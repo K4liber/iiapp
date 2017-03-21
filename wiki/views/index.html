@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>iiApp</title>
+    <link rel="stylesheet" type="text/css" href="/resources/style.css">
+    <script src="/resources/jquery.js"></script>
+    <!-- Auth0 -->
+    <script src="http://cdn.auth0.com/js/lock/10.13.0/lock.min.js"></script>
+    <script type="text/javascript" src="resources/auth0-variables.js"></script>
+
+    <!-- JQuery -->
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    
+    <!-- We will use the Babel transpiler so that we can convert our jsx code to js on the fly -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+
+    <!-- Core React libraries which we will be using -->
+    <script src="http://fb.me/react-0.14.7.js"></script>
+    <script src="https://fb.me/react-dom-0.14.7.js"></script>
+
+    <!-- Our React app code will be placed in the app.jsx file -->
+    <script type="text/babel" src="resources/app.jsx"></script>
+
+    <!-- React Router -->
+    <script src="https://unpkg.com/react-router/umd/react-router.min.js"></script>
+    <script src="https://unpkg.com/react-router-dom/umd/react-router-dom.min.js"></script>
+    
+    <!-- We will import bootstrap so that we can build a good looking UI fast -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" 
+    crossorigin="anonymous">
+  </head>
+  <body>
+    <!-- This will be the entry point for our React app -->
+    <div class="container" id="app">
+
+    </div>
+  </body>
+</html>

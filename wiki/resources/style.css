@@ -1,0 +1,187 @@
+body {
+	background-color: white;
+	color: black;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+    min-height: 100%;
+	max-height: 100%;
+}
+
+h2 {
+	margin: 0 0 1.5% 0;
+	padding: 0;
+	background-color: rgba(255, 240, 200, 1);
+	color: rgba(0, 15, 55, 1);
+}
+
+.title {
+	float: left;
+	margin: 2px 2px 2px 2px;
+}
+
+
+
+.imageLeft {
+	float: left;
+	margin: 10px 10px 10px 10px;
+	cursor: pointer;
+}
+
+.imageRight {
+	margin: 10px 10px 10px 10px;
+	float: right;
+	cursor: pointer;
+}
+
+.imageCenter {
+	width: 90%;
+	margin: 0;
+}
+
+span {
+	color: rgba(150,200,50,1);
+	cursor: pointer;
+}
+
+img {
+	padding: 2% 2% 2% 2%;
+}
+
+.apiContent {
+	margin: 0;
+	text-align: justify;
+    text-justify: inter-word;
+	height: 100%;
+}
+
+.menu {
+	text-align: center;
+	width: 5%;
+	float: left;
+	height: 100% !important;
+	background-color: black;
+	color: white;
+}
+
+.container {
+	height: 100%;
+}
+
+.contentLeft {
+	padding: 0% 0% 0% 0%;
+	width: 60%;
+	float: left;
+	overflow-y: scroll;
+	text-align: center;
+	height: auto;
+	max-height: 530px;
+}
+
+.contentRight {
+	padding: 0% 2% 0% 2%;
+	width: 26%;
+	float: right;
+	overflow: auto;
+	height: auto;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+
+.iconImage {
+	width: 30px;
+	float: right;
+	margin: 5px 5px 5px 5px;
+	padding: 0;
+	cursor: pointer;
+	background-color: transparent;
+}
+
+.mem {
+	position: relative;
+	cursor: pointer;
+	width: 98%;
+	margin: 5% 1% 5% 1%;
+}
+
+.memLeaf {
+	position: absolute;
+	width: 98%;
+	margin: 5% 1% 5% 1%;
+	display: none;
+	background-color: transparent;
+	border: solid 1px black;
+}
+
+.iconCenter {
+	width: 20px;
+	margin: 5px 5px 5px 5px;
+	padding: 0;
+	cursor: pointer;
+	background-color: transparent;
+}
+
+.changeColor {
+	width: 28px;
+	height: 28px;
+	cursor: pointer;
+	background-color: white;
+	border: 1px black solid;
+}
+
+.iconLogo {
+	width: 40px;
+	cursor: pointer;
+	background-color: black;
+}
+
+#1Column {
+	width: 60%;
+}
+
+.articlesTable {
+	width: 90%;
+}
+
+.articlesCellRight {
+	float: right;
+}
+
+.fullImage {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: normal;
+}
+
+.imageBox {
+	position: absolute;
+	width:100%;
+	display: none;
+	text-align: center;
+}
+
+.xIcon {
+	cursor: pointer;
+	position: absolute;
+	width: 20px;
+	margin: 0;
+	padding: 0;
+	background-color: transparent;
+}
+
+.insideImageBox {
+	overflow: auto;
+	color:black;
+	z-index: 99999;
+}
+
+.categories {
+	height: 50px;
+	text-align: center;
+}
