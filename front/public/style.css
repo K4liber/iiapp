@@ -1,5 +1,5 @@
 body {
-	background-color: white;
+	background-color: #150202 !important;
 	color: black;
 	margin: 0;
 	padding: 0;
@@ -72,10 +72,11 @@ img {
 	padding: 0% 0% 0% 0%;
 	width: 60%;
 	float: left;
-	overflow-y: scroll;
+	overflow-y: auto;
 	text-align: center;
-	height: auto;
+	height: 530px;
 	max-height: 530px;
+	min-height: 530px;
 }
 
 .contentRight {
@@ -83,7 +84,9 @@ img {
 	width: 26%;
 	float: right;
 	overflow: auto;
-	height: auto;
+	height: 530px;
+	max-height: 530px;
+	min-height: 530px;
 }
 
 .left {

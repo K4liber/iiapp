@@ -1,9 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './App.css';
+import Upload from './Upload';
+import MemDescription from './MemDescription';
 import Auth0Lock from 'auth0-lock';
 import createBrowserHistory from 'history/createBrowserHistory';
-import { Route, BrowserRouter } from 'react-router-dom';
+import { Route, Router } from 'react-router-dom';
+import { Link, Switch } from 'react-router';
 
 var browserHistory = createBrowserHistory();
 var CLIENT_ID = "ANOkwl33Ja5JX2ctrzF6FSXwhDbgiGU6";
@@ -28,7 +31,6 @@ var HttpClient = function(sendToken) {
 //Application
 var App = React.createClass({
   componentWillMount: function() {
-    this.setupAjax();
     this.createLock();
   },
   /* We will create the lock widget and pass it to sub-components */
@@ -63,31 +65,49 @@ var App = React.createClass({
     });
     }
   },
-  /* We will ensure that any AJAX request to our Go API has the authorization
-     header and passes the user JWT with the request */
-  setupAjax: function() {
-    /** 
-    $.ajaxSetup({
-      'beforeSend': function(xhr) {
-        if (localStorage.getItem('token')) {
-          xhr.setRequestHeader('Authorization',
-                'Bearer ' + localStorage.getItem('token'));
-        }
-      }
-    });
-    */
-  },
   render: function() {
     return (
-      <BrowserRouter>
-        <Route path="/">
-          <Route path="" component={() => (<Home lock={this.lock} />)}>
-          
-          </Route>
-        </Route>
-      </BrowserRouter>
+      <Router history={browserHistory}>
+            <div>
+              <div className="row categories">
+                <Categories/>
+                <Board lock={this.props.lock} />
+              </div>
+              <Switch>
+                <Route exact path="/" >
+                  <Home/>
+                </Route>
+                <Route path="/profile/:user">
+                  <Profile/>
+                </Route>
+                <Route path="/upload">
+                  <Upload/>
+                </Route>
+              </Switch>
+            </div>
+      </Router>
     );
   },
+});
+
+var Categories = React.createClass({
+  goHome : function() {
+    browserHistory.push('/');
+  },
+  render : function() {
+    return (
+      <div className="menu right col-md-8">
+        <img src="/img/homeIcon.png" onClick={this.goHome} className="iconLogo"/>
+        <img src="/img/ball.png" className="iconLogo"/>
+        <img src="/img/scienceIcon.png" className="iconLogo"/>
+        <img src="/img/movieIcon.png" className="iconLogo"/>
+        <img src="/img/peopleIcon.png" className="iconLogo"/>
+        <img src="/img/politicIcon.png" className="iconLogo"/>
+        <img src="/img/musicIcon.png" className="iconLogo"/>
+        <img src="/img/economyIcon.png" className="iconLogo"/>
+      </div>
+    )
+  }
 });
 
 //Home Component route('/')
@@ -108,7 +128,8 @@ var Home = React.createClass({
   },
   getInitialState: function() {
     return {
-      mems: null
+      mems: null,
+      memId: null
     }
   },
   componentDidMount: function() {
@@ -119,7 +140,7 @@ var Home = React.createClass({
     this.serverRequest = client.get('http://localhost:8080/mems', function(result) {
       this.setState({
         mems: result,
-        isLogged: isLogged,
+        memId: '1'
       });
     }.bind(this));
   },
@@ -127,59 +148,22 @@ var Home = React.createClass({
     if (this.state.mems) {
       console.log(this.state.mems);
       return (
-        <div>
-          <div className="row categories">
-            <div className="menu right col-md-8">
-                <img src="/img/ball.png" className="iconLogo"/>
-                <img src="/img/scienceIcon.png" className="iconLogo"/>
-                <img src="/img/movieIcon.png" className="iconLogo"/>
-                <img src="/img/peopleIcon.png" className="iconLogo"/>
-                <img src="/img/politicIcon.png" className="iconLogo"/>
-                <img src="/img/musicIcon.png" className="iconLogo"/>
-                <img src="/img/economyIcon.png" className="iconLogo"/>
-            </div>
-            <Board lock={this.props.lock}/>
-          </div>
           <div className="row well well-sm">
             <div className="contentLeft col-md-8" id="contentLeft">
-              {
-                JSON.parse(this.state.mems).map( function(s, index) { 
-                  return (
-                    <div className="mem" key={index}>
-                      <img alt="ASAS" src={"/img/" + s.ID +s.ImgExt}/>
-                      <p>{s.Signature}</p>
-                    </div>
-                  )
-                })
-              }
+              <Mems/>
             </div>
             <div className="contentRight col-md-4" id="contentRight">
-                
+              <MemDescription memId={this.state.memId} />
             </div>
           </div>
-        </div>
         );
       } else 
         return ( <div>Loading mems...</div> );
   }
 });
 
-//Profile Component route('/profile/*')
-var Profile = React.createClass({
-  logout : function(){
-    localStorage.removeItem('token');
-    window.location.replace('http://localhost:3000');
-  },
-  profileClick: function() {
-    if (this.state.isLogged)
-      console.log("Pokazuje profil");
-    else
-      this.showLock();
-  },
-  showLock: function() {
-    browserHistory.push('/login');
-    this.props.lock.show();
-  },
+//Mems Component
+var Mems = React.createClass({
   getInitialState: function() {
     return {
       mems: null
@@ -187,7 +171,7 @@ var Profile = React.createClass({
   },
   componentDidMount: function() {
     let isLogged = false;
-    if (this.props.token)
+    if (this.props.category)
       isLogged = true;
     var client = new HttpClient(true);
     this.serverRequest = client.get('http://localhost:8080/mems', function(result) {
@@ -199,39 +183,65 @@ var Profile = React.createClass({
   },
   render: function() {
     if (this.state.mems) {
-      console.log(this.state.mems);
       return (
         <div>
-          <div className="row categories">
-            <div className="menu right col-md-8">
-                <img src="/img/ball.png" className="iconLogo"/>
-                <img src="/img/scienceIcon.png" className="iconLogo"/>
-                <img src="/img/movieIcon.png" className="iconLogo"/>
-                <img src="/img/peopleIcon.png" className="iconLogo"/>
-                <img src="/img/politicIcon.png" className="iconLogo"/>
-                <img src="/img/musicIcon.png" className="iconLogo"/>
-                <img src="/img/economyIcon.png" className="iconLogo"/>
-            </div>
-            <Board lock={this.props.lock}/>
-          </div>
+          {
+            JSON.parse(this.state.mems).map( function(s, index) { 
+              return (
+                <div className="mem" key={index}>
+                  <img alt="ASAS" src={"/img/" + s.ID +s.ImgExt}/>
+                  <p>{s.Signature}</p>
+                </div>
+              )
+            })
+          }
+        </div>
+      );
+    } else {
+      return ( 
+        <div>
+          <p>Loading mems...</p>
+        </div>
+      );
+    }
+  }
+});
+
+//Profile Component route('/profile/*')
+var Profile = React.createClass({
+  getInitialState: function() {
+    return {
+      profile: null,
+      mems: null,
+    }
+  },
+  componentDidMount: function() {
+    let profile = localStorage.getItem('profile');
+    var client = new HttpClient(true);
+    this.serverRequest = client.get('http://localhost:8080/mems', function(result) {
+      this.setState({
+        mems: result,
+        profile: profile,
+      });
+    }.bind(this));
+  },
+  render: function() {
+    if (this.state.mems) {
+      let profile = JSON.parse(localStorage.getItem('profile'));
+      console.log(profile);
+      console.log("Tralala");
+      return (
           <div className="row well well-sm">
             <div className="contentLeft col-md-8" id="contentLeft">
-              {
-                JSON.parse(this.state.mems).map( function(s, index) { 
-                  return (
-                    <div className="mem" key={index}>
-                      <img alt="ASAS" src={"/img/" + s.ID +s.ImgExt}/>
-                      <p>{s.Signature}</p>
-                    </div>
-                  )
-                })
-              }
+              <Mems/>
             </div>
             <div className="contentRight col-md-4" id="contentRight">
-                Profile
+                <p>{profile.nickname}</p>
+                <div>
+                  <img src={profile.picture} className=""/>
+                </div>
             </div>
           </div>
-        </div>
         );
       } else 
         return ( <div>Loading mems...</div> );
@@ -250,11 +260,15 @@ var Board = React.createClass({
   },
   showProfile: function() {
     let profile = JSON.parse(localStorage.getItem('profile'));
-    browserHistory.push('/profile/' + profile.nickname);
+    //browserHistory.push('/profile/' + profile.nickname);
     console.log(localStorage.getItem('profile'));
+    browserHistory.replace('/profile/' + profile.nickname, {profile: profile,});
   },
   settings: function() {
     browserHistory.push('/settings');
+  },
+  upload: function() {
+    browserHistory.push('/upload');
   },
   logout : function(){
     browserHistory.push('/logout');
@@ -271,7 +285,8 @@ var Board = React.createClass({
       let profile = JSON.parse(localStorage.getItem('profile'));
       return (
       <div className="menu right col-md-4">
-          <img onClick={this.showProfile} src={profile.picture} className="iconLogo"/>  
+          <img onClick={this.showProfile} src={profile.picture} className="iconLogo"/>
+          <img onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo"/>
           <img onClick={this.settings} src="/img/settingsIcon.png" className="iconLogo"/>
           <img src="/img/polska.png" className="iconLogo"/>
           <img onClick={this.logout} src="/img/logoutIcon.png" className="iconLogo"/>
@@ -287,8 +302,6 @@ var Board = React.createClass({
     }
   }
 });
-
-
 
 /** 
 ReactDOM.render((
