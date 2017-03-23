@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -56,18 +57,6 @@ type Mem struct {
 	ImgExt         string
 	DateTime       time.Time
 	AuthorNickname string
-}
-
-func addMem() {
-	/*
-		result, err2 := db.Exec(
-			"INSERT INTO articles (id, name) VALUES (1, 'articleName')",
-		)
-		if err2 != nil {
-			fmt.Println(err2.Error())
-		}
-		result.RowsAffected()
-	*/
 }
 
 func getMems() []Mem {
@@ -150,6 +139,7 @@ func main() {
 	})
 	r.Handle("/mems", c.Handler(MemsHandler))
 	r.Handle("/mem/{id}", c.Handler(MemHandler))
+	r.Handle("/addMem", c.Handler(AddMemHandler))
 
 	fs := justFilesFilesystem{http.Dir("resources/")}
 	http.Handle("/resources/", http.StripPrefix("/resources", http.FileServer(fs)))
@@ -222,5 +212,44 @@ var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request)
 	if req.Method == "OPTIONS" {
 		return
 	}
+	w.Write([]byte(payload))
+})
+
+var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	req.ParseMultipartForm(32 << 20)
+	file, handler, err := req.FormFile("file")
+	var success = true
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer file.Close()
+	fmt.Fprintf(w, "%v", handler.Header)
+	f, err := os.OpenFile("./resources/mems/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer f.Close()
+	io.Copy(f, file)
+
+	var title = req.FormValue("title")
+	var description = req.FormValue("description")
+	var author = req.FormValue("author")
+	fmt.Println("title: " + title)
+	fmt.Println("description: " + description)
+	fmt.Println("author: " + author)
+
+	/*
+		result, err2 := db.Exec(
+			"INSERT INTO articles (id, name) VALUES (1, 'articleName')",
+		)
+		if err2 != nil {
+			fmt.Println(err2.Error())
+		}
+		result.RowsAffected()
+	*/
+
+	payload, _ := json.Marshal(success)
 	w.Write([]byte(payload))
 })
