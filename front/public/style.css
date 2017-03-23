@@ -20,7 +20,13 @@ h2 {
 	margin: 2px 2px 2px 2px;
 }
 
+.centering {
+	text-align: center;
+}
 
+.uploadInput {
+	display: none;
+}
 
 .imageLeft {
 	float: left;
@@ -106,11 +112,26 @@ img {
 	background-color: transparent;
 }
 
+.memUpload {
+	position: relative;
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+.cancelUpload {
+	position: absolute;
+	top: 0;
+    right: 0;
+}
 .mem {
 	position: relative;
 	cursor: pointer;
 	width: 98%;
 	margin: 5% 1% 5% 1%;
+}
+
+.memImage {
+	max-width: 500px;
 }
 
 .memLeaf {
