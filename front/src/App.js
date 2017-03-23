@@ -129,36 +129,25 @@ var Home = React.createClass({
   getInitialState: function() {
     return {
       mems: null,
-      memId: null
+      memId: '1'
     }
   },
   componentDidMount: function() {
-    let isLogged = false;
-    if (this.props.token)
-      isLogged = true;
-    var client = new HttpClient(true);
-    this.serverRequest = client.get('http://localhost:8080/mems', function(result) {
-      this.setState({
-        mems: result,
-        memId: '1'
-      });
-    }.bind(this));
+    this.setState({
+      memId: '1'
+    });
   },
   render: function() {
-    if (this.state.mems) {
-      console.log(this.state.mems);
       return (
-          <div className="row well well-sm">
-            <div className="contentLeft col-md-8" id="contentLeft">
-              <Mems/>
-            </div>
-            <div className="contentRight col-md-4" id="contentRight">
-              <MemDescription memId={this.state.memId} />
-            </div>
+        <div className="row well well-sm">
+          <div className="contentLeft col-md-8" id="contentLeft">
+            <Mems/>
           </div>
-        );
-      } else 
-        return ( <div>Loading mems...</div> );
+          <div className="contentRight col-md-4" id="contentRight">
+            <MemDescription memId={this.state.memId} />
+          </div>
+        </div>
+      );
   }
 });
 
@@ -183,6 +172,7 @@ var Mems = React.createClass({
   },
   render: function() {
     if (this.state.mems) {
+      console.log(this.state.mems);
       return (
         <div>
           {

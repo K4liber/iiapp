@@ -40,13 +40,22 @@ func (f neuteredReaddirFile) Readdir(count int) ([]os.FileInfo, error) {
 	return nil, nil
 }
 
+type MemDescription struct {
+	ID             int
+	MemID          int
+	Title          string
+	Description    string
+	AuthorNickname string
+}
+
 type Mem struct {
-	ID          int
-	UserID      int
-	HaveArticle bool
-	Signature   string
-	ImgExt      string
-	DateTime    time.Time
+	ID             int
+	UserID         int
+	HaveArticle    bool
+	Signature      string
+	ImgExt         string
+	DateTime       time.Time
+	AuthorNickname string
 }
 
 func addMem() {
@@ -76,14 +85,52 @@ func getMems() []Mem {
 	var Signature string
 	var ImgExt string
 	var DateTime time.Time
+	var AuthorNickname string
 	var slice []Mem
 	for rows.Next() {
-		err3 = rows.Scan(&ID, &UserID, &HaveArticle, &Signature, &ImgExt, &DateTime)
-		mem := &Mem{ID: ID, UserID: UserID, HaveArticle: HaveArticle, Signature: Signature, ImgExt: ImgExt, DateTime: DateTime}
+		err3 = rows.Scan(&ID, &UserID, &HaveArticle, &Signature, &ImgExt, &DateTime, &AuthorNickname)
+		mem := &Mem{
+			ID:             ID,
+			UserID:         UserID,
+			HaveArticle:    HaveArticle,
+			Signature:      Signature,
+			ImgExt:         ImgExt,
+			DateTime:       DateTime,
+			AuthorNickname: AuthorNickname,
+		}
+		fmt.Println(mem)
 		slice = append(slice, *mem)
 	}
 	defer db.Close()
 	return slice
+}
+
+func getMem(id string) MemDescription {
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	rows, err3 := db.Query("SELECT * FROM memDescription WHERE memID='" + id + "'")
+	if err3 != nil {
+		fmt.Println(err3.Error())
+	}
+	var ID int
+	var MemID int
+	var Title string
+	var Description string
+	var AuthorNickname string
+	for rows.Next() {
+		err3 = rows.Scan(&ID, &MemID, &Title, &Description, &AuthorNickname)
+	}
+	memDescription := MemDescription{
+		ID:             ID,
+		MemID:          MemID,
+		Title:          Title,
+		Description:    Description,
+		AuthorNickname: AuthorNickname,
+	}
+	defer db.Close()
+	return memDescription
 }
 
 func main() {
@@ -102,6 +149,7 @@ func main() {
 		OptionsPassthrough: true,
 	})
 	r.Handle("/mems", c.Handler(MemsHandler))
+	r.Handle("/mem/{id}", c.Handler(MemHandler))
 
 	fs := justFilesFilesystem{http.Dir("resources/")}
 	http.Handle("/resources/", http.StripPrefix("/resources", http.FileServer(fs)))
@@ -148,6 +196,22 @@ func (s *MyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 var MemsHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 	payload, _ := json.Marshal(getMems())
+	w.Header().Set("Content-Type", "application/json")
+	var origin = req.Header.Get("Origin")
+	w.Header().Set("Access-Control-Allow-Origin", origin)
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers",
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	w.Header().Set("Allow", "*")
+	if req.Method == "OPTIONS" {
+		return
+	}
+	w.Write([]byte(payload))
+})
+
+var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	payload, _ := json.Marshal(getMem(vars["id"]))
 	w.Header().Set("Content-Type", "application/json")
 	var origin = req.Header.Get("Origin")
 	w.Header().Set("Access-Control-Allow-Origin", origin)
