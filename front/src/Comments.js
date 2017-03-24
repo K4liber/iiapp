@@ -16,7 +16,7 @@ var HttpClient = function(sendToken) {
     }
 }
 
-var MemDescription = React.createClass({
+var Comments = React.createClass({
     getInitialState: function() {
         return {
         memDescription: null
@@ -45,7 +45,6 @@ var MemDescription = React.createClass({
                 </div>
             )
         } else {
-            let memId = this.props.memId;
             return (
                 <div>
                     Loading ...
@@ -55,4 +54,4 @@ var MemDescription = React.createClass({
     }
 });
 
-export default MemDescription;
+export default Comments;

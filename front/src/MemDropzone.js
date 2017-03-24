@@ -11,7 +11,7 @@ var MemDropzone = React.createClass({
         if(this.props.fileUrl) {
             return (
                 <div className="memUpload">
-                    <img className="memImage" src={this.props.fileUrl}/>
+                    <img alt="" className="memImage" src={this.props.fileUrl}/>
                     <button className="cancelUpload" onClick={this.props.onX}>X</button>
                 </div>
             )

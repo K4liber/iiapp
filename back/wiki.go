@@ -239,15 +239,15 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 	fmt.Println("title: " + title)
 	fmt.Println("description: " + description)
 	fmt.Println("author: " + author)
-
 	/*
 		result, err2 := db.Exec(
-			"INSERT INTO articles (id, name) VALUES (1, 'articleName')",
+			"INSERT INTO memDescription (id, name) VALUES (1, 'articleName')",
 		)
 		if err2 != nil {
 			fmt.Println(err2.Error())
 		}
 		result.RowsAffected()
+		fmt.Println(result);
 	*/
 
 	payload, _ := json.Marshal(success)
