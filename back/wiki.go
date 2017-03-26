@@ -41,22 +41,28 @@ func (f neuteredReaddirFile) Readdir(count int) ([]os.FileInfo, error) {
 	return nil, nil
 }
 
-type MemDescription struct {
+type Comment struct {
 	ID             int
 	MemID          int
-	Title          string
-	Description    string
 	AuthorNickname string
+	AuthorPhoto    string
+	Content        string
+	DateTime       time.Time
 }
 
 type Mem struct {
 	ID             int
 	UserID         int
-	HaveArticle    bool
 	Signature      string
 	ImgExt         string
 	DateTime       time.Time
 	AuthorNickname string
+	Category       string
+}
+
+type MemView struct {
+	Comments []Comment
+	Mem      Mem
 }
 
 func getMems() []Mem {
@@ -70,56 +76,92 @@ func getMems() []Mem {
 	}
 	var ID int
 	var UserID int
-	var HaveArticle bool
 	var Signature string
 	var ImgExt string
 	var DateTime time.Time
 	var AuthorNickname string
+	var Category string
 	var slice []Mem
 	for rows.Next() {
-		err3 = rows.Scan(&ID, &UserID, &HaveArticle, &Signature, &ImgExt, &DateTime, &AuthorNickname)
+		err3 = rows.Scan(&ID, &UserID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category)
 		mem := &Mem{
 			ID:             ID,
 			UserID:         UserID,
-			HaveArticle:    HaveArticle,
 			Signature:      Signature,
 			ImgExt:         ImgExt,
 			DateTime:       DateTime,
 			AuthorNickname: AuthorNickname,
+			Category:       Category,
 		}
-		fmt.Println(mem)
 		slice = append(slice, *mem)
 	}
 	defer db.Close()
 	return slice
 }
 
-func getMem(id string) MemDescription {
+func getMem(id string) Mem {
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	rows, err3 := db.Query("SELECT * FROM memDescription WHERE memID='" + id + "'")
+	rows, err3 := db.Query("SELECT * FROM mem WHERE ID='" + id + "'")
+	if err3 != nil {
+		fmt.Println(err3.Error())
+	}
+	var ID int
+	var UserID int
+	var Signature string
+	var ImgExt string
+	var DateTime time.Time
+	var AuthorNickname string
+	var Category string
+	for rows.Next() {
+		err3 = rows.Scan(&ID, &UserID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category)
+	}
+	mem := Mem{
+		ID:             ID,
+		UserID:         UserID,
+		Signature:      Signature,
+		ImgExt:         ImgExt,
+		DateTime:       DateTime,
+		AuthorNickname: AuthorNickname,
+		Category:       Category,
+	}
+	defer db.Close()
+	return mem
+}
+
+func getComments(id string) []Comment {
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	rows, err3 := db.Query("SELECT * FROM comment WHERE memID='" + id + "'")
 	if err3 != nil {
 		fmt.Println(err3.Error())
 	}
 	var ID int
 	var MemID int
-	var Title string
-	var Description string
 	var AuthorNickname string
+	var AuthorPhoto string
+	var Content string
+	var DateTime time.Time
+	var slice []Comment
+
 	for rows.Next() {
-		err3 = rows.Scan(&ID, &MemID, &Title, &Description, &AuthorNickname)
-	}
-	memDescription := MemDescription{
-		ID:             ID,
-		MemID:          MemID,
-		Title:          Title,
-		Description:    Description,
-		AuthorNickname: AuthorNickname,
+		err3 = rows.Scan(&ID, &MemID, &AuthorNickname, &AuthorPhoto, &Content, &DateTime)
+		comment := &Comment{
+			ID:             ID,
+			MemID:          MemID,
+			AuthorNickname: AuthorNickname,
+			AuthorPhoto:    AuthorPhoto,
+			Content:        Content,
+			DateTime:       DateTime,
+		}
+		slice = append(slice, *comment)
 	}
 	defer db.Close()
-	return memDescription
+	return slice
 }
 
 func main() {
@@ -201,7 +243,13 @@ var MemsHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request
 
 var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	payload, _ := json.Marshal(getMem(vars["id"]))
+	mem := getMem(vars["id"])
+	comments := getComments(vars["id"])
+	memView := MemView{
+		Comments: comments,
+		Mem:      mem,
+	}
+	payload, _ := json.Marshal(memView)
 	w.Header().Set("Content-Type", "application/json")
 	var origin = req.Header.Get("Origin")
 	w.Header().Set("Access-Control-Allow-Origin", origin)
@@ -234,10 +282,10 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 	io.Copy(f, file)
 
 	var title = req.FormValue("title")
-	var description = req.FormValue("description")
+	var comment = req.FormValue("description")
 	var author = req.FormValue("author")
 	fmt.Println("title: " + title)
-	fmt.Println("description: " + description)
+	fmt.Println("comment: " + comment)
 	fmt.Println("author: " + author)
 	/*
 		result, err2 := db.Exec(
