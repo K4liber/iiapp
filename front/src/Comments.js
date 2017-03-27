@@ -19,7 +19,8 @@ var HttpClient = function(sendToken) {
 var Comments = React.createClass({
     getInitialState: function() {
         return {
-        memDescription: null
+            comments: null,
+            mem: null
         }
     },
     componentDidMount: function() {
@@ -27,21 +28,39 @@ var Comments = React.createClass({
         var client = new HttpClient(true);
         this.serverRequest = client.get('http://localhost:8080/mem/' + memId, function(result) {
         this.setState({
-            memDescription: result,
+            comments: JSON.parse(result).Comments,
+            mem: JSON.parse(result).Mem,
         });
         }.bind(this));
     },
     render : function () {
-        if (this.state.memDescription) {
-            let memDescription = JSON.parse(this.state.memDescription);
+        if (this.state.comments) {
             return (
                 <div>
-                    <div>
-                        {memDescription.AuthorNickname} : {memDescription.Title}
-                    </div>
-                    <div>
-                        {memDescription.Description}.
-                    </div>
+                    <p>
+                        #{this.state.mem.Signature}
+                    </p>
+                    {
+                    (this.state.comments).map( function(comment, index) { 
+                        return (
+                            <div className="comment">
+                                <div>
+                                    {comment.DateTime}
+                                </div>
+                                <div>
+                                    <img alt="" src={comment.AuthorPhoto} className="commentPhoto"/>
+                                    {comment.AuthorNickname}
+                                </div>
+                                <div>
+                                    {comment.Content}.
+                                </div>
+                            </div>
+                        )
+                    })
+                    }
+                    <p>
+                        <button className="btn btn-primary">Comment</button>
+                    </p>
                 </div>
             )
         } else {

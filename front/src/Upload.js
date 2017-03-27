@@ -85,7 +85,6 @@ var Upload = React.createClass({
                     </p>
                     <textarea id="descriptionArea" onChange={this.loadDescription} placeholder="Description ..."></textarea> 
                     <p>
-                        
                         <button onClick={this.postMem} className="btn btn-primary">Send</button>
                     </p>
                 </div>

@@ -55,7 +55,7 @@ type Mem struct {
 	UserID         int
 	Signature      string
 	ImgExt         string
-	DateTime       time.Time
+	DateTime       string
 	AuthorNickname string
 	Category       string
 }
@@ -78,7 +78,7 @@ func getMems() []Mem {
 	var UserID int
 	var Signature string
 	var ImgExt string
-	var DateTime time.Time
+	var DateTime string
 	var AuthorNickname string
 	var Category string
 	var slice []Mem
@@ -93,6 +93,7 @@ func getMems() []Mem {
 			AuthorNickname: AuthorNickname,
 			Category:       Category,
 		}
+		fmt.Println(mem)
 		slice = append(slice, *mem)
 	}
 	defer db.Close()
@@ -112,7 +113,7 @@ func getMem(id string) Mem {
 	var UserID int
 	var Signature string
 	var ImgExt string
-	var DateTime time.Time
+	var DateTime string
 	var AuthorNickname string
 	var Category string
 	for rows.Next() {

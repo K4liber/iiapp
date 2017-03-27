@@ -118,11 +118,61 @@ img {
 	margin: 0 auto;
 }
 
+.comment {
+	background-color: white;
+	margin-top: 5%;
+}
+
+.uploadCategories {
+	height: auto;
+	width: 100%;
+	background-color: rgba(150,150,150,0.5);
+	position: absolute;
+	bottom: 20px;
+}
+
+.thumbImage {
+	margin: 0;
+	padding: 0;
+	width: 15px;
+}
+
+textarea#titleArea {
+	width: 90%;
+	height: auto;
+	min-height: 20px;
+	background-color: rgba(150,150,150,0.5);
+	border: 0px;
+	padding: 8px 8px 8px 8px;
+	text-align: center;
+}
+
+textarea#descriptionArea {
+	width: 90%;
+	height: auto;
+	min-height: 20px;
+	background-color: rgba(150,150,150,0.5);
+	border: 0px;
+	padding: 8px 8px 8px 8px;
+	text-align: left justify;
+}
+
 .cancelUpload {
 	position: absolute;
 	top: 0;
     right: 0;
+	background-color:  rgba(150,150,150,0.5);
+	width: 40px;
 }
+
+.uploadLogoChoosen {
+	position: absolute;
+	top: 0;
+    left: 0;
+	background-color:  rgba(150,150,150,0.5);
+	width: 40px;
+}
+
 .mem {
 	position: relative;
 	cursor: pointer;
@@ -163,6 +213,27 @@ img {
 	width: 40px;
 	cursor: pointer;
 	background-color: black;
+}
+
+.commentPhoto {
+	width: 40px;
+	cursor: pointer;
+	padding: 0;
+	margin: 3px 3px 3px 3px;
+}
+
+.iconLogo:hover {
+	background-color: rgba(255,0,100,0.5);
+}
+
+.uploadLogo {
+	width: 40px;
+	cursor: pointer;
+	background-color: transparent;
+}
+
+.uploadLogo:hover {
+	background-color: rgba(255,0,100,0.5);
 }
 
 #1Column {
@@ -206,6 +277,6 @@ img {
 }
 
 .categories {
-	height: 50px;
+	height: auto;
 	text-align: center;
 }

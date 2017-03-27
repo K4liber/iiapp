@@ -39,11 +39,16 @@ var Mems = React.createClass({
       return (
         <div>
           {
-            JSON.parse(this.state.mems).map( function(s, index) { 
+            JSON.parse(this.state.mems).map( function(mem, index) { 
               return (
                 <div className="mem" key={index}>
-                  <img alt="ASAS" src={"/img/" + s.ID +s.ImgExt}/>
-                  <p>{s.Signature}</p>
+                  <p>
+                    {mem.AuthorNickname} | {mem.DateTime} | Views: 0 | Points: 0 
+                    <img className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
+                  </p>
+                  <img alt="ASAS" src={"/img/" + mem.ID +mem.ImgExt}/>
+                  <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
+                  <p>{mem.Signature}</p>
                 </div>
               )
             })

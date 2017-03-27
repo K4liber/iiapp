@@ -26,6 +26,7 @@ var Profile = React.createClass({
   },
   componentDidMount: function() {
     let profile = localStorage.getItem('profile');
+    console.log(profile);
     var client = new HttpClient(true);
     this.serverRequest = client.get('http://localhost:8080/mems', function(result) {
       this.setState({

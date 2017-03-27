@@ -36,7 +36,6 @@ var Board = React.createClass({
           <img alt="" onClick={this.showProfile} src={profile.picture} className="iconLogo"/>
           <img alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo"/>
           <img alt="" onClick={this.settings} src="/img/settingsIcon.png" className="iconLogo"/>
-          <img alt="" src="/img/polska.png" className="iconLogo"/>
           <img alt="" onClick={this.logout} src="/img/logoutIcon.png" className="iconLogo"/>
       </div>
       );
@@ -44,7 +43,6 @@ var Board = React.createClass({
       return (
       <div className="menu right col-md-4">
           <img alt="" onClick={this.showLock} src="/img/loginIcon2.png" className="iconLogo"/>
-          <img alt="" src="/img/polska.png" className="iconLogo"/>
       </div>
       );
     }
