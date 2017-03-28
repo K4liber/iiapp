@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"time"
 
@@ -52,7 +53,6 @@ type Comment struct {
 
 type Mem struct {
 	ID             int
-	UserID         int
 	Signature      string
 	ImgExt         string
 	DateTime       string
@@ -75,7 +75,6 @@ func getMems() []Mem {
 		fmt.Println(err3.Error())
 	}
 	var ID int
-	var UserID int
 	var Signature string
 	var ImgExt string
 	var DateTime string
@@ -83,10 +82,9 @@ func getMems() []Mem {
 	var Category string
 	var slice []Mem
 	for rows.Next() {
-		err3 = rows.Scan(&ID, &UserID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category)
+		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category)
 		mem := &Mem{
 			ID:             ID,
-			UserID:         UserID,
 			Signature:      Signature,
 			ImgExt:         ImgExt,
 			DateTime:       DateTime,
@@ -110,18 +108,16 @@ func getMem(id string) Mem {
 		fmt.Println(err3.Error())
 	}
 	var ID int
-	var UserID int
 	var Signature string
 	var ImgExt string
 	var DateTime string
 	var AuthorNickname string
 	var Category string
 	for rows.Next() {
-		err3 = rows.Scan(&ID, &UserID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category)
+		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category)
 	}
 	mem := Mem{
 		ID:             ID,
-		UserID:         UserID,
 		Signature:      Signature,
 		ImgExt:         ImgExt,
 		DateTime:       DateTime,
@@ -265,8 +261,43 @@ var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request)
 })
 
 var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	var title = req.FormValue("title")
+	var author = req.FormValue("author")
+	var extension = req.FormValue("extension")
+	var category = req.FormValue("category")
+	datetime := time.Now().Format(time.RFC3339)
+	fmt.Println("title: " + title)
+	fmt.Println("author: " + author)
+	fmt.Println("extension: " + extension)
+	fmt.Println("category: " + category)
+	fmt.Println("dateTime: " + datetime)
+
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	result, err2 := db.Exec(
+		"INSERT INTO mem (signature, imgExt, dateTime, authorNickname, category) VALUES ('" +
+			title + "', '." + extension + "', '" + datetime + "', '" + author + "', '" + category + "')",
+	)
+	if err2 != nil {
+		fmt.Println(err2.Error())
+	}
+
+	fmt.Println("result: ")
+	fmt.Println()
+	id, err6 := result.LastInsertId()
+	if err6 != nil {
+		fmt.Println(err6)
+	}
+
+	var comment = req.FormValue("description")
+	fmt.Println("comment: " + comment)
+
 	req.ParseMultipartForm(32 << 20)
 	file, handler, err := req.FormFile("file")
+
 	var success = true
 	if err != nil {
 		fmt.Println(err)
@@ -274,30 +305,14 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 	}
 	defer file.Close()
 	fmt.Fprintf(w, "%v", handler.Header)
-	f, err := os.OpenFile("./resources/mems/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+	var fileName = "./resources/mems/" + strconv.FormatInt(id, 10) + "." + extension
+	f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	defer f.Close()
 	io.Copy(f, file)
-
-	var title = req.FormValue("title")
-	var comment = req.FormValue("description")
-	var author = req.FormValue("author")
-	fmt.Println("title: " + title)
-	fmt.Println("comment: " + comment)
-	fmt.Println("author: " + author)
-	/*
-		result, err2 := db.Exec(
-			"INSERT INTO memDescription (id, name) VALUES (1, 'articleName')",
-		)
-		if err2 != nil {
-			fmt.Println(err2.Error())
-		}
-		result.RowsAffected()
-		fmt.Println(result);
-	*/
 
 	payload, _ := json.Marshal(success)
 	w.Write([]byte(payload))

@@ -11,6 +11,7 @@ var Upload = React.createClass({
             fileUrl : null,
             title : null,
             description : null,
+            category : "science",
         };
     },
     loadTitle : function() {
@@ -55,13 +56,18 @@ var Upload = React.createClass({
             return
         }
         let nickname = JSON.parse(localStorage.getItem('profile')).nickname
+        var res = this.state.uploadedFile.type.split("/"); 
+        if (res[0] != "image")
+            alert("Zly format obrazka");
         let upload = request.post(UPLOAD_URL)
                         .field('Bearer ', localStorage.getItem('token'))
                         .field('file', this.state.uploadedFile)
+                        .field('extension', res[1])
                         .field('enctype', 'multipart/form-data')
                         .field('title', this.state.title)
                         .field('description', this.state.description)
-                        .field('author', nickname);
+                        .field('author', nickname)
+                        .field('category', this.state.category);
         upload.end((err, response) => {
             if (err) {
                 console.error(err);

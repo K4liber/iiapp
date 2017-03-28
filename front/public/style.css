@@ -15,6 +15,10 @@ h2 {
 	color: rgba(0, 15, 55, 1);
 }
 
+.memImage {
+	max-width: 95%;
+}
+
 .title {
 	float: left;
 	margin: 2px 2px 2px 2px;
@@ -62,10 +66,6 @@ img {
 }
 
 .menu {
-	text-align: center;
-	width: 5%;
-	float: left;
-	height: 100% !important;
 	background-color: black;
 	color: white;
 }
@@ -76,18 +76,16 @@ img {
 
 .contentLeft {
 	padding: 0% 0% 0% 0%;
-	width: 60%;
+	width: 100%;
 	float: left;
 	overflow-y: auto;
 	text-align: center;
-	height: 530px;
-	max-height: 530px;
-	min-height: 530px;
+	height: auto;
 }
 
 .contentRight {
 	padding: 0% 2% 0% 2%;
-	width: 26%;
+	width: 0%;
 	float: right;
 	overflow: auto;
 	height: 530px;
@@ -114,7 +112,7 @@ img {
 
 .memUpload {
 	position: relative;
-	max-width: 500px;
+	width: auto;
 	margin: 0 auto;
 }
 
@@ -162,7 +160,8 @@ textarea#descriptionArea {
 	top: 0;
     right: 0;
 	background-color:  rgba(150,150,150,0.5);
-	width: 40px;
+	width: 8%;
+	padding: 1% 1% 1% 1%;
 }
 
 .uploadLogoChoosen {
@@ -170,18 +169,20 @@ textarea#descriptionArea {
 	top: 0;
     left: 0;
 	background-color:  rgba(150,150,150,0.5);
-	width: 40px;
+	width: 8%;
+	padding: 1% 1% 1% 1%;
 }
 
 .mem {
 	position: relative;
 	cursor: pointer;
-	width: 98%;
+	width: auto;
+	display: inline-block;
 	margin: 5% 1% 5% 1%;
 }
 
 .memImage {
-	max-width: 500px;
+	max-width: 100%;
 }
 
 .memLeaf {
@@ -210,11 +211,28 @@ textarea#descriptionArea {
 }
 
 .iconLogo {
-	width: 40px;
+	width: 3%;
+	min-width: 10px;
 	cursor: pointer;
+	padding: 0;
+	margin: 5px 5px 5px 5px;
 	background-color: black;
 }
 
+.relative {
+	position: relative;
+}
+
+.comments {
+	display: none;
+	position: absolute !important;
+	background-color: rgba(100,100,100, 0.8);
+	left:0;
+	top:0;
+	z-index: 20;
+	width: 100%;
+	height: 100%;
+}
 .commentPhoto {
 	width: 40px;
 	cursor: pointer;

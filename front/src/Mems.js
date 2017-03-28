@@ -1,4 +1,5 @@
 import React from 'react';
+import Comments from './Comments';
 
 var HttpClient = function(sendToken) {
     this.get = function(aUrl, aCallback) {
@@ -34,21 +35,33 @@ var Mems = React.createClass({
       });
     }.bind(this));
   },
+  showComments: function(id) {
+    document.getElementById(id).style.display = "inline";
+  },
+  closeComments : function(id) {
+    document.getElementById(id).style.display = "none";
+  },
   render: function() {
     if (this.state.mems) {
+      let self = this;
       return (
         <div>
           {
-            JSON.parse(this.state.mems).map( function(mem, index) { 
+            JSON.parse(this.state.mems).map( function(mem, index) {
               return (
-                <div className="mem" key={index}>
+                <div className="mem relative" key={index}>
+                  <div id={mem.ID} className="contentLeft col-md-12 comments" >
+                    <Comments memId={mem.ID} />
+                    <img onClick={() => self.closeComments(mem.ID)} alt="" src="/img/xIcon.png" className="cancelUpload" />
+                  </div>           
+                  <img className="memImage" alt="ASAS" src={"http://localhost:8080/resources/mems/" + mem.ID +mem.ImgExt}
+                    onClick={() => self.showComments(mem.ID)}/>
+                  <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
+                  <p>{mem.Signature}</p>
                   <p>
                     {mem.AuthorNickname} | {mem.DateTime} | Views: 0 | Points: 0 
                     <img className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
                   </p>
-                  <img alt="ASAS" src={"/img/" + mem.ID +mem.ImgExt}/>
-                  <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
-                  <p>{mem.Signature}</p>
                 </div>
               )
             })

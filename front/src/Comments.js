@@ -66,7 +66,9 @@ var Comments = React.createClass({
         } else {
             return (
                 <div>
-                    Loading ...
+                    <p>
+                        <button className="btn btn-primary">Comment</button>
+                    </p>
                 </div>
             )
         }

@@ -4,6 +4,7 @@ import Upload from './Upload';
 import Categories from './Categories';
 import Board from './Board';
 import Profile from './Profile';
+import Settings from './Settings';
 import Home from './Home';
 import Auth0Lock from 'auth0-lock';
 import createBrowserHistory from 'history/createBrowserHistory';
@@ -51,7 +52,6 @@ var App = React.createClass({
       <Router history={browserHistory}>
             <div>
               <div className="row categories">
-                <Categories browserHistory={browserHistory}/>
                 <Board lock={this.lock} browserHistory={browserHistory}/>
               </div>
               <Switch>
@@ -63,6 +63,9 @@ var App = React.createClass({
                 </Route>
                 <Route path="/upload">
                   <Upload/>
+                </Route>
+                <Route path="/settings">
+                  <Settings/>
                 </Route>
               </Switch>
             </div>

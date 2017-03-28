@@ -15,7 +15,16 @@ var Home = React.createClass({
     });
   },
   render: function() {
+    if (1) {
       return (
+        <div className="row well well-sm">
+          <div className="contentLeft col-md-12" id="contentLeft">
+            <Mems/>
+          </div>
+        </div> 
+      );
+    } else {
+       return (
         <div className="row well well-sm">
           <div className="contentLeft col-md-8" id="contentLeft">
             <Mems/>
@@ -23,8 +32,9 @@ var Home = React.createClass({
           <div className="contentRight col-md-4" id="contentRight">
             <Comments memId={this.state.memId} />
           </div>
-        </div>
+        </div>  
       );
+    }
   }
 });
 
