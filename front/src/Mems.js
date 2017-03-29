@@ -28,7 +28,7 @@ var Mems = React.createClass({
     if (this.props.category)
       isLogged = true;
     var client = new HttpClient(true);
-    this.serverRequest = client.get('http://localhost:8080/mems', function(result) {
+    this.serverRequest = client.get('http://10.17.2.143:300/mems', function(result) {
       this.setState({
         mems: result,
         isLogged: isLogged,
@@ -54,7 +54,7 @@ var Mems = React.createClass({
                     <Comments memId={mem.ID} />
                     <img onClick={() => self.closeComments(mem.ID)} alt="" src="/img/xIcon.png" className="cancelUpload" />
                   </div>           
-                  <img className="memImage" alt="ASAS" src={"http://localhost:8080/resources/mems/" + mem.ID +mem.ImgExt}
+                  <img className="memImage" alt="ASAS" src={"http://10.17.2.143:300/resources/mems/" + mem.ID +mem.ImgExt}
                     onClick={() => self.showComments(mem.ID)}/>
                   <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
                   <p>{mem.Signature}</p>

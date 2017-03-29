@@ -28,7 +28,7 @@ var Profile = React.createClass({
     let profile = localStorage.getItem('profile');
     console.log(profile);
     var client = new HttpClient(true);
-    this.serverRequest = client.get('http://localhost:8080/mems', function(result) {
+    this.serverRequest = client.get('http://10.17.2.143:300/mems', function(result) {
       this.setState({
         mems: result,
         profile: profile,
@@ -37,17 +37,11 @@ var Profile = React.createClass({
   },
   render: function() {
     if (this.state.mems) {
-      let profile = JSON.parse(localStorage.getItem('profile'));
+      //let profile = JSON.parse(localStorage.getItem('profile'));
       return (
           <div className="row well well-sm">
-            <div className="contentLeft col-md-8" id="contentLeft">
+            <div className="contentLeft col-md-12" id="contentLeft">
               <Mems/>
-            </div>
-            <div className="contentRight col-md-4" id="contentRight">
-                <p>{profile.nickname}</p>
-                <div>
-                  <img alt="" src={profile.picture} className=""/>
-                </div>
             </div>
           </div>
         );

@@ -91,7 +91,6 @@ func getMems() []Mem {
 			AuthorNickname: AuthorNickname,
 			Category:       Category,
 		}
-		fmt.Println(mem)
 		slice = append(slice, *mem)
 	}
 	defer db.Close()
@@ -179,6 +178,7 @@ func main() {
 	r.Handle("/mems", c.Handler(MemsHandler))
 	r.Handle("/mem/{id}", c.Handler(MemHandler))
 	r.Handle("/addMem", c.Handler(AddMemHandler))
+	r.Handle("/addComment", c.Handler(AddCommentHandler))
 
 	fs := justFilesFilesystem{http.Dir("resources/")}
 	http.Handle("/resources/", http.StripPrefix("/resources", http.FileServer(fs)))
@@ -261,22 +261,18 @@ var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request)
 })
 
 var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	var title = req.FormValue("title")
-	var author = req.FormValue("author")
-	var extension = req.FormValue("extension")
-	var category = req.FormValue("category")
-	datetime := time.Now().Format(time.RFC3339)
-	fmt.Println("title: " + title)
-	fmt.Println("author: " + author)
-	fmt.Println("extension: " + extension)
-	fmt.Println("category: " + category)
-	fmt.Println("dateTime: " + datetime)
-
+	//Laczenie z baza danych
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
+	//Dodawanie mema
+	var title = req.FormValue("title")
+	var author = req.FormValue("author")
+	var extension = req.FormValue("extension")
+	var category = req.FormValue("category")
+	datetime := time.Now().Format(time.RFC3339)
 	result, err2 := db.Exec(
 		"INSERT INTO mem (signature, imgExt, dateTime, authorNickname, category) VALUES ('" +
 			title + "', '." + extension + "', '" + datetime + "', '" + author + "', '" + category + "')",
@@ -284,20 +280,30 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 	if err2 != nil {
 		fmt.Println(err2.Error())
 	}
-
-	fmt.Println("result: ")
-	fmt.Println()
-	id, err6 := result.LastInsertId()
+	memID, err6 := result.LastInsertId()
 	if err6 != nil {
 		fmt.Println(err6)
 	}
 
-	var comment = req.FormValue("description")
-	fmt.Println("comment: " + comment)
+	//Dodawanie komentarza
+	var profilePicture = req.FormValue("profilePicture")
+	var comment = req.FormValue("comment")
+	result2, errComment := db.Exec(
+		"INSERT INTO comment (memId, authorNickname, authorPhoto, content, dateTime) VALUES ('" +
+			strconv.FormatInt(memID, 10) + "', '" + author + "', '" + profilePicture + "', '" + comment + "', '" + datetime + "')",
+	)
+	if errComment != nil {
+		fmt.Println(errComment.Error())
+	}
+	commentID, errCommentID := result2.LastInsertId()
+	if errCommentID != nil {
+		fmt.Println(errCommentID)
+		fmt.Println(commentID)
+	}
 
+	//Zapisanie zdjecia
 	req.ParseMultipartForm(32 << 20)
 	file, handler, err := req.FormFile("file")
-
 	var success = true
 	if err != nil {
 		fmt.Println(err)
@@ -305,7 +311,7 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 	}
 	defer file.Close()
 	fmt.Fprintf(w, "%v", handler.Header)
-	var fileName = "./resources/mems/" + strconv.FormatInt(id, 10) + "." + extension
+	var fileName = "./resources/mems/" + strconv.FormatInt(memID, 10) + "." + extension
 	f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Println(err)
@@ -314,6 +320,36 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 	defer f.Close()
 	io.Copy(f, file)
 
+	//Wysylanie odpowiedzi
+	payload, _ := json.Marshal(success)
+	w.Write([]byte(payload))
+})
+
+var AddCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	//Laczenie z baza danych
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	//Dodawanie komentarza
+	datetime := time.Now().Format(time.RFC3339)
+	var memID = req.FormValue("memID")
+	var nickname = req.FormValue("nickname")
+	var profilePicture = req.FormValue("profilePicture")
+	var comment = req.FormValue("comment")
+	result, errComment := db.Exec(
+		"INSERT INTO comment (memId, authorNickname, authorPhoto, content, dateTime) VALUES ('" +
+			memID + "', '" + nickname + "', '" + profilePicture + "', '" + comment + "', '" + datetime + "')",
+	)
+	var success = true
+	if errComment != nil {
+		fmt.Println(errComment.Error())
+		fmt.Println(result)
+		success = false
+	}
+
+	//Wysylanie odpowiedzi
 	payload, _ := json.Marshal(success)
 	w.Write([]byte(payload))
 })

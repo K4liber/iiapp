@@ -9,8 +9,8 @@ var MemDropzone = React.createClass({
         };
     },
     loadCategoryIcon : function(category) {
-
         let link = "/img/" + category + "Icon.png";
+        document.getElementById("categoryImage").alt = category;
         console.log(link);
         this.setState({
             fileUrl : this.props.fileUrl,
@@ -23,7 +23,7 @@ var MemDropzone = React.createClass({
                 <div className="memUpload">
                     <img alt="" className="memImage" src={this.props.fileUrl}/>
                     <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.props.onX}/>
-                    <img alt="" src={this.state.categoryLink} className="uploadLogoChoosen"/>
+                    <img alt="own" id="categoryImage" src={this.state.categoryLink} className="uploadLogoChoosen"/>
                     <div className="uploadCategories">
                         <img alt="" id="sport" onClick={(event)=>this.loadCategoryIcon("sport")} src="/img/sportIcon.png" className="uploadLogo"/>
                         <img alt="" id="science" onClick={(event)=>this.loadCategoryIcon("science")} src="/img/scienceIcon.png" className="uploadLogo"/>
@@ -38,13 +38,15 @@ var MemDropzone = React.createClass({
             )
         } else {
             return (
-                <div style={{margin: "0 auto", width: "200px"}}>
-                    <Dropzone
-                        multiple={false}
-                        accept="image/*"
-                        onDrop={this.props.onDrop}>
-                        <p>Drop an image or click to select a file to upload.</p>
-                    </Dropzone>  
+                <div className="relative loadMem">
+                    <div className="centering">
+                        <Dropzone 
+                            multiple={false}
+                            accept="image/*"
+                            onDrop={this.props.onDrop}>
+                            <p>Drop an image or click to select a file to upload.</p>
+                        </Dropzone> 
+                    </div> 
                 </div>
             )
         }

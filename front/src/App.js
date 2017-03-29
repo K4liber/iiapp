@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 import Upload from './Upload';
-import Categories from './Categories';
 import Board from './Board';
 import Profile from './Profile';
 import Settings from './Settings';
@@ -62,7 +61,7 @@ var App = React.createClass({
                   <Profile/>
                 </Route>
                 <Route path="/upload">
-                  <Upload/>
+                  <Upload lock={this.lock} browserHistory={browserHistory}/>
                 </Route>
                 <Route path="/settings">
                   <Settings/>

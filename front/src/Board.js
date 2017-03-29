@@ -64,6 +64,7 @@ var Board = React.createClass({
         <img alt="" src="/img/economyIcon.png" className="iconLogo left"/>
         <img alt="" src="/img/ownIcon.png" className="iconLogo left"/>
         <img alt="" onClick={this.showLock} src="/img/loginIcon2.png" className="iconLogo right"/>
+        <img alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo right"/>
       </div>
       );
     }

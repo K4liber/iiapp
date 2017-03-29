@@ -1,6 +1,5 @@
 import React from 'react';
 import Mems from './Mems';
-import Comments from './Comments';
 
 var Home = React.createClass({
   getInitialState: function() {
@@ -30,7 +29,6 @@ var Home = React.createClass({
             <Mems/>
           </div>
           <div className="contentRight col-md-4" id="contentRight">
-            <Comments memId={this.state.memId} />
           </div>
         </div>  
       );

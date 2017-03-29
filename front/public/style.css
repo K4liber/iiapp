@@ -26,6 +26,7 @@ h2 {
 
 .centering {
 	text-align: center;
+	display: inline-block;
 }
 
 .uploadInput {
@@ -136,19 +137,19 @@ img {
 }
 
 textarea#titleArea {
-	width: 90%;
+	width: 50%;
 	height: auto;
-	min-height: 20px;
+	min-height: 15px;
 	background-color: rgba(150,150,150,0.5);
 	border: 0px;
 	padding: 8px 8px 8px 8px;
 	text-align: center;
 }
 
-textarea#descriptionArea {
-	width: 90%;
+textarea#commentArea {
+	width: 50%;
 	height: auto;
-	min-height: 20px;
+	min-height: 15px;
 	background-color: rgba(150,150,150,0.5);
 	border: 0px;
 	padding: 8px 8px 8px 8px;
@@ -212,7 +213,7 @@ textarea#descriptionArea {
 
 .iconLogo {
 	width: 3%;
-	min-width: 10px;
+	min-width: 25px;
 	cursor: pointer;
 	padding: 0;
 	margin: 5px 5px 5px 5px;
@@ -223,10 +224,33 @@ textarea#descriptionArea {
 	position: relative;
 }
 
+.video {
+	position: absolute;
+	top:50;
+	left:0;
+	display:none;
+	width: 100%;
+	height: auto;
+}
+
+.canvas {
+	position: absolute;
+	top:50;
+	left:0;
+	display:none;
+	width: 100%;
+	height: auto;
+}
+
+.loadMem {
+	width: 100%;
+	height: auto;
+}
+
 .comments {
 	display: none;
 	position: absolute !important;
-	background-color: rgba(100,100,100, 0.8);
+	background-color: rgba(200,200,200, 0.9);
 	left:0;
 	top:0;
 	z-index: 20;

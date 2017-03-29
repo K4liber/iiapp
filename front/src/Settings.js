@@ -20,22 +20,18 @@ var Settings = React.createClass({
   getInitialState: function() {
     return {
       profile: null,
-      mems: null,
     }
   },
   componentDidMount: function() {
     let profile = localStorage.getItem('profile');
     console.log(profile);
     var client = new HttpClient(true);
-    this.serverRequest = client.get('http://localhost:8080/mems', function(result) {
-      this.setState({
-        mems: result,
-        profile: profile,
-      });
-    }.bind(this));
+    this.setState({
+      profile: profile,
+    });
   },
   render: function() {
-    if (this.state.mems) {
+    if (this.state.profile) {
       let profile = JSON.parse(localStorage.getItem('profile'));
       return (
           <div className="row well well-sm">
@@ -48,7 +44,7 @@ var Settings = React.createClass({
           </div>
         );
       } else 
-        return ( <div>Loading mems...</div> );
+        return ( <div>Loading settings...</div> );
   }
 });
 
