@@ -118,8 +118,11 @@ img {
 }
 
 .comment {
-	background-color: white;
+	background-color: rgba(230,230,230,0.8);
 	margin-top: 5%;
+	text-align: justify;
+	text-justify: inter-word;
+	width: 100%;
 }
 
 .uploadCategories {
@@ -162,6 +165,8 @@ textarea#commentArea {
     right: 0;
 	background-color:  rgba(150,150,150,0.5);
 	width: 8%;
+	max-width: 40px;
+	min-width: 15px;
 	padding: 1% 1% 1% 1%;
 }
 
@@ -171,6 +176,8 @@ textarea#commentArea {
     left: 0;
 	background-color:  rgba(150,150,150,0.5);
 	width: 8%;
+	max-width: 40px;
+	min-width: 15px;
 	padding: 1% 1% 1% 1%;
 }
 
@@ -269,7 +276,11 @@ textarea#commentArea {
 }
 
 .uploadLogo {
-	width: 40px;
+	max-width: 40px;
+	min-width: 15px;
+	margin: 3px 3px 3px 3px;
+	padding: 3px 3px 3px 3px;
+	width: 8%;
 	cursor: pointer;
 	background-color: transparent;
 }

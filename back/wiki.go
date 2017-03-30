@@ -65,6 +65,38 @@ type MemView struct {
 	Mem      Mem
 }
 
+func getCategoryMems(category string) []Mem {
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	rows, err3 := db.Query("SELECT * FROM mem WHERE category='" + category + "'")
+	if err3 != nil {
+		fmt.Println(err3.Error())
+	}
+	var ID int
+	var Signature string
+	var ImgExt string
+	var DateTime string
+	var AuthorNickname string
+	var Category string
+	var slice []Mem
+	for rows.Next() {
+		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category)
+		mem := &Mem{
+			ID:             ID,
+			Signature:      Signature,
+			ImgExt:         ImgExt,
+			DateTime:       DateTime,
+			AuthorNickname: AuthorNickname,
+			Category:       Category,
+		}
+		slice = append(slice, *mem)
+	}
+	defer db.Close()
+	return slice
+}
+
 func getMems() []Mem {
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
@@ -177,6 +209,7 @@ func main() {
 	})
 	r.Handle("/mems", c.Handler(MemsHandler))
 	r.Handle("/mem/{id}", c.Handler(MemHandler))
+	r.Handle("/category/{category}", c.Handler(CategoryHandler))
 	r.Handle("/addMem", c.Handler(AddMemHandler))
 	r.Handle("/addComment", c.Handler(AddCommentHandler))
 
@@ -225,6 +258,22 @@ func (s *MyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 var MemsHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 	payload, _ := json.Marshal(getMems())
+	w.Header().Set("Content-Type", "application/json")
+	var origin = req.Header.Get("Origin")
+	w.Header().Set("Access-Control-Allow-Origin", origin)
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers",
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	w.Header().Set("Allow", "*")
+	if req.Method == "OPTIONS" {
+		return
+	}
+	w.Write([]byte(payload))
+})
+
+var CategoryHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	payload, _ := json.Marshal(getCategoryMems(vars["category"]))
 	w.Header().Set("Content-Type", "application/json")
 	var origin = req.Header.Get("Origin")
 	w.Header().Set("Access-Control-Allow-Origin", origin)

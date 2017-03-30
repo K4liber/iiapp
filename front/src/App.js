@@ -3,6 +3,7 @@ import './App.css';
 import Upload from './Upload';
 import Board from './Board';
 import Profile from './Profile';
+import Category from './Category';
 import Settings from './Settings';
 import Home from './Home';
 import Auth0Lock from 'auth0-lock';
@@ -59,6 +60,11 @@ var App = React.createClass({
                 </Route>
                 <Route path="/profile/:user">
                   <Profile/>
+                </Route>
+                <Route path="/category">
+                  <Route path="/:category">
+                    <Category/>
+                  </Route>
                 </Route>
                 <Route path="/upload">
                   <Upload lock={this.lock} browserHistory={browserHistory}/>

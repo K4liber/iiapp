@@ -38,25 +38,32 @@ var Comments = React.createClass({
     },
     sendComment : function(id) {
         let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
-        let profilePicture = JSON.parse(localStorage.getItem('profile')).picture;
-        let memId = this.props.memId;
-        var comment = document.getElementById("commentArea" + id).value;
-        
-        let upload = request.post(UPLOAD_URL)
-                        .field('Bearer ', localStorage.getItem('token'))
-                        .field('nickname', nickname)
-                        .field('profilePicture', profilePicture)
-                        .field('memID', this.props.memId)
-                        .field('comment', comment)
-        upload.end((err, response) => {
-            if (err) {
-                console.error(err);
-            }
-            if (response.status === 200)
-                alert("Your comment has been added!");
-                this.componentDidMount();
-                var comment = document.getElementById("commentArea" + id).value = "";
-        });
+        if (nickname) {
+            let profilePicture = JSON.parse(localStorage.getItem('profile')).picture;
+            let memId = this.props.memId;
+            var comment = document.getElementById("commentArea" + id).value;
+            
+            let upload = request.post(UPLOAD_URL)
+                            .field('Bearer ', localStorage.getItem('token'))
+                            .field('nickname', nickname)
+                            .field('profilePicture', profilePicture)
+                            .field('memID', this.props.memId)
+                            .field('comment', comment)
+            upload.end((err, response) => {
+                if (err) {
+                    console.error(err);
+                }
+                if (response.status === 200)
+                    alert("Your comment has been added!");
+                    this.componentDidMount();
+                    var comment = document.getElementById("commentArea" + id).value = "";
+            });
+        } else {
+            alert(
+                "Please login to send a comment!" +
+                <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Comment</button>
+            );
+        }
     },
     render : function () {
         if (this.state.comments) {
@@ -71,11 +78,9 @@ var Comments = React.createClass({
                         return (
                             <div key={comment.ID} className="comment">
                                 <div>
-                                    {comment.DateTime}
-                                </div>
-                                <div>
                                     <img alt="" src={comment.AuthorPhoto} className="commentPhoto"/>
-                                    {comment.AuthorNickname}
+                                    {comment.AuthorNickname} | {comment.DateTime} | Points 0 
+                                    <img className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
                                 </div>
                                 <div>
                                     {comment.Content}.
