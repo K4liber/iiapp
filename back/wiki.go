@@ -387,6 +387,13 @@ var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request)
 })
 
 var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+	}
+
 	//Dodawanie mema
 	var title = req.FormValue("title")
 	var author = req.FormValue("author")
@@ -443,9 +450,17 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 	//Wysylanie odpowiedzi
 	payload, _ := json.Marshal(success)
 	w.Write([]byte(payload))
+	defer db.Close()
 })
 
 var AddCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+	}
+
 	//Dodawanie komentarza
 	datetime := time.Now().Format(time.RFC3339)
 	var memID = req.FormValue("memID")
@@ -466,9 +481,17 @@ var AddCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.R
 	//Wysylanie odpowiedzi
 	payload, _ := json.Marshal(success)
 	w.Write([]byte(payload))
+	defer db.Close()
 })
 
 var AddMemPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+	}
+
 	var success = true
 
 	//Dodawanie pointa
@@ -529,6 +552,7 @@ var AddMemPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.
 	//Wysylanie odpowiedzi
 	payload, _ := json.Marshal(success)
 	w.Write([]byte(payload))
+	defer db.Close()
 })
 
 var AddViewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {

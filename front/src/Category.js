@@ -1,7 +1,7 @@
 import React from 'react';
-import Comments from './Comments';
 import { hostName } from './App.js'
 import { HttpClient } from './App.js'
+import Mem from './Mem';
 
 var Category = React.createClass({
   getInitialState: function() {
@@ -27,12 +27,6 @@ var Category = React.createClass({
       });
     }.bind(this));
   },
-  showComments: function(id) {
-    document.getElementById(id).style.display = "inline";
-  },
-  closeComments : function(id) {
-    document.getElementById(id).style.display = "none";
-  },
   render: function() {
     if (this.state.mems && this.state.mems!=="null") {
       let self = this;
@@ -41,21 +35,10 @@ var Category = React.createClass({
           <div className="contentLeft col-md-12" id="contentLeft">
               {
                 JSON.parse(this.state.mems).map( function(mem, index) {
+                  console.log(mem);
+                  let like = mem.Like;
                   return (
-                    <div className="mem relative" key={index}>
-                      <div id={mem.ID} className="contentLeft col-md-12 comments" >
-                        <Comments memId={mem.ID} />
-                        <img onClick={() => self.closeComments(mem.ID)} alt="" src="/img/xIcon.png" className="cancelUpload" />
-                      </div>           
-                      <img className="memImage" alt="ASAS" src={hostName + "/resources/mems/" + mem.ID +mem.ImgExt}
-                        onClick={() => self.showComments(mem.ID)}/>
-                      <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
-                      <p>{mem.Signature}</p>
-                      <p>
-                        {mem.AuthorNickname} | {mem.DateTime} | Views: 0 | Points: 0 
-                        <img className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
-                      </p>
-                    </div>
+                    <Mem mem={mem} index={index} key={mem.ID}/>
                   )
                 })
               }
@@ -83,3 +66,4 @@ var Category = React.createClass({
 });
 
 export default Category;
+

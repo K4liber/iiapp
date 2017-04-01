@@ -21,6 +21,14 @@ var Mem = React.createClass({
         views: this.props.mem.Views,
       });
   },
+  componentWillReceiveProps : function(newProps) {
+    this.setState({
+        mem: this.props.mem,
+        index: this.props.index,
+        points: this.props.mem.Points,
+        views: this.props.mem.Views,
+      });
+  },
   showComments: function(id) {
     document.getElementById(id).style.display = "inline";
     let upload = request.post(hostName + "/addView")
@@ -61,7 +69,7 @@ var Mem = React.createClass({
       let index = this.state.index;
       let like = this.state.mem.Like;
       return (
-        <div className="mem relative" key={index}>
+        <div className="mem relative" >
           <div id={mem.ID} className="contentLeft col-md-12 comments" >
             <Comments memId={mem.ID} />
             <img onClick={() => this.closeComments(mem.ID)} alt="" src="/img/xIcon.png" className="cancelUpload" />
