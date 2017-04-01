@@ -294,7 +294,7 @@ func main() {
 	r.Handle("/addMem", c.Handler(AddMemHandler))
 	r.Handle("/addComment", c.Handler(AddCommentHandler))
 	r.Handle("/addMemPoint", c.Handler(AddMemPointHandler))
-	//r.Handle("/addView", c.Handler(AddViewHandler))
+	r.Handle("/addView", c.Handler(AddViewHandler))
 
 	fs := justFilesFilesystem{http.Dir("resources/")}
 	http.Handle("/resources/", http.StripPrefix("/resources", http.FileServer(fs)))
@@ -532,23 +532,26 @@ var AddMemPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.
 })
 
 var AddViewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	var success = true
-
-	//Dodawanie komentarza
-	dateTime := time.Now().Format(time.RFC3339)
-	var memID = req.FormValue("memID")
-
-	result, errComment := db.Exec(
-		"INSERT INTO memPoint (memId, authorNickname, dateTime) VALUES ('" +
-			memID + "', '" + "', '" + dateTime + "')",
-	)
-	if errComment != nil {
-		fmt.Println(errComment.Error())
-		fmt.Println(result)
-		success = false
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
 	}
 
+	var success = true
+	var memID = req.FormValue("memID")
+	var mem = getMem(memID)
+	var views = mem.Views + 1
+	//Update
+	update, errUpdate := db.Exec("UPDATE mem SET views=" + strconv.Itoa(views) + " WHERE id=" + memID)
+	if errUpdate != nil {
+		fmt.Println(errUpdate)
+		fmt.Println(update)
+		success = false
+	}
 	//Wysylanie odpowiedzi
 	payload, _ := json.Marshal(success)
 	w.Write([]byte(payload))
+	defer db.Close()
 })

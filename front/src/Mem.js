@@ -32,7 +32,7 @@ var Mem = React.createClass({
       }
       if (response.status === 200)
         this.setState({
-          views: this.props.mem.Views+1,
+          views: this.state.views+1,
         });
     });
   },
