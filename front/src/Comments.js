@@ -1,23 +1,7 @@
 import React from 'react';
 import request from 'superagent';
-
-const UPLOAD_URL = 'http://10.17.2.143:300/addComment';
-
-var HttpClient = function(sendToken) {
-    this.get = function(aUrl, aCallback) {
-        var anHttpRequest = new XMLHttpRequest();
-        anHttpRequest.onreadystatechange = function() { 
-            if (anHttpRequest.readyState === 4 && anHttpRequest.status === 200)
-                aCallback(anHttpRequest.responseText);
-        }
-        anHttpRequest.open( "GET", aUrl, true ); 
-        if (sendToken && localStorage.getItem('token')) {
-          anHttpRequest.setRequestHeader('Authorization',
-                'Bearer ' + localStorage.getItem('token'));
-        }       
-        anHttpRequest.send( null );
-    }
-}
+import { hostName } from './App.js'
+import { HttpClient } from './App.js'
 
 var Comments = React.createClass({
     getInitialState: function() {
@@ -29,7 +13,7 @@ var Comments = React.createClass({
     componentDidMount: function() {
         let memId = this.props.memId;
         var client = new HttpClient(true);
-        this.serverRequest = client.get('http://10.17.2.143:300/mem/' + memId, function(result) {
+        this.serverRequest = client.get(hostName + '/mem/' + memId, function(result) {
             this.setState({
                 comments: JSON.parse(result).Comments,
                 mem: JSON.parse(result).Mem,
@@ -43,7 +27,7 @@ var Comments = React.createClass({
             let memId = this.props.memId;
             var comment = document.getElementById("commentArea" + id).value;
             
-            let upload = request.post(UPLOAD_URL)
+            let upload = request.post(hostName + "/addComment")
                             .field('Bearer ', localStorage.getItem('token'))
                             .field('nickname', nickname)
                             .field('profilePicture', profilePicture)

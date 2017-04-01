@@ -10,10 +10,27 @@ import Auth0Lock from 'auth0-lock';
 import createBrowserHistory from 'history/createBrowserHistory';
 import { Route, Router } from 'react-router-dom';
 import { Switch } from 'react-router';
+export const hostName = "http://localhost:8080";
 
 var browserHistory = createBrowserHistory();
 var CLIENT_ID = "ANOkwl33Ja5JX2ctrzF6FSXwhDbgiGU6";
 var CLIENT_DOMAIN = "k4liber.eu.auth0.com";
+
+export var HttpClient = function(sendToken) {
+    this.get = function(aUrl, aCallback) {
+        var anHttpRequest = new XMLHttpRequest();
+        anHttpRequest.onreadystatechange = function() { 
+            if (anHttpRequest.readyState === 4 && anHttpRequest.status === 200)
+                aCallback(anHttpRequest.responseText);
+        }
+        anHttpRequest.open( "GET", aUrl, true ); 
+        if (sendToken && localStorage.getItem('token')) {
+          anHttpRequest.setRequestHeader('Authorization',
+                'Bearer ' + localStorage.getItem('token'));
+        }       
+        anHttpRequest.send( null );
+    }
+}
 
 var App = React.createClass({
   componentWillMount: function() {

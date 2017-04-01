@@ -1,21 +1,7 @@
 import React from 'react';
 import Comments from './Comments';
-
-var HttpClient = function(sendToken) {
-    this.get = function(aUrl, aCallback) {
-        var anHttpRequest = new XMLHttpRequest();
-        anHttpRequest.onreadystatechange = function() { 
-            if (anHttpRequest.readyState === 4 && anHttpRequest.status === 200)
-                aCallback(anHttpRequest.responseText);
-        }
-        anHttpRequest.open( "GET", aUrl, true ); 
-        if (sendToken && localStorage.getItem('token')) {
-          anHttpRequest.setRequestHeader('Authorization',
-                'Bearer ' + localStorage.getItem('token'));
-        }       
-        anHttpRequest.send( null );
-    }
-}
+import { hostName } from './App.js'
+import { HttpClient } from './App.js'
 
 var Category = React.createClass({
   getInitialState: function() {
@@ -26,7 +12,7 @@ var Category = React.createClass({
   componentDidMount: function() {
     var res = location.pathname.split("/"); 
     var client = new HttpClient(true);
-    this.serverRequest = client.get('http://10.17.2.143:300/category/' + res[2], function(result) {
+    this.serverRequest = client.get(hostName + '/category/' + res[2], function(result) {
       this.setState({
         mems: result,
       });
@@ -35,7 +21,7 @@ var Category = React.createClass({
   componentWillReceiveProps : function(newProps) {
     var res = location.pathname.split("/"); 
     var client = new HttpClient(true);
-    this.serverRequest = client.get('http://10.17.2.143:300/category/' + res[2], function(result) {
+    this.serverRequest = client.get(hostName + '/category/' + res[2], function(result) {
       this.setState({
         mems: result,
       });
@@ -61,7 +47,7 @@ var Category = React.createClass({
                         <Comments memId={mem.ID} />
                         <img onClick={() => self.closeComments(mem.ID)} alt="" src="/img/xIcon.png" className="cancelUpload" />
                       </div>           
-                      <img className="memImage" alt="ASAS" src={"http://10.17.2.143:300/resources/mems/" + mem.ID +mem.ImgExt}
+                      <img className="memImage" alt="ASAS" src={hostName + "/resources/mems/" + mem.ID +mem.ImgExt}
                         onClick={() => self.showComments(mem.ID)}/>
                       <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
                       <p>{mem.Signature}</p>

@@ -1,21 +1,6 @@
 import React from 'react';
 import Mems from './Mems';
-
-var HttpClient = function(sendToken) {
-    this.get = function(aUrl, aCallback) {
-        var anHttpRequest = new XMLHttpRequest();
-        anHttpRequest.onreadystatechange = function() { 
-            if (anHttpRequest.readyState === 4 && anHttpRequest.status === 200)
-                aCallback(anHttpRequest.responseText);
-        }
-        anHttpRequest.open( "GET", aUrl, true ); 
-        if (sendToken && localStorage.getItem('token')) {
-          anHttpRequest.setRequestHeader('Authorization',
-                'Bearer ' + localStorage.getItem('token'));
-        }       
-        anHttpRequest.send( null );
-    }
-}
+import { HttpClient } from './App.js'
 
 var Profile = React.createClass({
   getInitialState: function() {

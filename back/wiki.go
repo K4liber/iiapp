@@ -22,6 +22,8 @@ import (
 	"github.com/rs/cors"
 )
 
+var db *sql.DB
+
 type justFilesFilesystem struct {
 	fs http.FileSystem
 }
@@ -51,6 +53,13 @@ type Comment struct {
 	DateTime       time.Time
 }
 
+type MemPoint struct {
+	ID             int
+	MemID          int
+	AuthorNickname string
+	DateTime       string
+}
+
 type Mem struct {
 	ID             int
 	Signature      string
@@ -58,6 +67,9 @@ type Mem struct {
 	DateTime       string
 	AuthorNickname string
 	Category       string
+	Points         int
+	Views          int
+	Like           bool
 }
 
 type MemView struct {
@@ -66,10 +78,13 @@ type MemView struct {
 }
 
 func getCategoryMems(category string) []Mem {
+	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
 		fmt.Println(err.Error())
+		fmt.Println(db)
 	}
+
 	rows, err3 := db.Query("SELECT * FROM mem WHERE category='" + category + "'")
 	if err3 != nil {
 		fmt.Println(err3.Error())
@@ -80,9 +95,15 @@ func getCategoryMems(category string) []Mem {
 	var DateTime string
 	var AuthorNickname string
 	var Category string
+	var Points int
+	var Views int
 	var slice []Mem
 	for rows.Next() {
-		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category)
+		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category, &Points, &Views)
+		var liked = false
+		if getLike(ID, AuthorNickname).ID != 0 {
+			liked = true
+		}
 		mem := &Mem{
 			ID:             ID,
 			Signature:      Signature,
@@ -90,6 +111,9 @@ func getCategoryMems(category string) []Mem {
 			DateTime:       DateTime,
 			AuthorNickname: AuthorNickname,
 			Category:       Category,
+			Points:         Points,
+			Views:          Views,
+			Like:           liked,
 		}
 		slice = append(slice, *mem)
 	}
@@ -97,11 +121,46 @@ func getCategoryMems(category string) []Mem {
 	return slice
 }
 
-func getMems() []Mem {
+func getLike(ID int, authorNickname string) MemPoint {
+	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
 		fmt.Println(err.Error())
+		fmt.Println(db)
 	}
+
+	rows, err3 :=
+		db.Query("SELECT * FROM memPoint WHERE memId=" + strconv.Itoa(ID) +
+			" AND authorNickname='" + authorNickname + "' LIMIT 1")
+	var pointID int
+	var MemID int
+	var AuthorNickname string
+	var DateTime string
+	for rows.Next() {
+		err3 = rows.Scan(&pointID, &MemID, &AuthorNickname, &DateTime)
+	}
+	memPoint := MemPoint{
+		ID:             pointID,
+		MemID:          MemID,
+		AuthorNickname: AuthorNickname,
+		DateTime:       DateTime,
+	}
+	fmt.Println(memPoint)
+	if err3 != nil {
+		fmt.Println(err3.Error())
+	}
+	defer db.Close()
+	return memPoint
+}
+
+func getMems() []Mem {
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+	}
+
 	rows, err3 := db.Query("SELECT * FROM mem")
 	if err3 != nil {
 		fmt.Println(err3.Error())
@@ -112,9 +171,15 @@ func getMems() []Mem {
 	var DateTime string
 	var AuthorNickname string
 	var Category string
+	var Points int
+	var Views int
 	var slice []Mem
 	for rows.Next() {
-		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category)
+		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category, &Points, &Views)
+		var liked = false
+		if getLike(ID, AuthorNickname).ID != 0 {
+			liked = true
+		}
 		mem := &Mem{
 			ID:             ID,
 			Signature:      Signature,
@@ -122,6 +187,9 @@ func getMems() []Mem {
 			DateTime:       DateTime,
 			AuthorNickname: AuthorNickname,
 			Category:       Category,
+			Points:         Points,
+			Views:          Views,
+			Like:           liked,
 		}
 		slice = append(slice, *mem)
 	}
@@ -130,10 +198,13 @@ func getMems() []Mem {
 }
 
 func getMem(id string) Mem {
+	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
 		fmt.Println(err.Error())
+		fmt.Println(db)
 	}
+
 	rows, err3 := db.Query("SELECT * FROM mem WHERE ID='" + id + "'")
 	if err3 != nil {
 		fmt.Println(err3.Error())
@@ -144,8 +215,14 @@ func getMem(id string) Mem {
 	var DateTime string
 	var AuthorNickname string
 	var Category string
+	var Points int
+	var Views int
 	for rows.Next() {
-		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category)
+		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category, &Points, &Views)
+	}
+	var liked = false
+	if getLike(ID, AuthorNickname).ID != 0 {
+		liked = true
 	}
 	mem := Mem{
 		ID:             ID,
@@ -154,16 +231,22 @@ func getMem(id string) Mem {
 		DateTime:       DateTime,
 		AuthorNickname: AuthorNickname,
 		Category:       Category,
+		Points:         Points,
+		Views:          Views,
+		Like:           liked,
 	}
 	defer db.Close()
 	return mem
 }
 
 func getComments(id string) []Comment {
+	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
 		fmt.Println(err.Error())
+		fmt.Println(db)
 	}
+
 	rows, err3 := db.Query("SELECT * FROM comment WHERE memID='" + id + "'")
 	if err3 != nil {
 		fmt.Println(err3.Error())
@@ -194,14 +277,12 @@ func getComments(id string) []Comment {
 
 func main() {
 	// Here we are loading in our .env file which will contain our Auth0 Client Secret and Domain
-	err := godotenv.Load()
-	if err != nil {
+	errEnv := godotenv.Load()
+	if errEnv != nil {
 		log.Fatal("Error loading .env file")
 	}
 
 	r := mux.NewRouter()
-
-	//r.HandleFunc("/home", homeHandler)
 	r.Handle("/", http.FileServer(http.Dir("./views/")))
 	c := cors.New(cors.Options{
 		AllowedOrigins:     []string{"http://localhost:3000", "*"},
@@ -212,6 +293,8 @@ func main() {
 	r.Handle("/category/{category}", c.Handler(CategoryHandler))
 	r.Handle("/addMem", c.Handler(AddMemHandler))
 	r.Handle("/addComment", c.Handler(AddCommentHandler))
+	r.Handle("/addMemPoint", c.Handler(AddMemPointHandler))
+	//r.Handle("/addView", c.Handler(AddViewHandler))
 
 	fs := justFilesFilesystem{http.Dir("resources/")}
 	http.Handle("/resources/", http.StripPrefix("/resources", http.FileServer(fs)))
@@ -246,12 +329,6 @@ func (s *MyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Headers",
 			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 	}
-	// Stop here if its Preflighted OPTIONS request
-	/*
-		if r.Method == "OPTIONS" {
-			return
-		}
-	*/
 	w.Write([]byte(payload))
 	s.r.ServeHTTP(w, r)
 }
@@ -310,12 +387,6 @@ var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request)
 })
 
 var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	//Laczenie z baza danych
-	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
 	//Dodawanie mema
 	var title = req.FormValue("title")
 	var author = req.FormValue("author")
@@ -375,12 +446,6 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 })
 
 var AddCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	//Laczenie z baza danych
-	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
 	//Dodawanie komentarza
 	datetime := time.Now().Format(time.RFC3339)
 	var memID = req.FormValue("memID")
@@ -392,6 +457,91 @@ var AddCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.R
 			memID + "', '" + nickname + "', '" + profilePicture + "', '" + comment + "', '" + datetime + "')",
 	)
 	var success = true
+	if errComment != nil {
+		fmt.Println(errComment.Error())
+		fmt.Println(result)
+		success = false
+	}
+
+	//Wysylanie odpowiedzi
+	payload, _ := json.Marshal(success)
+	w.Write([]byte(payload))
+})
+
+var AddMemPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	var success = true
+
+	//Dodawanie pointa
+	dateTime := time.Now().Format(time.RFC3339)
+	var memID = req.FormValue("memID")
+	var authorNickname = req.FormValue("authorNickname")
+	fmt.Println(memID)
+	fmt.Println(authorNickname)
+	res, resErr := db.Query("SELECT * FROM memPoint WHERE memId=" + memID + " AND authorNickname='" +
+		authorNickname + "' LIMIT 1")
+
+	if resErr != nil {
+		fmt.Println(resErr)
+	}
+
+	var IDFromDb int
+	var memIDFromDb int
+	var authorNicknameFromDb string
+	var dateTimeFromDb string
+
+	for res.Next() {
+		resErr = res.Scan(&IDFromDb, &memIDFromDb, &authorNicknameFromDb, &dateTimeFromDb)
+	}
+
+	fmt.Println(IDFromDb != 0)
+
+	if IDFromDb != 0 {
+		success = false
+	} else {
+		result, errComment := db.Exec(
+			"INSERT INTO memPoint (memId, authorNickname, dateTime) VALUES ('" +
+				memID + "', '" + authorNickname + "', '" + dateTime + "')",
+		)
+		//Count points
+		count, errCount := db.Query("SELECT * FROM memPoint WHERE memId=" + memID)
+		var points = 0
+		if errCount != nil {
+			fmt.Println(errCount)
+		}
+		for count.Next() {
+			points++
+		}
+		fmt.Println(points)
+		//Update
+		update, errUpdate := db.Exec("UPDATE mem SET points=" + strconv.Itoa(points) + " WHERE id=" + memID)
+		if errUpdate != nil {
+			fmt.Println(errUpdate)
+			fmt.Println(update)
+		}
+
+		if errComment != nil {
+			fmt.Println(errComment.Error())
+			fmt.Println(result)
+			success = false
+		}
+	}
+
+	//Wysylanie odpowiedzi
+	payload, _ := json.Marshal(success)
+	w.Write([]byte(payload))
+})
+
+var AddViewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	var success = true
+
+	//Dodawanie komentarza
+	dateTime := time.Now().Format(time.RFC3339)
+	var memID = req.FormValue("memID")
+
+	result, errComment := db.Exec(
+		"INSERT INTO memPoint (memId, authorNickname, dateTime) VALUES ('" +
+			memID + "', '" + "', '" + dateTime + "')",
+	)
 	if errComment != nil {
 		fmt.Println(errComment.Error())
 		fmt.Println(result)
