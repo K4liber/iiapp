@@ -86,7 +86,7 @@ type MemView struct {
 	Mem      Mem
 }
 
-func getCategoryMems(category string) []Mem {
+func getCategoryMems(category string, nickname string) []Mem {
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
@@ -110,7 +110,7 @@ func getCategoryMems(category string) []Mem {
 	for rows.Next() {
 		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category, &Points, &Views)
 		var liked = false
-		if getMemLike(ID, AuthorNickname).ID != 0 {
+		if getMemLike(ID, nickname).ID != 0 {
 			liked = true
 		}
 		mem := &Mem{
@@ -194,7 +194,7 @@ func getCommentLike(ID int, authorNickname string) CommentPoint {
 	return commentPoint
 }
 
-func getMems() []Mem {
+func getMems(nickname string) []Mem {
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
@@ -218,7 +218,7 @@ func getMems() []Mem {
 	for rows.Next() {
 		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category, &Points, &Views)
 		var liked = false
-		if getMemLike(ID, AuthorNickname).ID != 0 {
+		if getMemLike(ID, nickname).ID != 0 {
 			liked = true
 		}
 		mem := &Mem{
@@ -238,7 +238,7 @@ func getMems() []Mem {
 	return slice
 }
 
-func getMem(id string) Mem {
+func getMem(id string, nickname string) Mem {
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
@@ -262,7 +262,7 @@ func getMem(id string) Mem {
 		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category, &Points, &Views)
 	}
 	var liked = false
-	if getMemLike(ID, AuthorNickname).ID != 0 {
+	if getMemLike(ID, nickname).ID != 0 {
 		liked = true
 	}
 	mem := Mem{
@@ -280,7 +280,7 @@ func getMem(id string) Mem {
 	return mem
 }
 
-func getComments(id string) []Comment {
+func getComments(id string, nickname string) []Comment {
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
@@ -304,7 +304,7 @@ func getComments(id string) []Comment {
 	for rows.Next() {
 		err3 = rows.Scan(&ID, &MemID, &AuthorNickname, &AuthorPhoto, &Content, &DateTime, &Points)
 		var liked = false
-		if getCommentLike(ID, AuthorNickname).ID != 0 {
+		if getCommentLike(ID, nickname).ID != 0 {
 			liked = true
 		}
 		comment := &Comment{
@@ -335,6 +335,7 @@ func main() {
 	c := cors.New(cors.Options{
 		AllowedOrigins:     []string{"http://localhost:3000", "*"},
 		OptionsPassthrough: true,
+		AllowedHeaders:     []string{"nickname"},
 	})
 	r.Handle("/mems", c.Handler(MemsHandler))
 	r.Handle("/mem/{id}", c.Handler(MemHandler))
@@ -370,25 +371,25 @@ type MyServer struct {
 }
 
 func (s *MyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	payload, _ := json.Marshal(getMems())
+	payload, _ := json.Marshal(getMems(r.Header.Get("nickname")))
 	if origin := r.Header.Get("Origin"); origin != "" {
 		w.Header().Set("Access-Control-Allow-Origin", origin)
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers",
-			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, nickname")
 	}
 	w.Write([]byte(payload))
 	s.r.ServeHTTP(w, r)
 }
 
 var MemsHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	payload, _ := json.Marshal(getMems())
+	payload, _ := json.Marshal(getMems(req.Header.Get("nickname")))
 	w.Header().Set("Content-Type", "application/json")
 	var origin = req.Header.Get("Origin")
 	w.Header().Set("Access-Control-Allow-Origin", origin)
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers",
-		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, nickname")
 	w.Header().Set("Allow", "*")
 	if req.Method == "OPTIONS" {
 		return
@@ -398,13 +399,13 @@ var MemsHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request
 
 var CategoryHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	payload, _ := json.Marshal(getCategoryMems(vars["category"]))
+	payload, _ := json.Marshal(getCategoryMems(vars["category"], req.Header.Get("nickname")))
 	w.Header().Set("Content-Type", "application/json")
 	var origin = req.Header.Get("Origin")
 	w.Header().Set("Access-Control-Allow-Origin", origin)
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers",
-		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, nickname")
 	w.Header().Set("Allow", "*")
 	if req.Method == "OPTIONS" {
 		return
@@ -414,8 +415,8 @@ var CategoryHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Req
 
 var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	mem := getMem(vars["id"])
-	comments := getComments(vars["id"])
+	mem := getMem(vars["id"], req.Header.Get("nickname"))
+	comments := getComments(vars["id"], req.Header.Get("nickname"))
 	memView := MemView{
 		Comments: comments,
 		Mem:      mem,
@@ -426,7 +427,7 @@ var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request)
 	w.Header().Set("Access-Control-Allow-Origin", origin)
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers",
-		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, nickname")
 	w.Header().Set("Allow", "*")
 	if req.Method == "OPTIONS" {
 		return
@@ -676,7 +677,7 @@ var AddViewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Requ
 
 	var success = true
 	var memID = req.FormValue("memID")
-	var mem = getMem(memID)
+	var mem = getMem(memID, req.Header.Get("nickname"))
 	var views = mem.Views + 1
 	//Update
 	update, errUpdate := db.Exec("UPDATE mem SET views=" + strconv.Itoa(views) + " WHERE id=" + memID)

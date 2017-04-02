@@ -12,7 +12,8 @@ import { Route, Router } from 'react-router-dom';
 import { Switch } from 'react-router';
 export const hostName = "http://localhost:8080";
 
-var browserHistory = createBrowserHistory();
+export var browserHistory = createBrowserHistory();
+export var lock;
 var CLIENT_ID = "ANOkwl33Ja5JX2ctrzF6FSXwhDbgiGU6";
 var CLIENT_DOMAIN = "k4liber.eu.auth0.com";
 
@@ -27,12 +28,24 @@ export var HttpClient = function(sendToken) {
         if (sendToken && localStorage.getItem('token')) {
           anHttpRequest.setRequestHeader('Authorization',
                 'Bearer ' + localStorage.getItem('token'));
-        }       
+        } 
+        if (localStorage.getItem('profile')) { 
+          let profile = JSON.parse(localStorage.getItem('profile'));
+          if (sendToken && profile) {
+            anHttpRequest.setRequestHeader('nickname', profile.nickname);
+          }
+        }
         anHttpRequest.send( null );
     }
 }
 
 var App = React.createClass({
+  getInitialState: function() {
+    return {
+      token: null,
+      profile: null,
+    }
+  },
   componentWillMount: function() {
     this.createLock();
   },
@@ -60,8 +73,10 @@ var App = React.createClass({
             token: authResult.accessToken,
             profile: profile,
           });
+          browserHistory.push("/");
         });   
       });
+      lock = this.lock;
     }
   },
   render: function() {
@@ -73,7 +88,7 @@ var App = React.createClass({
               </div>
               <Switch>
                 <Route exact path="/" >
-                  <Home/>
+                  <Home token={this.state.token}/>
                 </Route>
                 <Route path="/profile/:user">
                   <Profile/>

@@ -6,20 +6,28 @@ import { HttpClient } from './App.js'
 var Mems = React.createClass({
   getInitialState: function() {
     return {
-      mems: null
+      mems: null,
+      token: null,
     }
   },
-  componentDidMount: function() {
-    let isLogged = false;
-    if (this.props.category)
-      isLogged = true;
+  componentWillReceiveProps : function(newProps) {
     var client = new HttpClient(true);
     let url = hostName + "/mems";
     console.log(url);
     this.serverRequest = client.get(url, function(result) {
       this.setState({
         mems: result,
-        isLogged: isLogged,
+        token: this.props.token,
+      });
+    }.bind(this));
+  },
+  componentDidMount: function() {
+    var client = new HttpClient(true);
+    let url = hostName + "/mems";
+    console.log(url);
+    this.serverRequest = client.get(url, function(result) {
+      this.setState({
+        mems: result,
       });
     }.bind(this));
   },

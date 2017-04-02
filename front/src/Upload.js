@@ -2,7 +2,7 @@ import React from 'react';
 import request from 'superagent';
 import MemDropzone from './MemDropzone'
 
-const UPLOAD_URL = 'http://10.17.2.143:300/addMem';
+const UPLOAD_URL = 'http://localhost:8080/addMem';
 
 var Upload = React.createClass({
     componentWillMount : function(props) {

@@ -2,6 +2,7 @@ import React from 'react';
 import Comments from './Comments';
 import { hostName } from './App.js'
 import request from 'superagent';
+import { lock } from './App.js';
 
 var Mem = React.createClass({
   getInitialState: function() {
@@ -31,7 +32,6 @@ var Mem = React.createClass({
   showComments: function(id) {
     document.getElementById(id).style.display = "inline";
     let upload = request.post(hostName + "/addView")
-      .field('Bearer ', localStorage.getItem('token'))
       .field('memID', id)
     upload.end((err, response) => {
       if (err) {
@@ -47,20 +47,24 @@ var Mem = React.createClass({
     document.getElementById(id).style.display = "none";
   },
   doLike : function() {
-    let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
-    let upload = request.post(hostName + "/addMemPoint")
-      .field('Bearer ', localStorage.getItem('token'))
-      .field('memID', this.props.mem.ID)
-      .field('authorNickname', nickname)
-    upload.end((err, response) => {
-      if (err) {
-        console.log(err);
-      }
-      if (response.status === 200 && response.text !== "false")
-        this.setState({
-          points: this.props.mem.Points+1,
-        });
-    });
+    if (localStorage.getItem('profile')) {
+      let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
+      let upload = request.post(hostName + "/addMemPoint")
+        .field('Bearer ', localStorage.getItem('token'))
+        .field('memID', this.props.mem.ID)
+        .field('authorNickname', nickname)
+      upload.end((err, response) => {
+        if (err) {
+          console.log(err);
+        }
+        if (response.status === 200 && response.text !== "false")
+          this.setState({
+            points: this.props.mem.Points+1,
+          });
+      });
+    } else {
+      lock.show();
+    }
   },
   render: function() {
     if (this.state.mem) {

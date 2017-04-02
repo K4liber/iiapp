@@ -21,6 +21,16 @@ var Comments = React.createClass({
             });
         }.bind(this));
     },
+    componentWillReceiveProps : function(newProps) {
+        let memId = this.props.memId;
+        var client = new HttpClient(true);
+        this.serverRequest = client.get(hostName + '/mem/' + memId, function(result) {
+            this.setState({
+                comments: JSON.parse(result).Comments,
+                mem: JSON.parse(result).Mem,
+            });
+        }.bind(this));
+    },
     sendComment : function(id) {
         let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
         if (nickname) {
@@ -48,22 +58,6 @@ var Comments = React.createClass({
             );
         }
     },
-    doLike : function(commentID) {
-    let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
-    let upload = request.post(hostName + "/addCommentPoint")
-      .field('Bearer ', localStorage.getItem('token'))
-      .field('commentID', commentID)
-      .field('authorNickname', nickname)
-    upload.end((err, response) => {
-      if (err) {
-        console.log(err);
-      }
-      if (response.status === 200 && response.text !== "false")
-        this.setState({
-          points: this.props.mem.Points+1,
-        });
-    });
-  },
     render : function () {
         if (this.state.comments) {
             let commentAreaID = "commentArea" + this.state.mem.ID;
