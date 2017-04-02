@@ -2,6 +2,7 @@ import React from 'react';
 import request from 'superagent';
 import { hostName } from './App.js'
 import { HttpClient } from './App.js'
+import Comm from './Comm.js'
 
 var Comments = React.createClass({
     getInitialState: function() {
@@ -24,9 +25,7 @@ var Comments = React.createClass({
         let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
         if (nickname) {
             let profilePicture = JSON.parse(localStorage.getItem('profile')).picture;
-            let memId = this.props.memId;
             var comment = document.getElementById("commentArea" + id).value;
-            
             let upload = request.post(hostName + "/addComment")
                             .field('Bearer ', localStorage.getItem('token'))
                             .field('nickname', nickname)
@@ -40,7 +39,7 @@ var Comments = React.createClass({
                 if (response.status === 200)
                     alert("Your comment has been added!");
                     this.componentDidMount();
-                    var comment = document.getElementById("commentArea" + id).value = "";
+                    document.getElementById("commentArea" + id).value = "";
             });
         } else {
             alert(
@@ -49,6 +48,22 @@ var Comments = React.createClass({
             );
         }
     },
+    doLike : function(commentID) {
+    let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
+    let upload = request.post(hostName + "/addCommentPoint")
+      .field('Bearer ', localStorage.getItem('token'))
+      .field('commentID', commentID)
+      .field('authorNickname', nickname)
+    upload.end((err, response) => {
+      if (err) {
+        console.log(err);
+      }
+      if (response.status === 200 && response.text !== "false")
+        this.setState({
+          points: this.props.mem.Points+1,
+        });
+    });
+  },
     render : function () {
         if (this.state.comments) {
             let commentAreaID = "commentArea" + this.state.mem.ID;
@@ -58,20 +73,12 @@ var Comments = React.createClass({
                         #{this.state.mem.Signature}
                     </p>
                     {
-                    (this.state.comments).map( function(comment, index) { 
-                        return (
-                            <div key={comment.ID} className="comment">
-                                <div>
-                                    <img alt="" src={comment.AuthorPhoto} className="commentPhoto"/>
-                                    {comment.AuthorNickname} | {comment.DateTime} | Points 0 
-                                    <img className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
-                                </div>
-                                <div>
-                                    {comment.Content}.
-                                </div>
-                            </div>
-                        )
-                    })
+                        (this.state.comments).map( function(comment, index) { 
+                            let key = "comment" + comment.ID;
+                            return (
+                                <Comm key={key} comment={comment} index={index}/>
+                            )
+                        })
                     }
                     <div>
                         <textarea id={commentAreaID} onChange={this.loadDescription} placeholder="Comment ..."></textarea> 

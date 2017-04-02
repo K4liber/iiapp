@@ -1,7 +1,6 @@
 import React from 'react';
 import Comments from './Comments';
 import { hostName } from './App.js'
-import { HttpClient } from './App.js'
 import request from 'superagent';
 
 var Mem = React.createClass({
@@ -66,7 +65,6 @@ var Mem = React.createClass({
   render: function() {
     if (this.state.mem) {
       let mem = this.state.mem;
-      let index = this.state.index;
       let like = this.state.mem.Like;
       return (
         <div className="mem relative" >

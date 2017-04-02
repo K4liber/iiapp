@@ -1,5 +1,4 @@
 import React from 'react';
-import Comments from './Comments';
 import Mem from './Mem';
 import { hostName } from './App.js'
 import { HttpClient } from './App.js'
@@ -32,13 +31,13 @@ var Mems = React.createClass({
   },
   render: function() {
     if (this.state.mems) {
-      let self = this;
       return (
         <div>
           {
             JSON.parse(this.state.mems).map( function(mem, index) {
+              let key = "mem" + mem.ID;
               return (
-                <Mem mem={mem} index={index}/>
+                <Mem key={key} mem={mem} index={index}/>
               )
             })
           }

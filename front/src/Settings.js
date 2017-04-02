@@ -1,5 +1,4 @@
 import React from 'react';
-import { HttpClient } from './App.js'
 
 var Settings = React.createClass({
   getInitialState: function() {
@@ -9,8 +8,6 @@ var Settings = React.createClass({
   },
   componentDidMount: function() {
     let profile = localStorage.getItem('profile');
-    console.log(profile);
-    var client = new HttpClient(true);
     this.setState({
       profile: profile,
     });

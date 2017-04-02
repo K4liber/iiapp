@@ -29,14 +29,11 @@ var Category = React.createClass({
   },
   render: function() {
     if (this.state.mems && this.state.mems!=="null") {
-      let self = this;
       return (
         <div className="row well well-sm">
           <div className="contentLeft col-md-12" id="contentLeft">
               {
                 JSON.parse(this.state.mems).map( function(mem, index) {
-                  console.log(mem);
-                  let like = mem.Like;
                   return (
                     <Mem mem={mem} index={index} key={mem.ID}/>
                   )
