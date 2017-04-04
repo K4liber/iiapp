@@ -301,6 +301,11 @@ textarea#commentArea {
 	float: right;
 }
 
+.avatarImage {
+	max-width: 200px;
+	max-height: 200px;
+}
+
 .fullImage {
 	display: inline-block;
 	vertical-align: middle;

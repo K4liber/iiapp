@@ -6,10 +6,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"time"
 
@@ -280,6 +282,24 @@ func getMem(id string, nickname string) Mem {
 	return mem
 }
 
+func getToken() {
+	url := "https://k4liber.eu.auth0.com/oauth/token"
+
+	payload := strings.NewReader("{\"grant_type\":\"client_credentials\",\"client_id\": \"wHdG0NB3oYgveHBX3nvsB4LDUkDnsCd4\",\"client_secret\": \"qeCIO0A-2Df1jHhqa0HwNxO9DyMCwZw10JrthmWc3tQpxRFg75D_mQHkkm7gx1uP\",\"audience\": \"https://k4liber.eu.auth0.com/api/v2/\"}")
+
+	req, _ := http.NewRequest("POST", url, payload)
+
+	req.Header.Add("content-type", "application/json")
+
+	res, _ := http.DefaultClient.Do(req)
+
+	defer res.Body.Close()
+	body, _ := ioutil.ReadAll(res.Body)
+
+	fmt.Println(res)
+	fmt.Println(string(body))
+}
+
 func getComments(id string, nickname string) []Comment {
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
@@ -341,6 +361,7 @@ func main() {
 	r.Handle("/mem/{id}", c.Handler(MemHandler))
 	r.Handle("/category/{category}", c.Handler(CategoryHandler))
 	r.Handle("/addMem", c.Handler(AddMemHandler))
+	r.Handle("/uploadAvatar", c.Handler(UploadAvatarHandler))
 	r.Handle("/addComment", c.Handler(AddCommentHandler))
 	r.Handle("/addMemPoint", c.Handler(AddMemPointHandler))
 	r.Handle("/addCommentPoint", c.Handler(AddCommentPointHandler))
@@ -432,6 +453,35 @@ var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request)
 	if req.Method == "OPTIONS" {
 		return
 	}
+	w.Write([]byte(payload))
+})
+
+var UploadAvatarHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	//Dodawanie mema
+	var nickname = req.FormValue("nickname")
+	var extension = req.FormValue("extension")
+	var avatarName = nickname + "." + extension
+	//Zapisanie zdjecia
+	req.ParseMultipartForm(32 << 20)
+	file, handler, err := req.FormFile("file")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer file.Close()
+	fmt.Fprintf(w, "%v", handler.Header)
+	var fileName = "./resources/avatars/" + avatarName
+	f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer f.Close()
+	io.Copy(f, file)
+
+	//Wysylanie odpowiedzi
+	payload, _ := json.Marshal(avatarName)
+	w.Header().Set("Avatar-Name", avatarName)
 	w.Write([]byte(payload))
 })
 

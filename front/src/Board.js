@@ -1,5 +1,6 @@
 import React from 'react';
 import Categories from './Categories';
+import { hostName } from './App.js';
 
 var Board = React.createClass({
   componentDidMount: function() {
@@ -32,10 +33,14 @@ var Board = React.createClass({
   render: function() {
     if (localStorage.getItem('profile')) {
       let profile = JSON.parse(localStorage.getItem('profile'));
+      if (profile.user_metadata.picture)
+        var picture = hostName + "/resources/avatars/" + profile.user_metadata.picture
+      else 
+        var picture = profile.picture;
       return (
       <div className="menu right col-md-12">
         <Categories/>
-        <img alt="" onClick={this.showProfile} src={profile.picture} className="iconLogo right"/>
+        <img alt="" onClick={this.showProfile} src={picture} className="iconLogo right"/>
         <img alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo right"/>
         <img alt="" onClick={this.settings} src="/img/settingsIcon.png" className="iconLogo right"/>
         <img alt="" onClick={this.logout} src="/img/logoutIcon.png" className="iconLogo right"/>

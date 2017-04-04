@@ -2,7 +2,7 @@ import React from 'react';
 import request from 'superagent';
 import MemDropzone from './MemDropzone'
 
-const UPLOAD_URL = 'http://localhost:8080/addMem';
+import { hostName } from './App.js';
 
 var Upload = React.createClass({
     componentWillMount : function(props) {
@@ -55,10 +55,11 @@ var Upload = React.createClass({
         }
         let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
         let profilePicture = JSON.parse(localStorage.getItem('profile')).picture;
+        let UPLOAD_URL = hostName + "/addMem";
         console.log(this.state.category);
         var res = this.state.uploadedFile.type.split("/"); 
         if (res[0] !== "image")
-            alert("Zly format obrazka");
+            alert("Wrong image format!");
         let upload = request.post(UPLOAD_URL)
                         .field('Bearer ', localStorage.getItem('token'))
                         .field('file', this.state.uploadedFile)
@@ -74,7 +75,7 @@ var Upload = React.createClass({
                 console.error(err);
             }
             if (response.status === 200)
-                alert("dodano mema!");
+                alert("Success!");
         });
     },
     render : function() {
