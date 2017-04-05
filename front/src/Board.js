@@ -40,10 +40,10 @@ var Board = React.createClass({
       return (
       <div className="menu right col-md-12">
         <Categories/>
-        <img alt="" onClick={this.showProfile} src={picture} className="iconLogo right"/>
-        <img alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo right"/>
-        <img alt="" onClick={this.settings} src="/img/settingsIcon.png" className="iconLogo right"/>
         <img alt="" onClick={this.logout} src="/img/logoutIcon.png" className="iconLogo right"/>
+        <img alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo right"/>
+        <img alt="" onClick={this.showProfile} src="/img/activityIcon.png" className="iconLogo right"/>
+        <img alt="" onClick={this.settings} src={picture} className="iconLogo right"/>
       </div>
       );
     } else {

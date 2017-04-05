@@ -57,10 +57,38 @@ var Mem = React.createClass({
         if (err) {
           console.log(err);
         }
-        if (response.status === 200 && response.text !== "false")
+        if (response.status === 200 && response.text !== "false") {
+          let mem = this.state.mem;
+          mem.Like = true;
           this.setState({
-            points: this.props.mem.Points+1,
+            points: this.state.points+1,
+            mem: mem,
           });
+        }
+      });
+    } else {
+      lock.show();
+    }
+  },
+  doUnLike : function() {
+    if (localStorage.getItem('profile')) {
+      let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
+      let upload = request.post(hostName + "/deleteMemPoint")
+        .field('Bearer ', localStorage.getItem('token'))
+        .field('memID', this.props.mem.ID)
+        .field('authorNickname', nickname)
+      upload.end((err, response) => {
+        if (err) {
+          console.log(err);
+        }
+        if (response.status === 200 && response.text !== "false"){
+          let mem = this.state.mem;
+          mem.Like = false;
+          this.setState({
+            points: this.state.points-1,
+            mem: mem,
+          });
+        }
       });
     } else {
       lock.show();
@@ -69,7 +97,6 @@ var Mem = React.createClass({
   render: function() {
     if (this.state.mem) {
       let mem = this.state.mem;
-      let like = this.state.mem.Like;
       return (
         <div className="mem relative" >
           <div id={mem.ID} className="contentLeft col-md-12 comments" >
@@ -82,8 +109,11 @@ var Mem = React.createClass({
           <p>{mem.Signature}</p>
           <p>
             {mem.AuthorNickname} | {mem.DateTime} | Views: {this.state.views}  | Points: {this.state.points} 
-            {!like && 
+            {!this.state.mem.Like && 
               <img onClick={this.doLike} className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
+            }
+            {this.state.mem.Like && 
+              <img onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
             }
           </p>
         </div>
