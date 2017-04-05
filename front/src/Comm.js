@@ -1,7 +1,9 @@
 import React from 'react';
 import request from 'superagent';
+
 import { hostName } from './App.js';
 import { lock } from './App.js';
+import { browserHistory } from './App.js';
 
 var Comm = React.createClass({
     getInitialState: function() {
@@ -73,6 +75,9 @@ var Comm = React.createClass({
             lock.show();
         }
     },
+    showProfile: function(nickname) {
+        browserHistory.replace('/profile/' + nickname);
+    },
     render : function () {
         if (this.state.comment) {
             let comment = this.state.comment;
@@ -82,20 +87,22 @@ var Comm = React.createClass({
                 var picture = hostName + "/resources/avatars/" + profile.user_metadata.picture
             return (
                 <div className="comment">
-                    <div>
-                        <img alt="" src={picture} className="commentPhoto"/>
-                        {comment.AuthorNickname} | {comment.DateTime} | Points: {this.state.points} 
-                        {!this.state.comment.Like && 
-                            <img onClick={this.doLike}
-                                className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
-                        }
-                        {this.state.comment.Like && 
-                            <img onClick={this.doUnLike}
-                                className="thumbImage" alt="ASAS" src="/img/thumbDownIcon.png"/>
-                        }
-                    </div>
-                    <div>
-                        {comment.Content}.
+                    <div onMouseEnter={this.showDetails} onMouseLeave={this.hideDetails}>
+                        <img alt="" onClick={() => this.showProfile(comment.AuthorNickname)} src={picture} className="commentPhoto"/>
+                        {comment.Content}
+
+                            <div>
+                            {comment.AuthorNickname} | {comment.DateTime} | Points: {this.state.points} 
+                            {!this.state.comment.Like && 
+                                <img onClick={this.doLike}
+                                    className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
+                            }
+                            {this.state.comment.Like && 
+                                <img onClick={this.doUnLike}
+                                    className="thumbImage" alt="ASAS" src="/img/thumbDownIcon.png"/>
+                            }
+                            </div>
+                        
                     </div>
                 </div>
             )

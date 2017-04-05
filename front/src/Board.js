@@ -45,9 +45,9 @@ var Board = React.createClass({
         <Categories/>
         <img alt="" onClick={this.logout} src="/img/logoutIcon.png" className="iconLogo right"/>
         <img alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo right"/>
-        <img alt="" onClick={this.showActivities} src="/img/activityIcon.png" className="iconLogo right"/>
-        <img alt="" onClick={this.showProfile} src="/img/galleryIcon.png" className="iconLogo right"/>
-        <img alt="" onClick={this.settings} src={picture} className="iconLogo right"/>
+        <img alt="" onClick={this.showActivities} src="/img/galleryIcon.png" className="iconLogo right"/>
+        <img alt="" onClick={this.settings} src="/img/settingsIcon.png" className="iconLogo right"/>
+        <img alt="" onClick={this.showProfile} src={picture} className="iconLogo right"/>
       </div>
       );
     } else {

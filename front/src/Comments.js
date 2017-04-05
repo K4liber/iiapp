@@ -1,8 +1,10 @@
 import React from 'react';
 import request from 'superagent';
-import { hostName } from './App.js'
-import { HttpClient } from './App.js'
-import Comm from './Comm.js'
+import Comm from './Comm.js';
+
+import { hostName } from './App.js';
+import { HttpClient } from './App.js';
+import { browserHistory } from './App.js';
 
 var Comments = React.createClass({
     getInitialState: function() {
@@ -30,6 +32,9 @@ var Comments = React.createClass({
                 mem: JSON.parse(result).Mem,
             });
         }.bind(this));
+    },
+    goToIdea: function() {
+        browserHistory.replace('/idea/' + this.props.memId);
     },
     sendComment : function(id) {
         let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
@@ -63,9 +68,9 @@ var Comments = React.createClass({
             let commentAreaID = "commentArea" + this.state.mem.ID;
             return (
                 <div>
-                    <p>
+                    <div className="commentSignature" onClick={this.goToIdea}>
                         #{this.state.mem.Signature}
-                    </p>
+                    </div>
                     {
                         (this.state.comments).map( function(comment, index) { 
                             let key = "comment" + comment.ID;
@@ -86,9 +91,9 @@ var Comments = React.createClass({
             let commentAreaID = "commentArea" + this.state.mem.ID;
             return (
                 <div>
-                    <p>
+                    <div className="commentSignature">
                         #{this.state.mem.Signature}
-                    </p>
+                    </div>
                     <div>
                         <textarea id={commentAreaID} onChange={this.loadDescription} placeholder="Comment ..."></textarea> 
                     </div>

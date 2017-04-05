@@ -6,18 +6,15 @@ import { hostName } from './App.js'
 var Activities = React.createClass({
   getInitialState: function() {
     return {
-      profile: null,
       mems: null,
     }
   },
   componentDidMount: function() {
-    let profile = JSON.parse(localStorage.getItem('profile'));
-    console.log(profile);
+    var res = location.pathname.split("/"); 
     var client = new HttpClient(true);
-    this.serverRequest = client.get(hostName + '/profile/' + profile.nickname, function(result) {
+    this.serverRequest = client.get(hostName + '/profile/' + res[2], function(result) {
       this.setState({
         mems: result,
-        profile: profile,
       });
     }.bind(this));
   },

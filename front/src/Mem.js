@@ -1,7 +1,10 @@
 import React from 'react';
 import Comments from './Comments';
-import { hostName } from './App.js'
+
 import request from 'superagent';
+
+import { browserHistory } from './App.js';
+import { hostName } from './App.js';
 import { lock } from './App.js';
 
 var Mem = React.createClass({
@@ -26,6 +29,9 @@ var Mem = React.createClass({
         views: this.props.mem.Views,
       });
   },
+  goToIdea: function() {
+        browserHistory.replace('/idea/' + this.state.mem.ID);
+    },
   showComments: function(id) {
     document.getElementById(id).style.display = "inline";
     let upload = request.post(hostName + "/addView")
@@ -100,10 +106,12 @@ var Mem = React.createClass({
             <Comments memId={mem.ID} />
             <img onClick={() => this.closeComments(mem.ID)} alt="" src="/img/xIcon.png" className="cancelUpload" />
           </div>           
-          <img className="memImage" alt="ASAS" src={hostName + "/resources/mems/" + mem.ID +mem.ImgExt}
+          <img className="memImage pointer" alt="ASAS" src={hostName + "/resources/mems/" + mem.ID +mem.ImgExt}
             onClick={() => this.showComments(mem.ID)}/>
           <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
-          <p>{mem.Signature}</p>
+          <div className="commentSignature" onClick={this.goToIdea}>
+            {mem.Signature}
+          </div>
           <p>
             {mem.AuthorNickname} | {mem.DateTime} | Views: {this.state.views}  | Points: {this.state.points} 
             {!this.state.mem.Like && 

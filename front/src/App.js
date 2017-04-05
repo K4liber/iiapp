@@ -7,6 +7,7 @@ import Activities from './Activities';
 import Category from './Category';
 import Settings from './Settings';
 import Home from './Home';
+import MemPage from './MemPage';
 import Auth0Lock from 'auth0-lock';
 import createBrowserHistory from 'history/createBrowserHistory';
 import { Route, Router } from 'react-router-dom';
@@ -130,6 +131,9 @@ var App = React.createClass({
                 </Route>
                 <Route path="/activities/:user">
                   <Activities/>
+                </Route>
+                <Route path="/idea/:id">
+                  <MemPage/>
                 </Route>
                 <Route path="/category">
                   <Route path="/:category">
