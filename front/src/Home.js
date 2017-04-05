@@ -1,11 +1,13 @@
 import React from 'react';
 import Mems from './Mems';
 
+import { hostName } from './App.js'
+import { HttpClient } from './App.js'
+
 var Home = React.createClass({
   getInitialState: function() {
     return {
       mems: null,
-      memId: '1',
       token: null,
     }
   },
@@ -18,26 +20,32 @@ var Home = React.createClass({
     this.setState({
       token: this.props.token,
     });
-    console.log("state changed");
+  },
+  componentWillMount: function() {
+    var client = new HttpClient(true);
+    let url = hostName + "/mems";
+    this.serverRequest = client.get(url, function(result) {
+      this.setState({
+        mems: result,
+      });
+    }.bind(this));
   },
   render: function() {
-    if (1) {
+    if(this.state.mems) {
       return (
         <div className="row well well-sm">
           <div className="contentLeft col-md-12" id="contentLeft">
-            <Mems/>
+            <Mems mems={this.state.mems}/>
           </div>
         </div> 
       );
     } else {
-       return (
+      return (
         <div className="row well well-sm">
-          <div className="contentLeft col-md-8" id="contentLeft">
-            <Mems token={this.state.token}/>
+          <div className="contentLeft col-md-12" id="contentLeft">
+            Loading ...
           </div>
-          <div className="contentRight col-md-4" id="contentRight">
-          </div>
-        </div>  
+        </div> 
       );
     }
   }

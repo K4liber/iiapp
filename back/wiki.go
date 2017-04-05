@@ -196,6 +196,55 @@ func getCommentLike(ID int, authorNickname string) CommentPoint {
 	return commentPoint
 }
 
+func getProfileMems(nickname string) []Mem { //DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+	}
+
+	rows, err3 := db.Query("SELECT * FROM mem WHERE authorNickname='" + nickname + "'")
+	if err3 != nil {
+		fmt.Println(err3.Error())
+	}
+	var ID int
+	var Signature string
+	var ImgExt string
+	var DateTime string
+	var AuthorNickname string
+	var Category string
+	var Points int
+	var Views int
+	var slice []Mem
+	var turnedSlice []Mem
+	for rows.Next() {
+		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category, &Points, &Views)
+		var liked = false
+		if getMemLike(ID, nickname).ID != 0 {
+			liked = true
+		}
+		mem := &Mem{
+			ID:             ID,
+			Signature:      Signature,
+			ImgExt:         ImgExt,
+			DateTime:       DateTime,
+			AuthorNickname: AuthorNickname,
+			Category:       Category,
+			Points:         Points,
+			Views:          Views,
+			Like:           liked,
+		}
+		slice = append(slice, *mem)
+		turnedSlice = append(turnedSlice, *mem)
+	}
+	for index := range slice {
+		var indexTurned = len(slice) - 1 - index
+		turnedSlice[indexTurned] = slice[index]
+	}
+	defer db.Close()
+	return turnedSlice
+}
+
 func getMems(nickname string) []Mem {
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
@@ -365,6 +414,7 @@ func main() {
 	})
 	r.Handle("/mems", c.Handler(MemsHandler))
 	r.Handle("/mem/{id}", c.Handler(MemHandler))
+	r.Handle("/profile/{nickname}", c.Handler(ProfileHandler))
 	r.Handle("/category/{category}", c.Handler(CategoryHandler))
 	r.Handle("/addMem", c.Handler(AddMemHandler))
 	r.Handle("/uploadAvatar", c.Handler(UploadAvatarHandler))
@@ -410,6 +460,22 @@ func (s *MyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(payload))
 	s.r.ServeHTTP(w, r)
 }
+
+var ProfileHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	payload, _ := json.Marshal(getProfileMems(vars["nickname"]))
+	w.Header().Set("Content-Type", "application/json")
+	var origin = req.Header.Get("Origin")
+	w.Header().Set("Access-Control-Allow-Origin", origin)
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers",
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, nickname")
+	w.Header().Set("Allow", "*")
+	if req.Method == "OPTIONS" {
+		return
+	}
+	w.Write([]byte(payload))
+})
 
 var MemsHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 	payload, _ := json.Marshal(getMems(req.Header.Get("nickname")))

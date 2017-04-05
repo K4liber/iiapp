@@ -15,6 +15,10 @@ var Board = React.createClass({
     let profile = JSON.parse(localStorage.getItem('profile'));
     this.props.browserHistory.replace('/profile/' + profile.nickname, {profile: profile,});
   },
+  showActivities: function() {
+    let profile = JSON.parse(localStorage.getItem('profile'));
+    this.props.browserHistory.replace('/activities/' + profile.nickname, {profile: profile,});
+  },
   settings: function() {
     this.props.browserHistory.push('/settings');
   },
@@ -33,16 +37,16 @@ var Board = React.createClass({
   render: function() {
     if (localStorage.getItem('profile')) {
       let profile = JSON.parse(localStorage.getItem('profile'));
+      var picture = profile.picture;
       if (profile.user_metadata.picture)
-        var picture = hostName + "/resources/avatars/" + profile.user_metadata.picture
-      else 
-        var picture = profile.picture;
+        picture = hostName + "/resources/avatars/" + profile.user_metadata.picture
       return (
       <div className="menu right col-md-12">
         <Categories/>
         <img alt="" onClick={this.logout} src="/img/logoutIcon.png" className="iconLogo right"/>
         <img alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo right"/>
-        <img alt="" onClick={this.showProfile} src="/img/activityIcon.png" className="iconLogo right"/>
+        <img alt="" onClick={this.showActivities} src="/img/activityIcon.png" className="iconLogo right"/>
+        <img alt="" onClick={this.showProfile} src="/img/galleryIcon.png" className="iconLogo right"/>
         <img alt="" onClick={this.settings} src={picture} className="iconLogo right"/>
       </div>
       );

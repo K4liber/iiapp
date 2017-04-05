@@ -49,7 +49,8 @@ var Comm = React.createClass({
     },
     doUnLike : function() {
         if (localStorage.getItem('profile')) {
-            let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
+            let profile = JSON.parse(localStorage.getItem('profile'));
+            let nickname = profile.nickname;
             let commentID = this.props.comment.ID;
             let upload = request.post(hostName + "/deleteCommentPoint")
                 .field('Bearer ', localStorage.getItem('token'))
@@ -75,10 +76,14 @@ var Comm = React.createClass({
     render : function () {
         if (this.state.comment) {
             let comment = this.state.comment;
+            let profile = JSON.parse(localStorage.getItem('profile'));
+            var picture = comment.AuthorPhoto;
+            if (profile.user_metadata.picture)
+                var picture = hostName + "/resources/avatars/" + profile.user_metadata.picture
             return (
                 <div className="comment">
                     <div>
-                        <img alt="" src={comment.AuthorPhoto} className="commentPhoto"/>
+                        <img alt="" src={picture} className="commentPhoto"/>
                         {comment.AuthorNickname} | {comment.DateTime} | Points: {this.state.points} 
                         {!this.state.comment.Like && 
                             <img onClick={this.doLike}

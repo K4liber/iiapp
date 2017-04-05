@@ -1,41 +1,21 @@
 import React from 'react';
 import Mem from './Mem';
-import { hostName } from './App.js'
-import { HttpClient } from './App.js'
 
 var Mems = React.createClass({
   getInitialState: function() {
     return {
       mems: null,
-      token: null,
     }
   },
   componentWillReceiveProps : function(newProps) {
-    var client = new HttpClient(true);
-    let url = hostName + "/mems";
-    console.log(url);
-    this.serverRequest = client.get(url, function(result) {
-      this.setState({
-        mems: result,
-        token: this.props.token,
-      });
-    }.bind(this));
+    this.setState({
+      mems: newProps.mems,
+    });
   },
-  componentDidMount: function() {
-    var client = new HttpClient(true);
-    let url = hostName + "/mems";
-    console.log(url);
-    this.serverRequest = client.get(url, function(result) {
-      this.setState({
-        mems: result,
-      });
-    }.bind(this));
-  },
-  showComments: function(id) {
-    document.getElementById(id).style.display = "inline";
-  },
-  closeComments : function(id) {
-    document.getElementById(id).style.display = "none";
+  componentWillMount: function() {
+    this.setState({
+      mems: this.props.mems,
+    });  
   },
   render: function() {
     if (this.state.mems) {
@@ -45,7 +25,7 @@ var Mems = React.createClass({
             JSON.parse(this.state.mems).map( function(mem, index) {
               let key = "mem" + mem.ID;
               return (
-                <Mem key={key} mem={mem} index={index}/>
+                <Mem key={key} mem={mem}/>
               )
             })
           }

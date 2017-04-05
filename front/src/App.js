@@ -3,6 +3,7 @@ import './App.css';
 import Upload from './Upload';
 import Board from './Board';
 import Profile from './Profile';
+import Activities from './Activities';
 import Category from './Category';
 import Settings from './Settings';
 import Home from './Home';
@@ -126,6 +127,9 @@ var App = React.createClass({
                 </Route>
                 <Route path="/profile/:user">
                   <Profile/>
+                </Route>
+                <Route path="/activities/:user">
+                  <Activities/>
                 </Route>
                 <Route path="/category">
                   <Route path="/:category">

@@ -1,7 +1,7 @@
 import React from 'react';
 import { hostName } from './App.js'
 import { HttpClient } from './App.js'
-import Mem from './Mem';
+import Mems from './Mems';
 
 var Category = React.createClass({
   getInitialState: function() {
@@ -32,13 +32,7 @@ var Category = React.createClass({
       return (
         <div className="row well well-sm">
           <div className="contentLeft col-md-12" id="contentLeft">
-              {
-                JSON.parse(this.state.mems).map( function(mem, index) {
-                  return (
-                    <Mem mem={mem} index={index} key={mem.ID}/>
-                  )
-                })
-              }
+              <Mems mems={this.state.mems} />
            </div>
         </div> 
       );
@@ -54,7 +48,7 @@ var Category = React.createClass({
       return ( 
         <div className="row well well-sm">
           <div className="contentLeft col-md-12" id="contentLeft">
-            <p>Loading mems...</p>
+            <p>Loading ...</p>
           </div>
         </div>
       );

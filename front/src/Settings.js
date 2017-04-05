@@ -2,9 +2,7 @@ import React from 'react';
 import AvatarDropzone from './AvatarDropzone.js';
 import request from 'superagent';
 
-import { CLIENT_ID } from './App.js';
 import { CLIENT_DOMAIN } from './App.js';
-import { CLIENT_SECRET } from './App.js';
 import { hostName } from './App.js';
 
 var req = require("request");
@@ -107,7 +105,7 @@ var Settings = React.createClass({
         let profile = JSON.parse(localStorage.getItem('profile'));
         var picture = profile.picture;
         if (profile.user_metadata.picture)
-          var picture = hostName + "/resources/avatars/" + profile.user_metadata.picture
+          picture = hostName + "/resources/avatars/" + profile.user_metadata.picture
         return (
             <div className="row well well-sm">
               <script src="/static/js/auth0-editprofile.min.js"></script>

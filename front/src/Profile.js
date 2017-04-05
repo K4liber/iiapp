@@ -1,6 +1,7 @@
 import React from 'react';
 import Mems from './Mems';
 import { HttpClient } from './App.js'
+import { hostName } from './App.js'
 
 var Profile = React.createClass({
   getInitialState: function() {
@@ -10,10 +11,10 @@ var Profile = React.createClass({
     }
   },
   componentDidMount: function() {
-    let profile = localStorage.getItem('profile');
+    let profile = JSON.parse(localStorage.getItem('profile'));
     console.log(profile);
     var client = new HttpClient(true);
-    this.serverRequest = client.get('http://10.17.2.143:300/mems', function(result) {
+    this.serverRequest = client.get(hostName + '/profile/' + profile.nickname, function(result) {
       this.setState({
         mems: result,
         profile: profile,
@@ -22,11 +23,10 @@ var Profile = React.createClass({
   },
   render: function() {
     if (this.state.mems) {
-      //let profile = JSON.parse(localStorage.getItem('profile'));
       return (
           <div className="row well well-sm">
             <div className="contentLeft col-md-12" id="contentLeft">
-              <Mems/>
+              <Mems mems={this.state.mems}/>
             </div>
           </div>
         );

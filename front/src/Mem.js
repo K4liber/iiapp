@@ -8,15 +8,13 @@ var Mem = React.createClass({
   getInitialState: function() {
     return {
       mem: null,
-      index: null,
       points: null,
       views: null,
     }
   },
-  componentDidMount: function() {
+  componentWillMount: function() {
       this.setState({
         mem: this.props.mem,
-        index: this.props.index,
         points: this.props.mem.Points,
         views: this.props.mem.Views,
       });
@@ -24,7 +22,6 @@ var Mem = React.createClass({
   componentWillReceiveProps : function(newProps) {
     this.setState({
         mem: this.props.mem,
-        index: this.props.index,
         points: this.props.mem.Points,
         views: this.props.mem.Views,
       });
