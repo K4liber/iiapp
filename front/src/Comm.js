@@ -6,6 +6,7 @@ import { lock } from './App.js';
 import { browserHistory } from './App.js';
 import { API_TOKEN } from './App.js';
 import { CLIENT_DOMAIN } from './App.js';
+import { HttpClient } from './App.js';
 
 var Comm = React.createClass({
     getInitialState: function() {
@@ -82,36 +83,52 @@ var Comm = React.createClass({
     showProfile: function(nickname) {
         browserHistory.replace('/profile/' + nickname);
     },
+    deleteComment: function() {
+        let self = this;
+        if (confirm("You really want to delete this comment?")) {
+            var client = new HttpClient(true);
+            let url = hostName + "/deleteComment/" + this.state.comment.ID;
+            this.serverRequest = client.get(url, function(result) {
+                if(result) {
+                    self.setState({
+                        comment: null,
+                    });
+                }
+            });
+        }
+    },
     render : function () {
         if (this.state.comment) {
             let comment = this.state.comment;
             var picture = comment.AuthorPhoto;
+            var isMain = false;
+            if (localStorage.getItem('profile'))
+                isMain = comment.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
             return (
-                <div className="comment">
+                <div className="comment relative">
                     <div onMouseEnter={this.showDetails} onMouseLeave={this.hideDetails}>
                         <img alt="" onClick={() => this.showProfile(comment.AuthorNickname)} src={picture} className="commentPhoto"/>
                         {comment.Content}
-
-                            <div>
-                            {comment.AuthorNickname} | {comment.DateTime} | Points: {this.state.points} 
-                            {!this.state.comment.Like && 
-                                <img onClick={this.doLike}
-                                    className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
-                            }
-                            {this.state.comment.Like && 
-                                <img onClick={this.doUnLike}
-                                    className="thumbImage" alt="ASAS" src="/img/thumbDownIcon.png"/>
-                            }
-                            </div>
-                        
+                        {isMain &&
+                            <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.deleteComment}/>
+                        }
+                        <div>
+                        {comment.AuthorNickname} | {comment.DateTime} | Points: {this.state.points} 
+                        {!this.state.comment.Like && 
+                            <img onClick={this.doLike}
+                                className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
+                        }
+                        {this.state.comment.Like && 
+                            <img onClick={this.doUnLike}
+                                className="thumbImage" alt="ASAS" src="/img/thumbDownIcon.png"/>
+                        }
+                        </div>
                     </div>
                 </div>
             )
         } else {
             return (
-                <div>
-                    Loading ...
-                </div>
+                <div></div>
             )
         }
     }

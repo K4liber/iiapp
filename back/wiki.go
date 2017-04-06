@@ -26,6 +26,8 @@ import (
 
 var db *sql.DB
 
+const hostName = "http://localhost:8080"
+
 type justFilesFilesystem struct {
 	fs http.FileSystem
 }
@@ -566,6 +568,7 @@ func main() {
 	r.Handle("/addCommentPoint", c.Handler(AddCommentPointHandler))
 	r.Handle("/deleteCommentPoint", c.Handler(DeleteCommentPointHandler))
 	r.Handle("/addView", c.Handler(AddViewHandler))
+	r.Handle("/deleteComment/{id}", c.Handler(DeleteCommentHandler))
 
 	fs := justFilesFilesystem{http.Dir("resources/")}
 	http.Handle("/resources/", http.StripPrefix("/resources", http.FileServer(fs)))
@@ -688,6 +691,26 @@ var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request)
 	w.Write([]byte(payload))
 })
 
+func uploadUserComments(nickname string, avatarName string) bool {
+	var photoUrl = hostName + "/resources/avatars/" + avatarName
+	var success = true
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+		success = false
+	}
+	update, errUpdate := db.Exec("UPDATE comment SET authorPhoto='" + photoUrl + "' WHERE authorNickname='" + nickname + "'")
+	if errUpdate != nil {
+		fmt.Println(errUpdate)
+		fmt.Println(update)
+		success = false
+	}
+	defer db.Close()
+	return success
+}
+
 var UploadAvatarHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 	//Dodawanie mema
 	var nickname = req.FormValue("nickname")
@@ -710,6 +733,8 @@ var UploadAvatarHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http
 	}
 	defer f.Close()
 	io.Copy(f, file)
+
+	uploadUserComments(nickname, avatarName)
 
 	//Wysylanie odpowiedzi
 	payload, _ := json.Marshal(avatarName)
@@ -944,6 +969,44 @@ var AddMemPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.
 
 	//Wysylanie odpowiedzi
 	payload, _ := json.Marshal(success)
+	w.Write([]byte(payload))
+	defer db.Close()
+})
+
+var DeleteCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	var reqId = vars["id"]
+	var success = true
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+	}
+	_, err3 :=
+		db.Query("DELETE FROM commentPoint WHERE commentId=" + reqId)
+	if err3 != nil {
+		fmt.Println(err3)
+		return
+	}
+	_, err4 :=
+		db.Query("DELETE FROM comment WHERE id=" + reqId)
+	if err4 != nil {
+		fmt.Println(err4)
+		success = false
+	}
+	//Wysylanie odpowiedzi
+	payload, _ := json.Marshal(success)
+	w.Header().Set("Content-Type", "application/json")
+	var origin = req.Header.Get("Origin")
+	w.Header().Set("Access-Control-Allow-Origin", origin)
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers",
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, nickname")
+	w.Header().Set("Allow", "*")
+	if req.Method == "OPTIONS" {
+		return
+	}
 	w.Write([]byte(payload))
 	defer db.Close()
 })
