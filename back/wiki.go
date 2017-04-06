@@ -275,17 +275,50 @@ func getCommentLike(ID int, authorNickname string) CommentPoint {
 
 func getProfileActivities(nickname string) []Activity {
 	var mems = getProfileMems(nickname)
-	//var comments = getProfileComments(nickname)
-	//var commentLikes = getProfileCommentLike(nickname)
-	//var memLikes = getProfileMemLike(nickname)
+	var comments = getProfileComments(nickname)
+	var commentLikes = getProfileCommentLike(nickname)
+	var memLikes = getProfileMemLike(nickname)
 	var slice []Activity
 	var memID int
 	var description string
 	var dateTime string
 	for _, mem := range mems {
 		memID = mem.ID
-		description = "Your mem " + mem.Signature + " has been added."
+		description = "Your mem '" + mem.Signature + "' has been added."
 		dateTime = mem.DateTime
+		activity := &Activity{
+			MemID:       memID,
+			Description: description,
+			DateTime:    dateTime,
+		}
+		slice = append(slice, *activity)
+	}
+	for _, comment := range comments {
+		memID = comment.MemID
+		description = "Your comment '" + comment.Content + "' has been added."
+		dateTime = comment.DateTime
+		activity := &Activity{
+			MemID:       memID,
+			Description: description,
+			DateTime:    dateTime,
+		}
+		slice = append(slice, *activity)
+	}
+	for _, commentLike := range commentLikes {
+		memID = commentLike.MemID
+		description = "Your like this comment!"
+		dateTime = commentLike.DateTime
+		activity := &Activity{
+			MemID:       memID,
+			Description: description,
+			DateTime:    dateTime,
+		}
+		slice = append(slice, *activity)
+	}
+	for _, memLike := range memLikes {
+		memID = memLike.MemID
+		description = "Your like this idea!"
+		dateTime = memLike.DateTime
 		activity := &Activity{
 			MemID:       memID,
 			Description: description,

@@ -1,7 +1,9 @@
 import React from 'react';
 import Mems from './Mems';
-import { HttpClient } from './App.js'
-import { hostName } from './App.js'
+import Activity from './Activity';
+
+import { HttpClient } from './App.js';
+import { hostName } from './App.js';
 
 var Activities = React.createClass({
   getInitialState: function() {
@@ -13,10 +15,18 @@ var Activities = React.createClass({
     var res = location.pathname.split("/"); 
     var client = new HttpClient(true);
     this.serverRequest = client.get(hostName + '/activities/' + res[2], function(result) {
+      var acitivities = JSON.parse(result).sort(this.compare);
       this.setState({
-        activities: result,
+        activities: acitivities,
       });
     }.bind(this));
+  },
+  compare: function(a, b) {
+   if (a.DateTime < b.DateTime)
+      return 1
+   if (a.DateTime > b.DateTime)
+      return -1
+   return 0
   },
   render: function() {
     if (this.state.activities) {
@@ -24,11 +34,9 @@ var Activities = React.createClass({
           <div className="row well well-sm">
             <div className="contentLeft col-md-12" id="contentLeft">
               {
-                JSON.parse(this.state.activities).map( function(activity, index) {
+                this.state.activities.map( function(activity, index) {
                   return (
-                    <div>
-                      {activity.Description}
-                    </div>
+                    <Activity activity={activity}/>
                   )
                 })
               }

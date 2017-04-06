@@ -38,7 +38,7 @@ var Board = React.createClass({
     if (localStorage.getItem('profile')) {
       let profile = JSON.parse(localStorage.getItem('profile'));
       var picture = profile.picture;
-      if (profile.user_metadata.picture)
+      if (profile.user_metadata && profile.user_metadata.picture)
         picture = hostName + "/resources/avatars/" + profile.user_metadata.picture
       return (
       <div className="menu right col-md-12">

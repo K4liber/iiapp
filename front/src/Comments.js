@@ -43,7 +43,7 @@ var Comments = React.createClass({
             if(localStorage.getItem('profile')) {
                 let profile = JSON.parse(localStorage.getItem('profile'));
                 var profilePicture = profile.picture;
-                if (profile.user_metadata.picture)
+                if (profile.user_metadata && profile.user_metadata.picture)
                     profilePicture = hostName + "/resources/avatars/" + profile.user_metadata.picture;
                 let upload = request.post(hostName + "/addComment")
                                 .field('Bearer ', localStorage.getItem('token'))
