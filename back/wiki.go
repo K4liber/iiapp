@@ -69,6 +69,7 @@ type CommentPoint struct {
 	CommentID      int
 	AuthorNickname string
 	DateTime       string
+	MemID          int
 }
 
 type Mem struct {
@@ -86,6 +87,12 @@ type Mem struct {
 type MemView struct {
 	Comments []Comment
 	Mem      Mem
+}
+
+type Activity struct {
+	MemID       int
+	Description string
+	DateTime    string
 }
 
 func getCategoryMems(category string, nickname string) []Mem {
@@ -164,6 +171,72 @@ func getMemLike(ID int, authorNickname string) MemPoint {
 	return memPoint
 }
 
+func getProfileMemLike(authorNickname string) []MemPoint {
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+	}
+
+	rows, err3 :=
+		db.Query("SELECT * FROM memPoint WHERE authorNickname='" + authorNickname + "'")
+	var pointID int
+	var MemID int
+	var AuthorNickname string
+	var DateTime string
+	var slice []MemPoint
+	for rows.Next() {
+		err3 = rows.Scan(&pointID, &MemID, &AuthorNickname, &DateTime)
+		memPoint := &MemPoint{
+			ID:             pointID,
+			MemID:          MemID,
+			AuthorNickname: AuthorNickname,
+			DateTime:       DateTime,
+		}
+		slice = append(slice, *memPoint)
+	}
+
+	if err3 != nil {
+		fmt.Println(err3.Error())
+	}
+	defer db.Close()
+	return slice
+}
+
+func getProfileCommentLike(authorNickname string) []CommentPoint {
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+	}
+	rows, err3 :=
+		db.Query("SELECT * FROM commentPoint WHERE authorNickname='" + authorNickname + "'")
+	var PointID int
+	var CommentID int
+	var MemID int
+	var AuthorNickname string
+	var DateTime string
+	var slice []CommentPoint
+	for rows.Next() {
+		err3 = rows.Scan(&PointID, &CommentID, &AuthorNickname, &DateTime, &MemID)
+		commentPoint := &CommentPoint{
+			ID:             PointID,
+			CommentID:      CommentID,
+			AuthorNickname: AuthorNickname,
+			DateTime:       DateTime,
+			MemID:          MemID,
+		}
+		slice = append(slice, *commentPoint)
+	}
+	if err3 != nil {
+		fmt.Println(err3.Error())
+	}
+	defer db.Close()
+	return slice
+}
+
 func getCommentLike(ID int, authorNickname string) CommentPoint {
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
@@ -177,16 +250,18 @@ func getCommentLike(ID int, authorNickname string) CommentPoint {
 			" AND authorNickname='" + authorNickname + "' LIMIT 1")
 	var PointID int
 	var CommentID int
+	var MemID int
 	var AuthorNickname string
 	var DateTime string
 	for rows.Next() {
-		err3 = rows.Scan(&PointID, &CommentID, &AuthorNickname, &DateTime)
+		err3 = rows.Scan(&PointID, &CommentID, &AuthorNickname, &DateTime, &MemID)
 	}
 	commentPoint := CommentPoint{
 		ID:             PointID,
 		CommentID:      CommentID,
 		AuthorNickname: AuthorNickname,
 		DateTime:       DateTime,
+		MemID:          MemID,
 	}
 
 	if err3 != nil {
@@ -194,6 +269,29 @@ func getCommentLike(ID int, authorNickname string) CommentPoint {
 	}
 	defer db.Close()
 	return commentPoint
+}
+
+func getProfileActivities(nickname string) []Activity {
+	var mems = getProfileMems(nickname)
+	//var comments = getProfileComments(nickname)
+	//var commentLikes = getProfileCommentLike(nickname)
+	//var memLikes = getProfileMemLike(nickname)
+	var slice []Activity
+	var memID int
+	var description string
+	var dateTime string
+	for _, mem := range mems {
+		memID = mem.ID
+		description = "Your mem " + mem.Signature + " has been added."
+		dateTime = mem.DateTime
+		activity := &Activity{
+			MemID:       memID,
+			Description: description,
+			DateTime:    dateTime,
+		}
+		slice = append(slice, *activity)
+	}
+	return slice
 }
 
 func getProfileMems(nickname string) []Mem { //DataBase connection
@@ -398,6 +496,49 @@ func getComments(id string, nickname string) []Comment {
 	return slice
 }
 
+func getProfileComments(nickname string) []Comment {
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+	}
+
+	rows, err3 := db.Query("SELECT * FROM comment WHERE authorNickname='" + nickname + "'")
+	if err3 != nil {
+		fmt.Println(err3.Error())
+	}
+	var ID int
+	var MemID int
+	var AuthorNickname string
+	var AuthorPhoto string
+	var Content string
+	var DateTime string
+	var Points int
+	var slice []Comment
+
+	for rows.Next() {
+		err3 = rows.Scan(&ID, &MemID, &AuthorNickname, &AuthorPhoto, &Content, &DateTime, &Points)
+		var liked = false
+		if getCommentLike(ID, nickname).ID != 0 {
+			liked = true
+		}
+		comment := &Comment{
+			ID:             ID,
+			MemID:          MemID,
+			AuthorNickname: AuthorNickname,
+			AuthorPhoto:    AuthorPhoto,
+			Content:        Content,
+			DateTime:       DateTime,
+			Points:         Points,
+			Like:           liked,
+		}
+		slice = append(slice, *comment)
+	}
+	defer db.Close()
+	return slice
+}
+
 func main() {
 	// Here we are loading in our .env file which will contain our Auth0 Client Secret and Domain
 	errEnv := godotenv.Load()
@@ -415,6 +556,7 @@ func main() {
 	r.Handle("/mems", c.Handler(MemsHandler))
 	r.Handle("/mem/{id}", c.Handler(MemHandler))
 	r.Handle("/profile/{nickname}", c.Handler(ProfileHandler))
+	r.Handle("/activities/{nickname}", c.Handler(ActivitiesHandler))
 	r.Handle("/category/{category}", c.Handler(CategoryHandler))
 	r.Handle("/addMem", c.Handler(AddMemHandler))
 	r.Handle("/uploadAvatar", c.Handler(UploadAvatarHandler))
@@ -460,6 +602,22 @@ func (s *MyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(payload))
 	s.r.ServeHTTP(w, r)
 }
+
+var ActivitiesHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	payload, _ := json.Marshal(getProfileActivities(vars["nickname"]))
+	w.Header().Set("Content-Type", "application/json")
+	var origin = req.Header.Get("Origin")
+	w.Header().Set("Access-Control-Allow-Origin", origin)
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers",
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, nickname")
+	w.Header().Set("Allow", "*")
+	if req.Method == "OPTIONS" {
+		return
+	}
+	w.Write([]byte(payload))
+})
 
 var ProfileHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
@@ -812,11 +970,12 @@ var DeleteCommentPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req
 
 	var IDFromDb int
 	var commentIDFromDb int
+	var MemIDFromDb int
 	var authorNicknameFromDb string
 	var dateTimeFromDb string
 
 	for res.Next() {
-		resErr = res.Scan(&IDFromDb, &commentIDFromDb, &authorNicknameFromDb, &dateTimeFromDb)
+		resErr = res.Scan(&IDFromDb, &commentIDFromDb, &authorNicknameFromDb, &dateTimeFromDb, &MemIDFromDb)
 	}
 
 	if IDFromDb != 0 {
@@ -870,6 +1029,7 @@ var AddCommentPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *h
 	dateTime := time.Now().Format(time.RFC3339)
 	var commentID = req.FormValue("commentID")
 	var authorNickname = req.FormValue("authorNickname")
+	var memID = req.FormValue("memId")
 	res, resErr := db.Query("SELECT * FROM commentPoint WHERE commentId=" + commentID + " AND authorNickname='" +
 		authorNickname + "' LIMIT 1")
 
@@ -879,19 +1039,20 @@ var AddCommentPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *h
 
 	var IDFromDb int
 	var commentIDFromDb int
+	var MemIDFromDb int
 	var authorNicknameFromDb string
 	var dateTimeFromDb string
 
 	for res.Next() {
-		resErr = res.Scan(&IDFromDb, &commentIDFromDb, &authorNicknameFromDb, &dateTimeFromDb)
+		resErr = res.Scan(&IDFromDb, &commentIDFromDb, &authorNicknameFromDb, &dateTimeFromDb, &MemIDFromDb)
 	}
 
 	if IDFromDb != 0 {
 		success = false
 	} else {
 		result, errComment := db.Exec(
-			"INSERT INTO commentPoint (commentId, authorNickname, dateTime) VALUES ('" +
-				commentID + "', '" + authorNickname + "', '" + dateTime + "')",
+			"INSERT INTO commentPoint (commentId, authorNickname, dateTime, memId) VALUES ('" +
+				commentID + "', '" + authorNickname + "', '" + dateTime + "', '" + memID + "')",
 		)
 		//Count points
 		count, errCount := db.Query("SELECT * FROM commentPoint WHERE commentId=" + commentID)

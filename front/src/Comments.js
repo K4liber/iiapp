@@ -5,6 +5,7 @@ import Comm from './Comm.js';
 import { hostName } from './App.js';
 import { HttpClient } from './App.js';
 import { browserHistory } from './App.js';
+import { lock } from './App.js';
 
 var Comments = React.createClass({
     getInitialState: function() {
@@ -37,13 +38,15 @@ var Comments = React.createClass({
         browserHistory.replace('/idea/' + this.props.memId);
     },
     sendComment : function(id) {
-        let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
-        if (nickname) {
-            let profilePicture = JSON.parse(localStorage.getItem('profile')).picture;
+        if(localStorage.getItem('profile')) {
+            let profile = JSON.parse(localStorage.getItem('profile'));
+            var profilePicture = profile.picture;
+            if (profile.user_metadata.picture)
+                profilePicture = hostName + "/resources/avatars/" + profile.user_metadata.picture;
             var comment = document.getElementById("commentArea" + id).value;
             let upload = request.post(hostName + "/addComment")
                             .field('Bearer ', localStorage.getItem('token'))
-                            .field('nickname', nickname)
+                            .field('nickname', profile.nickname)
                             .field('profilePicture', profilePicture)
                             .field('memID', this.props.memId)
                             .field('comment', comment)
@@ -56,11 +59,9 @@ var Comments = React.createClass({
                     this.componentDidMount();
                     document.getElementById("commentArea" + id).value = "";
             });
+            
         } else {
-            alert(
-                "Please login to send a comment!" +
-                <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Comment</button>
-            );
+            lock.show();
         }
     },
     render : function () {

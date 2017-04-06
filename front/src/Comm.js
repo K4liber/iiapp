@@ -4,6 +4,8 @@ import request from 'superagent';
 import { hostName } from './App.js';
 import { lock } from './App.js';
 import { browserHistory } from './App.js';
+import { API_TOKEN } from './App.js';
+import { CLIENT_DOMAIN } from './App.js';
 
 var Comm = React.createClass({
     getInitialState: function() {
@@ -27,17 +29,19 @@ var Comm = React.createClass({
     doLike : function() {
         if (localStorage.getItem('profile')) {
             let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
+            let comment = this.state.comment;
             let commentID = this.props.comment.ID;
             let upload = request.post(hostName + "/addCommentPoint")
                 .field('Bearer ', localStorage.getItem('token'))
                 .field('commentID', commentID)
                 .field('authorNickname', nickname)
+                .field('memId', comment.MemID)
             upload.end((err, response) => {
                 if (err) {
                     console.log(err);
                 }
                 if (response.status === 200 && response.text !== "false") {
-                    let comment = this.state.comment;
+                    
                     comment.Like = true;
                     this.setState({
                         points: this.state.points+1,
@@ -81,10 +85,7 @@ var Comm = React.createClass({
     render : function () {
         if (this.state.comment) {
             let comment = this.state.comment;
-            let profile = JSON.parse(localStorage.getItem('profile'));
             var picture = comment.AuthorPhoto;
-            if (profile.user_metadata.picture)
-                var picture = hostName + "/resources/avatars/" + profile.user_metadata.picture
             return (
                 <div className="comment">
                     <div onMouseEnter={this.showDetails} onMouseLeave={this.hideDetails}>

@@ -6,24 +6,32 @@ import { hostName } from './App.js'
 var Activities = React.createClass({
   getInitialState: function() {
     return {
-      mems: null,
+      activities: null,
     }
   },
   componentDidMount: function() {
     var res = location.pathname.split("/"); 
     var client = new HttpClient(true);
-    this.serverRequest = client.get(hostName + '/profile/' + res[2], function(result) {
+    this.serverRequest = client.get(hostName + '/activities/' + res[2], function(result) {
       this.setState({
-        mems: result,
+        activities: result,
       });
     }.bind(this));
   },
   render: function() {
-    if (this.state.mems) {
+    if (this.state.activities) {
       return (
           <div className="row well well-sm">
             <div className="contentLeft col-md-12" id="contentLeft">
-              <Mems mems={this.state.mems}/>
+              {
+                JSON.parse(this.state.activities).map( function(activity, index) {
+                  return (
+                    <div>
+                      {activity.Description}
+                    </div>
+                  )
+                })
+              }
             </div>
           </div>
         );
