@@ -7,14 +7,17 @@ var Profile = React.createClass({
   getInitialState: function() {
     return {
       mems: null,
+      username: null,
     }
   },
   componentDidMount: function() {
     var res = location.pathname.split("/"); 
     var client = new HttpClient(true);
     this.serverRequest = client.get(hostName + '/profile/' + res[2], function(result) {
+      console.log(result);
       this.setState({
         mems: result,
+        username: res[2],
       });
     }.bind(this));
   },
@@ -27,8 +30,10 @@ var Profile = React.createClass({
             </div>
           </div>
         );
-      } else 
-        return ( <div>Loading mems...</div> );
+      } else if (this.state.username) {
+        return ( <div>User {this.state.username} have not upload any idea yet.</div> );
+      } else
+        return ( <div>Loading ...</div> );
   }
 });
 

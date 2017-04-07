@@ -1,5 +1,6 @@
 import React from 'react';
 import { browserHistory } from './App';
+
 var Categories = React.createClass({
   getInitialState: function() {
     return {
@@ -34,7 +35,7 @@ var Categories = React.createClass({
           <img alt="" src="/img/politicIcon.png" onClick={(event)=>this.selectCategory("politic")} className="iconLogo left"/>
           <img alt="" src="/img/mediaIcon.png" onClick={(event)=>this.selectCategory("music")} className="iconLogo left"/>
           <img alt="" src="/img/economyIcon.png" onClick={(event)=>this.selectCategory("economy")} className="iconLogo left"/>
-          <img alt="" src="/img/ownIcon.png" onClick={(event)=>this.selectCategory("own")} className="iconLogo left"/>
+          <img alt="" src="/img/anotherIcon.png" onClick={(event)=>this.selectCategory("another")} className="iconLogo left"/>
         </div>
       )
     } else {

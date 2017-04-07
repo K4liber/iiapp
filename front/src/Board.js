@@ -4,11 +4,13 @@ import { hostName } from './App.js';
 
 var Board = React.createClass({
   componentDidMount: function() {
-    let profile = JSON.parse(localStorage.getItem('profile'));
-    if (profile) {
-      this.setState({
-        profile: profile,
-      });
+    if(localStorage.getItem('profile')) {
+      let profile = JSON.parse(localStorage.getItem('profile'));
+      if (profile) {
+        this.setState({
+          profile: profile,
+        });
+      }
     }
   },
   showProfile: function() {
@@ -30,6 +32,9 @@ var Board = React.createClass({
     localStorage.removeItem('token');
     localStorage.removeItem('profile');
     window.location.replace('http://localhost:3000');
+  },
+  about: function() {
+    this.props.browserHistory.push('/about');
   },
   showLock : function() {
     this.props.lock.show();
@@ -56,6 +61,7 @@ var Board = React.createClass({
         <Categories/>
         <img alt="" onClick={this.showLock} src="/img/loginIcon2.png" className="iconLogo right"/>
         <img alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo right"/>
+        <img alt="" onClick={this.about} src="/img/infoIcon.png" className="iconLogo right"/>
       </div>
       );
     }

@@ -6,7 +6,7 @@ import { CLIENT_DOMAIN } from './App.js';
 import { hostName } from './App.js';
 import { API_TOKEN } from './App.js';
 
-var req = require("request");
+import { request as req } from 'request';
 
 var Settings = React.createClass({
   getInitialState: function() {

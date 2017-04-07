@@ -466,6 +466,15 @@ func getMem(id string, nickname string) Mem {
 		Views:          Views,
 		Like:           liked,
 	}
+
+	var views = mem.Views + 1
+	update, errUpdate := db.Exec("UPDATE mem SET views=" + strconv.Itoa(views) + " WHERE id=" +
+		strconv.Itoa(mem.ID))
+	if errUpdate != nil {
+		fmt.Println(errUpdate)
+		fmt.Println(update)
+	}
+
 	defer db.Close()
 	return mem
 }
@@ -598,9 +607,9 @@ func main() {
 	r.Handle("/addComment", c.Handler(AddCommentHandler))
 	r.Handle("/addMemPoint", c.Handler(AddMemPointHandler))
 	r.Handle("/deleteMemPoint", c.Handler(DeleteMemPointHandler))
+	r.Handle("/deleteMem", c.Handler(DeleteMemHandler))
 	r.Handle("/addCommentPoint", c.Handler(AddCommentPointHandler))
 	r.Handle("/deleteCommentPoint", c.Handler(DeleteCommentPointHandler))
-	r.Handle("/addView", c.Handler(AddViewHandler))
 	r.Handle("/deleteComment/{id}", c.Handler(DeleteCommentHandler))
 
 	fs := justFilesFilesystem{http.Dir("resources/")}
@@ -866,6 +875,65 @@ var AddCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.R
 		fmt.Println(errComment.Error())
 		fmt.Println(result)
 		success = false
+	}
+
+	//Wysylanie odpowiedzi
+	payload, _ := json.Marshal(success)
+	w.Write([]byte(payload))
+	defer db.Close()
+})
+
+var DeleteMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+	}
+
+	var success = true
+
+	//Form data
+	var memID = req.FormValue("memID")
+	var authorNickname = req.FormValue("authorNickname")
+	var nickname = req.FormValue("nickname")
+
+	//Check delete post aurhor
+	if authorNickname != nickname {
+		success = false
+		return
+	}
+
+	//Delete memPoints
+	_, resErr1 := db.Query("DELETE FROM memPoint WHERE memId=" + memID)
+	if resErr1 != nil {
+		fmt.Println(resErr1)
+		success = false
+		return
+	}
+
+	//Delete comments
+	_, resErr2 := db.Query("DELETE FROM comment WHERE memId=" + memID)
+	if resErr2 != nil {
+		fmt.Println(resErr2)
+		success = false
+		return
+	}
+
+	//Delete commentsPoints
+	_, resErr3 := db.Query("DELETE FROM commentPoint WHERE memId=" + memID)
+	if resErr3 != nil {
+		fmt.Println(resErr3)
+		success = false
+		return
+	}
+
+	//Delete mem
+	_, resErr4 := db.Query("DELETE FROM mem WHERE id=" + memID)
+	if resErr4 != nil {
+		fmt.Println(resErr4)
+		success = false
+		return
 	}
 
 	//Wysylanie odpowiedzi
@@ -1174,31 +1242,6 @@ var AddCommentPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *h
 		}
 	}
 
-	//Wysylanie odpowiedzi
-	payload, _ := json.Marshal(success)
-	w.Write([]byte(payload))
-	defer db.Close()
-})
-
-var AddViewHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	//DataBase connection
-	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
-	if err != nil {
-		fmt.Println(err.Error())
-		fmt.Println(db)
-	}
-
-	var success = true
-	var memID = req.FormValue("memID")
-	var mem = getMem(memID, req.Header.Get("nickname"))
-	var views = mem.Views + 1
-	//Update
-	update, errUpdate := db.Exec("UPDATE mem SET views=" + strconv.Itoa(views) + " WHERE id=" + memID)
-	if errUpdate != nil {
-		fmt.Println(errUpdate)
-		fmt.Println(update)
-		success = false
-	}
 	//Wysylanie odpowiedzi
 	payload, _ := json.Marshal(success)
 	w.Write([]byte(payload))

@@ -1,11 +1,8 @@
 import React from 'react';
-import Comments from './Comments';
 import Mem from './Mem';
 
-import { browserHistory } from './App.js';
 import { HttpClient } from './App.js';
 import { hostName } from './App.js';
-import { lock } from './App.js';
 
 var Activity = React.createClass({
   getInitialState: function() {
@@ -44,11 +41,13 @@ var Activity = React.createClass({
   },
   render: function() {
     let activity = this.state.activity;
+    var date = new Date(Date.parse(activity.DateTime));
+    var dateTime = date.toString();
     if (this.state.activity) {
       return (
         <div>
           <div>
-            {activity.Description} | {activity.DateTime}
+            {activity.Description} | {dateTime}
             {!this.state.showMem &&
               <img onClick={this.showMem} className="thumbImage" alt="" src="/img/arrowDown.png"/>
             }

@@ -1,5 +1,4 @@
 import React from 'react';
-import Mem from './Mem';
 
 import request from 'superagent';
 

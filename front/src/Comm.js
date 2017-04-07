@@ -4,8 +4,6 @@ import request from 'superagent';
 import { hostName } from './App.js';
 import { lock } from './App.js';
 import { browserHistory } from './App.js';
-import { API_TOKEN } from './App.js';
-import { CLIENT_DOMAIN } from './App.js';
 import { HttpClient } from './App.js';
 
 var Comm = React.createClass({

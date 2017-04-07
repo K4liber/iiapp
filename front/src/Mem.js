@@ -1,11 +1,20 @@
 import React from 'react';
 import Comments from './Comments';
 
-import request from 'superagent';
-
 import { browserHistory } from './App.js';
 import { hostName } from './App.js';
 import { lock } from './App.js';
+
+import request from 'superagent';
+import { FacebookButton, FacebookCount } from "react-social";
+
+import {
+  ShareButtons,
+  ShareCounts,
+  generateShareIcon
+} from 'react-share';
+
+const FacebookIcon = generateShareIcon('facebook');
 
 var Mem = React.createClass({
   getInitialState: function() {
@@ -13,6 +22,7 @@ var Mem = React.createClass({
       mem: null,
       points: null,
       views: null,
+      showComments: false,
     }
   },
   componentWillMount: function() {
@@ -30,24 +40,18 @@ var Mem = React.createClass({
       });
   },
   goToIdea: function() {
-        browserHistory.replace('/idea/' + this.state.mem.ID);
-    },
-  showComments: function(id) {
-    document.getElementById(id).style.display = "inline";
-    let upload = request.post(hostName + "/addView")
-      .field('memID', id)
-    upload.end((err, response) => {
-      if (err) {
-        console.error(err);
-      }
-      if (response.status === 200)
-        this.setState({
-          views: this.state.views+1,
-        });
+    browserHistory.replace('/idea/' + this.state.mem.ID);
+  },
+  showComments: function() {
+    this.setState({
+      views: this.state.views+1,
+      showComments: true,
     });
   },
   closeComments : function(id) {
-    document.getElementById(id).style.display = "none";
+    this.setState({
+      showComments: false,
+    });
   },
   doLike : function() {
     if (localStorage.getItem('profile')) {
@@ -97,36 +101,78 @@ var Mem = React.createClass({
       lock.show();
     }
   },
+  deleteMem: function() {
+    if (confirm("You really want to delete this idea and all comments and points belong?")) {
+      let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
+      let upload = request.post(hostName + "/deleteMem")
+          .field('Bearer ', localStorage.getItem('token'))
+          .field('memID', this.props.mem.ID)
+          .field('authorNickname', this.props.mem.AuthorNickname)
+          .field('nickname', nickname)
+        upload.end((err, response) => {
+          if (err) {
+            console.log(err);
+          }
+          if (response.status === 200 && response.text !== "false"){
+            this.setState({
+              mem: null,
+            });
+          }
+        });
+    }
+  },
   render: function() {
     if (this.state.mem) {
       let mem = this.state.mem;
+      let url = "90minut.pl";
+      let shareUrl = hostName + "/mem/" + mem.ID;
+      var isMain = false;
+      if (localStorage.getItem('profile'))
+          isMain = mem.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
       return (
         <div className="mem relative" >
-          <div id={mem.ID} className="contentLeft col-md-12 comments" >
-            <Comments memId={mem.ID} />
-            <img onClick={() => this.closeComments(mem.ID)} alt="" src="/img/xIcon.png" className="cancelUpload" />
-          </div>           
+          {this.state.showComments &&
+            <div className="contentLeft col-md-12 comments" >
+              <Comments memId={mem.ID} />
+              <img onClick={this.closeComments} alt="" src="/img/xIcon.png" className="cancelUpload" />
+            </div>  
+          }         
           <img className="memImage pointer" alt="ASAS" src={hostName + "/resources/mems/" + mem.ID +mem.ImgExt}
-            onClick={() => this.showComments(mem.ID)}/>
+            onClick={this.showComments}/>
           <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
+          {isMain &&
+            <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.deleteMem}/>
+          }
           <div className="commentSignature" onClick={this.goToIdea}>
             {mem.Signature}
           </div>
-          <p>
-            {mem.AuthorNickname} | {mem.DateTime} | Views: {this.state.views}  | Points: {this.state.points} 
+          <div>
+            {mem.AuthorNickname} | {mem.DateTime} |
+            Views: {this.state.views}  | Points: {this.state.points} 
+            
             {!this.state.mem.Like && 
               <img onClick={this.doLike} className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
             }
             {this.state.mem.Like && 
               <img onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
             }
-          </p>
+          </div>
+          <div>
+            Share: 
+            <FacebookButton url={shareUrl}>
+              {
+                <div>
+                  <FacebookIcon size={20} round={false} /> 
+                </div>
+              }
+            </FacebookButton>
+          </div>
         </div>
       );
     } else {
       return ( 
         <div>
-          <p>Loading mems...</p>
+         
         </div>
       );
     }

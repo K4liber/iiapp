@@ -261,7 +261,6 @@ textarea#commentArea {
 }
 
 .comments {
-	display: none;
 	position: absolute !important;
 	background-color: rgba(200,200,200, 0.9);
 	left:0;

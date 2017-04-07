@@ -32,7 +32,7 @@ var MemDropzone = React.createClass({
                         <img alt="" id="politic" onClick={(event)=>this.loadCategoryIcon("politic")} src="/img/politicIcon.png" className="uploadLogo"/>
                         <img alt="" id="music" onClick={(event)=>this.loadCategoryIcon("music")} src="/img/musicIcon.png" className="uploadLogo"/>
                         <img alt="" id="economy" onClick={(event)=>this.loadCategoryIcon("economy")} src="/img/economyIcon.png" className="uploadLogo"/>
-                        <img alt="" id="own" onClick={(event)=>this.loadCategoryIcon("own")} src="/img/ownIcon.png" className="uploadLogo"/>
+                        <img alt="" id="another" onClick={(event)=>this.loadCategoryIcon("another")} src="/img/anotherIcon.png" className="uploadLogo"/>
                     </div>
                 </div>
             )

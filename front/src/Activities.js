@@ -1,5 +1,4 @@
 import React from 'react';
-import Mems from './Mems';
 import Activity from './Activity';
 
 import { HttpClient } from './App.js';
@@ -35,8 +34,9 @@ var Activities = React.createClass({
             <div className="contentLeft col-md-12" id="contentLeft">
               {
                 this.state.activities.map( function(activity, index) {
+                  let key= "activity" + index;
                   return (
-                    <Activity activity={activity}/>
+                    <Activity key={key} activity={activity}/>
                   )
                 })
               }
