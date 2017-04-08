@@ -18,6 +18,7 @@ import { request } from 'request';
 export const hostName = "http://localhost:8080";
 export var browserHistory = createBrowserHistory();
 export var lock;
+export var AppID = 1891449367779446;
 export var CLIENT_ID = "ANOkwl33Ja5JX2ctrzF6FSXwhDbgiGU6";
 export var CLIENT_DOMAIN = "k4liber.eu.auth0.com";
 export var CLIENT_SECRET = "6I_oCVGgrCJ4bQz1AhoUuixbbIOL4BRSXmOyAackQAP37sMsyOfXig5AjG9jzkhQ";

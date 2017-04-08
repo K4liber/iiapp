@@ -4,6 +4,7 @@ import Comments from './Comments';
 import { browserHistory } from './App.js';
 import { hostName } from './App.js';
 import { lock } from './App.js';
+import { AppID } from './App.js';
 
 import request from 'superagent';
 import { FacebookButton, FacebookCount } from "react-social";
@@ -124,9 +125,10 @@ var Mem = React.createClass({
   render: function() {
     if (this.state.mem) {
       let mem = this.state.mem;
-      let url = "90minut.pl";
-      let shareUrl = hostName + "/mem/" + mem.ID;
+      //let shareUrl = hostName + "/mem/" + mem.ID;
+      let shareUrl = "90minut.pl";
       var isMain = false;
+      let memImage = hostName + "/resources/mems/" + mem.ID +mem.ImgExt;
       if (localStorage.getItem('profile'))
           isMain = mem.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
       return (
@@ -137,7 +139,7 @@ var Mem = React.createClass({
               <img onClick={this.closeComments} alt="" src="/img/xIcon.png" className="cancelUpload" />
             </div>  
           }         
-          <img className="memImage pointer" alt="ASAS" src={hostName + "/resources/mems/" + mem.ID +mem.ImgExt}
+          <img className="memImage pointer" alt="ASAS" src={memImage}
             onClick={this.showComments}/>
           <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
           {isMain &&
@@ -147,23 +149,21 @@ var Mem = React.createClass({
             {mem.Signature}
           </div>
           <div>
-            {mem.AuthorNickname} | {mem.DateTime} |
+            {mem.AuthorNickname} | {mem.DateTime} |  
+          </div>
+          <div>
             Views: {this.state.views}  | Points: {this.state.points} 
-            
             {!this.state.mem.Like && 
               <img onClick={this.doLike} className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
             }
             {this.state.mem.Like && 
               <img onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
-            }
-          </div>
-          <div>
-            Share: 
-            <FacebookButton url={shareUrl}>
+            }| Shares: <FacebookCount/>
+            <FacebookButton url={shareUrl} appId={AppID} message={mem.Signature} media={"http://img.90minut.pl/img/reklama90/logo_zlote.gif"}>
               {
-                <div>
-                  <FacebookIcon size={20} round={false} /> 
-                </div>
+              <div>
+                <FacebookIcon size={20} round={false} /> 
+              </div>
               }
             </FacebookButton>
           </div>
