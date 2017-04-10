@@ -56,7 +56,6 @@ var Comments = React.createClass({
                         console.error(err);
                     }
                     if (response.status === 200)
-                        alert("Your comment has been added!");
                         this.componentDidMount();
                         document.getElementById("commentArea" + id).value = "";
                 });

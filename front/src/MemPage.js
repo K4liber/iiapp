@@ -30,7 +30,8 @@ var MemPage = React.createClass({
   componentDidMount: function() {
     var res = location.pathname.split("/"); 
     var client = new HttpClient(true);
-    this.serverRequest = client.get(hostName + '/mem/' + res[2], function(result) {
+    var url = hostName + '/mem/' + res[2]
+    this.serverRequest = client.get(url, function(result) {
       let mem = JSON.parse(result).Mem;
       this.setState({
         mem: mem,

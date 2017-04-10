@@ -103,7 +103,7 @@ var Comm = React.createClass({
             if (localStorage.getItem('profile'))
                 isMain = comment.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
             return (
-                <div className="comment relative">
+                <div className="center relative">
                     <div onMouseEnter={this.showDetails} onMouseLeave={this.hideDetails}>
                         <img alt="" onClick={() => this.showProfile(comment.AuthorNickname)} src={picture} className="commentPhoto"/>
                         {comment.Content}

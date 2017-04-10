@@ -8,6 +8,25 @@ import { AppID } from './App.js';
 
 import request from 'superagent';
 import { FacebookButton, FacebookCount } from "react-social";
+import Modal from 'react-modal';
+
+const modalStyle = {
+  content : {
+    top                   : '50%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)'
+  }
+};
+
+const commentsStyle = {
+  content : {
+    overlfow: 'scroll',
+    maxwidth: '600px',
+  }
+};
 
 import {
   ShareButtons,
@@ -25,6 +44,15 @@ var Mem = React.createClass({
       views: null,
       showComments: false,
     }
+  },
+  openModal: function () {
+    this.setState({modalIsOpen: true});
+  },
+  afterOpenModal: function () {
+    //
+  },
+  closeModal: function () {
+    this.setState({modalIsOpen: false});
   },
   componentWillMount: function() {
       this.setState({
@@ -49,7 +77,7 @@ var Mem = React.createClass({
       showComments: true,
     });
   },
-  closeComments : function(id) {
+  closeComments : function() {
     this.setState({
       showComments: false,
     });
@@ -103,24 +131,22 @@ var Mem = React.createClass({
     }
   },
   deleteMem: function() {
-    if (confirm("You really want to delete this idea and all comments and points belong?")) {
-      let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
-      let upload = request.post(hostName + "/deleteMem")
-          .field('Bearer ', localStorage.getItem('token'))
-          .field('memID', this.props.mem.ID)
-          .field('authorNickname', this.props.mem.AuthorNickname)
-          .field('nickname', nickname)
-        upload.end((err, response) => {
-          if (err) {
-            console.log(err);
-          }
-          if (response.status === 200 && response.text !== "false"){
-            this.setState({
-              mem: null,
-            });
-          }
-        });
-    }
+    let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
+    let upload = request.post(hostName + "/deleteMem")
+        .field('Bearer ', localStorage.getItem('token'))
+        .field('memID', this.props.mem.ID)
+        .field('authorNickname', this.props.mem.AuthorNickname)
+        .field('nickname', nickname)
+      upload.end((err, response) => {
+        if (err) {
+          console.log(err);
+        }
+        if (response.status === 200 && response.text !== "false"){
+          this.setState({
+            mem: null,
+          });
+        }
+      });
   },
   render: function() {
     if (this.state.mem) {
@@ -133,17 +159,35 @@ var Mem = React.createClass({
           isMain = mem.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
       return (
         <div className="mem relative" >
-          {this.state.showComments &&
-            <div className="contentLeft col-md-12 comments" >
-              <Comments memId={mem.ID} />
-              <img onClick={this.closeComments} alt="" src="/img/xIcon.png" className="cancelUpload" />
-            </div>  
-          }         
+          <Modal
+              isOpen={this.state.modalIsOpen}
+              onAfterOpen={this.afterOpenModal}
+              onRequestClose={this.closeComments}
+              style={modalStyle}
+              contentLabel="Example Modal"
+            >
+            You really want to delete this idea and all comments and points belong?
+            <p>
+              <button onClick={this.deleteMem} className="btn btn-primary">Yes</button>
+              <button onClick={this.closeModal} className="rtn rtn-primary">Cancel</button>
+            </p>
+          </Modal>
+          <Modal
+              isOpen={this.state.showComments}
+              onAfterOpen={this.afterOpenModal}
+              onRequestClose={this.closeComments}
+              style={commentsStyle}
+              contentLabel="Example Modal"
+            >
+                <Comments memId={mem.ID} className="comments"/>
+                <img onClick={this.closeComments} alt="" src="/img/xIcon.png" className="cancelUpload" />
+          </Modal>
+          
           <img className="memImage pointer" alt="ASAS" src={memImage}
             onClick={this.showComments}/>
           <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
           {isMain &&
-            <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.deleteMem}/>
+            <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.openModal}/>
           }
           <div className="commentSignature" onClick={this.goToIdea}>
             {mem.Signature}
@@ -172,7 +216,7 @@ var Mem = React.createClass({
     } else {
       return ( 
         <div>
-         
+          trlalal
         </div>
       );
     }

@@ -11,7 +11,7 @@ var Upload = React.createClass({
             fileUrl : null,
             title : null,
             comment : "null",
-            category : "own",
+            category : "another",
         };
     },
     loadTitle : function() {
@@ -58,8 +58,10 @@ var Upload = React.createClass({
         let UPLOAD_URL = hostName + "/addMem";
         console.log(this.state.category);
         var res = this.state.uploadedFile.type.split("/"); 
-        if (res[0] !== "image")
+        if (res[0] !== "image") {
             alert("Wrong image format!");
+            return
+        }
         let upload = request.post(UPLOAD_URL)
                         .field('Bearer ', localStorage.getItem('token'))
                         .field('file', this.state.uploadedFile)
