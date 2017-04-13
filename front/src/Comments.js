@@ -84,7 +84,7 @@ var Comments = React.createClass({
                         })
                     }
                     <div>
-                        <textarea maxLength="255" id={commentAreaID} onChange={this.loadDescription} placeholder="Comment ..."></textarea> 
+                        <textarea maxLength="1000" id={commentAreaID} onChange={this.loadDescription} placeholder="Comment ..."></textarea> 
                     </div>
                     <p>
                         <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Comment</button>

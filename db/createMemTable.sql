@@ -1,0 +1,10 @@
+CREATE TABLE mem (
+id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+signature VARCHAR(100) NOT NULL,
+imgExt VARCHAR(10) NOT NULL,
+dateTime VARCHAR(50),
+authorNickname VARCHAR(50),
+category VARCHAR(50),
+points INT(6),
+views INT(6)
+) 

@@ -1,0 +1,7 @@
+CREATE TABLE commentPoint (
+id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+commentId INT(6) NOT NULL,
+authorNickname VARCHAR(50) NOT NULL,
+dateTime VARCHAR(50) NOT NULL,
+memId INT(6) NOT NULL
+) 

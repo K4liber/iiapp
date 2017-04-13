@@ -30,9 +30,9 @@ var Categories = React.createClass({
     if(this.state.show) {
       return (
         <div>
-          <img alt="" src="/img/arrowLeft.png" onMouseEnter={this.openModal} onClick={this.hideCategories} className="iconLogo left"/>
+          <img data-tip="hide categories" alt="" src="/img/arrowLeft.png" onClick={this.hideCategories} className="iconLogo left"/>
           <img data-tip="home" alt="" src="/img/homeIcon.png" onClick={this.goHome} className="iconLogo left"/>
-          <img data-tip="sport" alt="" src="/img/sportIcon.png" onClick={(event)=>this.selectCategory("sport")} className="iconLogo left"/>
+          <img data-tip="entertainment" alt="" src="/img/sportIcon.png" onClick={(event)=>this.selectCategory("sport")} className="iconLogo left"/>
           <img data-tip="science" alt="" src="/img/scienceIcon.png" onClick={(event)=>this.selectCategory("science")} className="iconLogo left"/>
           <img data-tip="people" alt="" src="/img/peopleIcon.png" onClick={(event)=>this.selectCategory("people")} className="iconLogo left"/>
           <img data-tip="politic" alt="" src="/img/politicIcon.png" onClick={(event)=>this.selectCategory("politic")} className="iconLogo left"/>
@@ -46,7 +46,7 @@ var Categories = React.createClass({
       return (
         <div>
           <img data-tip="home" alt="" src="/img/homeIcon.png" onClick={this.goHome} className="iconLogo left"/>
-          <img alt="" src="/img/arrowRight.png" onClick={this.showCategories} className="iconLogo left"/>
+          <img data-tip="show categories" alt="" src="/img/arrowRight.png" onClick={this.showCategories} className="iconLogo left"/>
           <ReactTooltip />
         </div>
       )

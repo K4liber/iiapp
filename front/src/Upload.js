@@ -53,8 +53,11 @@ var Upload = React.createClass({
             alert("Nie dodales tytulu!");
             return
         }
-        let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
-        let profilePicture = JSON.parse(localStorage.getItem('profile')).picture;
+        let profile = JSON.parse(localStorage.getItem('profile'));
+        let nickname = profile.nickname;
+        var profilePicture = profile.picture;
+                if (profile.user_metadata && profile.user_metadata.picture)
+                    profilePicture = hostName + "/resources/avatars/" + profile.user_metadata.picture;
         let UPLOAD_URL = hostName + "/addMem";
         console.log(this.state.category);
         var res = this.state.uploadedFile.type.split("/"); 
@@ -90,10 +93,10 @@ var Upload = React.createClass({
                             fileUrl={this.state.fileUrl} />
                         </div>
                         <div>
-                            <textarea id="titleArea" onChange={this.loadTitle} placeholder="Signature ..."></textarea> 
+                            <textarea maxLength="100" id="titleArea" onChange={this.loadTitle} placeholder="Signature ..."></textarea> 
                         </div>
                         <div>
-                            <textarea id="commentArea" onChange={this.loadComment} placeholder="Comment (you can optionaly add first comment) ..."></textarea> 
+                            <textarea maxLength="1000" id="commentArea" onChange={this.loadComment} placeholder="Comment (you can optionaly add first comment) ..."></textarea> 
                         </div>
                         <p>
                             <button onClick={this.postMem} className="btn btn-primary">Send</button>
