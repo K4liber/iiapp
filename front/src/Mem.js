@@ -17,7 +17,8 @@ const modalStyle = {
     right                 : 'auto',
     bottom                : 'auto',
     marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
+    transform             : 'translate(-50%, -50%)',
+    
   }
 };
 
@@ -25,8 +26,9 @@ const commentsStyle = {
   content : {
     overlfow: 'scroll',
     width: 'auto',
-    margin: '0',
-    padding: '0',
+    margin: '0 0 0 0',
+    padding: '0 0 0 0',
+    backgroundColor : 'rgba(248,248,248, 0.9)',
   }
 };
 
@@ -179,7 +181,7 @@ var Mem = React.createClass({
               onAfterOpen={this.afterOpenModal}
               onRequestClose={this.closeComments}
               style={commentsStyle}
-              contentLabel="Example Modal"
+              transparent={true}
             >
                 <Comments memId={mem.ID} className="comments"/>
                 <img onClick={this.closeComments} alt="" src="/img/xIcon.png" className="cancelUpload" />

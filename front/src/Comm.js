@@ -98,26 +98,30 @@ var Comm = React.createClass({
             let comment = this.state.comment;
             var picture = comment.AuthorPhoto;
             var isMain = false;
+            var date = new Date(Date.parse(comment.DateTime));
+            var dateTime = date.toString();
             if (localStorage.getItem('profile'))
                 isMain = comment.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
             return (
                 <div className="center relative">
                     <div onMouseEnter={this.showDetails} onMouseLeave={this.hideDetails}>
-                        <img alt="" onClick={() => this.showProfile(comment.AuthorNickname)} src={picture} className="commentPhoto"/>
-                        {comment.Content}
-                        {isMain &&
-                            <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.deleteComment}/>
-                        }
                         <div>
-                        {comment.AuthorNickname} | {comment.DateTime} | Points: {this.state.comment.Points} 
-                        {!this.state.comment.Like && 
-                            <img onClick={this.doLike}
-                                className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
-                        }
-                        {this.state.comment.Like && 
-                            <img onClick={this.doUnLike}
-                                className="thumbImage" alt="ASAS" src="/img/thumbDownIcon.png"/>
-                        }
+                            <img alt="" onClick={() => this.showProfile(comment.AuthorNickname)} src={picture} className="commentPhoto"/>
+                            {comment.AuthorNickname} | {dateTime} | Points: {this.state.comment.Points}
+                            {!this.state.comment.Like && 
+                                <img onClick={this.doLike}
+                                    className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
+                            }
+                            {this.state.comment.Like && 
+                                <img onClick={this.doUnLike}
+                                    className="thumbImage" alt="ASAS" src="/img/thumbDownIcon.png"/>
+                            }
+                            {isMain &&
+                                <img alt="" src="/img/xIcon.png" className="deleteComment right" onClick={this.deleteComment}/>
+                            }
+                        </div>
+                        <div className="comment">
+                            {comment.Content}
                         </div>
                     </div>
                 </div>

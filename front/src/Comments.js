@@ -103,7 +103,7 @@ var Comments = React.createClass({
             let commentAreaID = "commentArea" + this.state.mem.ID;
             let self = this;
             return (
-                <div>
+                <div className="comments center">
                     <div className="commentSignature" onClick={this.goToIdea}>
                         #{this.state.mem.Signature}
                     </div>
@@ -116,10 +116,10 @@ var Comments = React.createClass({
                         })
                     }
                     <div>
-                        <textarea maxLength="1000" id={commentAreaID} onChange={this.loadDescription} placeholder="Comment ..."></textarea> 
+                        <textarea className="commentTextarea" maxLength="1000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ..."></textarea> 
                     </div>
                     <p>
-                        <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Comment</button>
+                        <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Send</button>
                     </p>
                 </div>
             )
@@ -127,14 +127,14 @@ var Comments = React.createClass({
             let commentAreaID = "commentArea" + this.state.mem.ID;
             return (
                 <div>
-                    <div className="commentSignature">
+                    <div className="commentSignature" onClick={this.goToIdea}>
                         #{this.state.mem.Signature}
                     </div>
                     <div>
-                        <textarea id={commentAreaID} onChange={this.loadDescription} placeholder="Comment ..."></textarea> 
+                        <textarea className="commentTextarea" maxLength="1000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ..."></textarea> 
                     </div>
                     <p>
-                        <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Comment</button>
+                        <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Send</button>
                     </p>
                 </div>
             )
