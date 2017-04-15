@@ -24,7 +24,9 @@ const modalStyle = {
 const commentsStyle = {
   content : {
     overlfow: 'scroll',
-    maxwidth: '600px',
+    width: 'auto',
+    margin: '0',
+    padding: '0',
   }
 };
 

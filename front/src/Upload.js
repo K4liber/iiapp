@@ -56,8 +56,8 @@ var Upload = React.createClass({
         let profile = JSON.parse(localStorage.getItem('profile'));
         let nickname = profile.nickname;
         var profilePicture = profile.picture;
-                if (profile.user_metadata && profile.user_metadata.picture)
-                    profilePicture = hostName + "/resources/avatars/" + profile.user_metadata.picture;
+        if (profile.user_metadata && profile.user_metadata.picture)
+            profilePicture = hostName + "/resources/avatars/" + profile.user_metadata.picture;
         let UPLOAD_URL = hostName + "/addMem";
         console.log(this.state.category);
         var res = this.state.uploadedFile.type.split("/"); 

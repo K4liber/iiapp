@@ -37,6 +37,19 @@ var Comments = React.createClass({
     goToIdea: function() {
         browserHistory.replace('/idea/' + this.props.memId);
     },
+    updateComment: function(comment) {
+        let comments = this.state.comments;
+         for (var i in comments) {
+            if (comments[i].ID === comment.ID) {
+                comments[i] = comment;
+                break; //Stop this loop, we found it!
+            }
+        }
+        this.setState({
+            comments: comments,
+        });
+        this.forceUpdate();
+    },
     sendComment : function(id) {
         var comment = document.getElementById("commentArea" + id).value;
         if (comment !== "") {
@@ -55,9 +68,14 @@ var Comments = React.createClass({
                     if (err) {
                         console.error(err);
                     }
-                    if (response.status === 200)
-                        this.componentDidMount();
+                    if (response.status === 200) {
+                        let actualComments = this.state.comments;
+                        actualComments.push(JSON.parse(response.text));
+                        this.setState({
+                            comments: actualComments
+                        })
                         document.getElementById("commentArea" + id).value = "";
+                    }
                 });
                 
             } else {
@@ -67,9 +85,23 @@ var Comments = React.createClass({
             alert("Your comment cannot be empty.");
         }
     },
+    deleteComment : function(ID) {
+        let comments = this.state.comments;
+         for (var i in comments) {
+            if (comments[i].ID === ID) {
+                comments.splice(i, 1)
+                break; //Stop this loop, we found it!
+            }
+        }
+        this.setState({
+            comments: comments,
+        });
+        this.forceUpdate();
+    },
     render : function () {
         if (this.state.comments) {
             let commentAreaID = "commentArea" + this.state.mem.ID;
+            let self = this;
             return (
                 <div>
                     <div className="commentSignature" onClick={this.goToIdea}>
@@ -79,7 +111,7 @@ var Comments = React.createClass({
                         (this.state.comments).map( function(comment, index) { 
                             let key = "comment" + comment.ID;
                             return (
-                                <Comm key={key} comment={comment} index={index}/>
+                                <Comm key={key} comment={comment} index={index} update={self.updateComment} delete={self.deleteComment}/>
                             )
                         })
                     }

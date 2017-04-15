@@ -10,20 +10,20 @@ var Comm = React.createClass({
     getInitialState: function() {
         return {
             comment: null,
-            points: null,
         }
     },
     componentDidMount: function() {
         this.setState({
             comment: this.props.comment,
-            points: this.props.comment.Points,
         });  
     },
     componentWillReceiveProps : function(newProps) {
         this.setState({
             comment: this.props.comment,
-            points: this.props.comment.Points,
         });  
+    },
+    updateComment: function(comment) {
+        this.props.update(comment);
     },
     doLike : function() {
         if (localStorage.getItem('profile')) {
@@ -39,13 +39,11 @@ var Comm = React.createClass({
                 if (err) {
                     console.log(err);
                 }
-                if (response.status === 200 && response.text !== "false") {
-                    
-                    comment.Like = true;
+                if (response.status === 200 && response.text != '') {
                     this.setState({
-                        points: this.state.points+1,
-                        comment: comment,
+                        comment: JSON.parse(response.text),
                     });
+                    this.updateComment(JSON.parse(response.text));
                 }
             });
         } else {
@@ -65,13 +63,12 @@ var Comm = React.createClass({
                 if (err) {
                     console.log(err);
                 }
-                if (response.status === 200 && response.text !== "false") {
-                    let comment = this.state.comment;
-                    comment.Like = false;
+                if (response.status === 200 && response.text != '') {
                     this.setState({
-                        points: this.state.points-1,
-                        comment: comment,
+                        comment: JSON.parse(response.text),
                     });
+                    let comm = JSON.parse(response.text);
+                    this.updateComment(comm);
                 }
             });
         } else {
@@ -88,12 +85,13 @@ var Comm = React.createClass({
             let url = hostName + "/deleteComment/" + this.state.comment.ID;
             this.serverRequest = client.get(url, function(result) {
                 if(result) {
-                    self.setState({
-                        comment: null,
-                    });
+                    self.deleteFromComments(self.state.comment.ID)
                 }
             });
         }
+    },
+    deleteFromComments: function(ID) {
+        this.props.delete(ID);
     },
     render : function () {
         if (this.state.comment) {
@@ -111,7 +109,7 @@ var Comm = React.createClass({
                             <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.deleteComment}/>
                         }
                         <div>
-                        {comment.AuthorNickname} | {comment.DateTime} | Points: {this.state.points} 
+                        {comment.AuthorNickname} | {comment.DateTime} | Points: {this.state.comment.Points} 
                         {!this.state.comment.Like && 
                             <img onClick={this.doLike}
                                 className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>

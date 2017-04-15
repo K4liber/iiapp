@@ -869,16 +869,46 @@ var AddCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.R
 		"INSERT INTO comment (memId, authorNickname, authorPhoto, content, dateTime) VALUES ('" +
 			memID + "', '" + nickname + "', '" + profilePicture + "', '" + comment + "', '" + datetime + "')",
 	)
-	var success = true
-
 	if errComment != nil {
 		fmt.Println(errComment.Error())
 		fmt.Println(result)
-		success = false
+	}
+
+	//Select
+	sel, errSelect := db.Query(
+		"SELECT * FROM comment WHERE authorNickname='" + nickname + "' AND dateTime='" + datetime + "'",
+	)
+	if errSelect != nil {
+		fmt.Println(errSelect.Error())
+		fmt.Println(sel)
+	}
+
+	var ID int
+	var MemID int
+	var AuthorNickname string
+	var AuthorPhoto string
+	var Content string
+	var DateTime string
+	var Points int
+	var Like = false
+
+	for sel.Next() {
+		errSelect = sel.Scan(&ID, &MemID, &AuthorNickname, &AuthorPhoto, &Content, &DateTime, &Points)
+	}
+
+	commentObj := Comment{
+		ID:             ID,
+		MemID:          MemID,
+		AuthorNickname: AuthorNickname,
+		AuthorPhoto:    AuthorPhoto,
+		Content:        Content,
+		DateTime:       DateTime,
+		Points:         Points,
+		Like:           Like,
 	}
 
 	//Wysylanie odpowiedzi
-	payload, _ := json.Marshal(success)
+	payload, _ := json.Marshal(commentObj)
 	w.Write([]byte(payload))
 	defer db.Close()
 })
@@ -1120,8 +1150,6 @@ var DeleteCommentPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req
 		fmt.Println(db)
 	}
 
-	var success = true
-
 	//Usuwanie pointa
 	var commentID = req.FormValue("commentID")
 	var authorNickname = req.FormValue("authorNickname")
@@ -1147,6 +1175,11 @@ var DeleteCommentPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req
 			"DELETE FROM commentPoint WHERE commentId=" +
 				commentID + " AND authorNickname='" + authorNickname + "'",
 		)
+		if errComment != nil {
+			fmt.Println(errComment.Error())
+			fmt.Println(result)
+			return
+		}
 		//Count points
 		count, errCount := db.Query("SELECT * FROM commentPoint WHERE commentId=" + commentID)
 		var points = 0
@@ -1162,20 +1195,47 @@ var DeleteCommentPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req
 		if errUpdate != nil {
 			fmt.Println(errUpdate)
 			fmt.Println(update)
+			return
 		}
 
-		if errComment != nil {
-			fmt.Println(errComment.Error())
-			fmt.Println(result)
-			success = false
+		//Select
+		sel, errSelect := db.Query("SELECT * FROM comment WHERE id=" + commentID)
+		if errSelect != nil {
+			fmt.Println(errSelect)
+			fmt.Println(sel)
+			return
 		}
-	} else {
-		success = false
+
+		var ID int
+		var MemID int
+		var AuthorNickname string
+		var AuthorPhoto string
+		var Content string
+		var DateTime string
+		var Points int
+		var Like = false
+
+		for sel.Next() {
+			errSelect = sel.Scan(&ID, &MemID, &AuthorNickname, &AuthorPhoto, &Content, &DateTime, &Points)
+		}
+
+		comment := Comment{
+			ID:             ID,
+			MemID:          MemID,
+			AuthorNickname: AuthorNickname,
+			AuthorPhoto:    AuthorPhoto,
+			Content:        Content,
+			DateTime:       DateTime,
+			Points:         Points,
+			Like:           Like,
+		}
+
+		//Wysylanie odpowiedzi
+		payload, _ := json.Marshal(comment)
+		w.Write([]byte(payload))
+
 	}
 
-	//Wysylanie odpowiedzi
-	payload, _ := json.Marshal(success)
-	w.Write([]byte(payload))
 	defer db.Close()
 })
 
@@ -1186,8 +1246,6 @@ var AddCommentPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *h
 		fmt.Println(err.Error())
 		fmt.Println(db)
 	}
-
-	var success = true
 
 	//Dodawanie pointa
 	dateTime := time.Now().Format(time.RFC3339)
@@ -1211,13 +1269,17 @@ var AddCommentPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *h
 		resErr = res.Scan(&IDFromDb, &commentIDFromDb, &authorNicknameFromDb, &dateTimeFromDb, &MemIDFromDb)
 	}
 
-	if IDFromDb != 0 {
-		success = false
-	} else {
+	if !(IDFromDb != 0) {
 		result, errComment := db.Exec(
 			"INSERT INTO commentPoint (commentId, authorNickname, dateTime, memId) VALUES ('" +
 				commentID + "', '" + authorNickname + "', '" + dateTime + "', '" + memID + "')",
 		)
+
+		if errComment != nil {
+			fmt.Println(errComment.Error())
+			fmt.Println(result)
+			return
+		}
 		//Count points
 		count, errCount := db.Query("SELECT * FROM commentPoint WHERE commentId=" + commentID)
 		var points = 0
@@ -1233,17 +1295,45 @@ var AddCommentPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *h
 		if errUpdate != nil {
 			fmt.Println(errUpdate)
 			fmt.Println(update)
+			return
 		}
 
-		if errComment != nil {
-			fmt.Println(errComment.Error())
-			fmt.Println(result)
-			success = false
+		//Select
+		sel, errSelect := db.Query("SELECT * FROM comment WHERE id=" + commentID)
+		if errSelect != nil {
+			fmt.Println(errSelect)
+			fmt.Println(sel)
+			return
 		}
+
+		var ID int
+		var MemID int
+		var AuthorNickname string
+		var AuthorPhoto string
+		var Content string
+		var DateTime string
+		var Points int
+		var Like = true
+
+		for sel.Next() {
+			errSelect = sel.Scan(&ID, &MemID, &AuthorNickname, &AuthorPhoto, &Content, &DateTime, &Points)
+		}
+
+		comment := Comment{
+			ID:             ID,
+			MemID:          MemID,
+			AuthorNickname: AuthorNickname,
+			AuthorPhoto:    AuthorPhoto,
+			Content:        Content,
+			DateTime:       DateTime,
+			Points:         Points,
+			Like:           Like,
+		}
+
+		//Wysylanie odpowiedzi
+		payload, _ := json.Marshal(comment)
+		w.Write([]byte(payload))
 	}
 
-	//Wysylanie odpowiedzi
-	payload, _ := json.Marshal(success)
-	w.Write([]byte(payload))
 	defer db.Close()
 })
