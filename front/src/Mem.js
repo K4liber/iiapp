@@ -183,6 +183,9 @@ var Mem = React.createClass({
               style={commentsStyle}
               transparent={true}
             >
+                <div className="commentSignature" onClick={this.goToIdea}>
+                    #{mem.Signature}
+                </div>
                 <Comments memId={mem.ID} className="comments"/>
                 <img onClick={this.closeComments} alt="" src="/img/xIcon.png" className="cancelUpload" />
           </Modal>
@@ -195,9 +198,6 @@ var Mem = React.createClass({
           }
           <div className="commentSignature" onClick={this.goToIdea}>
             {mem.Signature}
-          </div>
-          <div>
-            {mem.AuthorNickname} | {mem.DateTime} |  
           </div>
           <div>
             Views: {this.state.views}  | Points: {this.state.points} 

@@ -104,9 +104,6 @@ var Comments = React.createClass({
             let self = this;
             return (
                 <div className="comments center">
-                    <div className="commentSignature" onClick={this.goToIdea}>
-                        #{this.state.mem.Signature}
-                    </div>
                     {
                         (this.state.comments).map( function(comment, index) { 
                             let key = "comment" + comment.ID;
@@ -127,9 +124,6 @@ var Comments = React.createClass({
             let commentAreaID = "commentArea" + this.state.mem.ID;
             return (
                 <div>
-                    <div className="commentSignature" onClick={this.goToIdea}>
-                        #{this.state.mem.Signature}
-                    </div>
                     <div>
                         <textarea className="commentTextarea" maxLength="1000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ..."></textarea> 
                     </div>

@@ -1,10 +1,21 @@
 import React from 'react';
 
 import request from 'superagent';
+import { FacebookButton, FacebookCount } from "react-social";
+
+import Comments from './Comments';
 
 import { HttpClient } from './App.js';
 import { hostName } from './App.js';
 import { lock } from './App.js';
+import { AppID } from './App.js';
+import { browserHistory } from './App.js';
+
+import {
+  generateShareIcon
+} from 'react-share';
+
+const FacebookIcon = generateShareIcon('facebook');
 
 var MemPage = React.createClass({
   getInitialState: function() {
@@ -89,25 +100,45 @@ var MemPage = React.createClass({
       lock.show();
     }
   },
+  showProfile: function(nickname) {
+      browserHistory.replace('/profile/' + nickname);
+  },
   render: function() {
     if (this.state.mem) {
       let mem = this.state.mem;
+      let shareUrl = "90minut.pl";
+      var picture = mem.AuthorPhoto;
+      var date = new Date(Date.parse(mem.DateTime));
+      var dateTime = date.toString();
       return (
           <div className="row well well-sm">
             <div className="contentLeft col-md-12" id="contentLeft">
+              <div>
+                Uploaded by <span onClick={() => this.showProfile(mem.AuthorNickname)}>{mem.AuthorNickname}</span> at {dateTime}
+              </div>
               <img className="memImage" alt="ASAS" src={hostName + "/resources/mems/" + mem.ID +mem.ImgExt}/>
               <div className="commentSignature" onClick={this.goToIdea}>
                 {mem.Signature}
               </div>
-              <p>
-                {mem.AuthorNickname} | {mem.DateTime} | Views: {this.state.views}  | Points: {this.state.points} 
+              <div>
+                Views: {this.state.views}  | Points: {this.state.points} 
                 {!this.state.mem.Like && 
                   <img onClick={this.doLike} className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
                 }
                 {this.state.mem.Like && 
                   <img onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
-                }
-              </p>
+                }| Shares: <FacebookCount/>
+                <FacebookButton url={shareUrl} appId={AppID} message={mem.Signature} media={"http://img.90minut.pl/img/reklama90/logo_zlote.gif"}>
+                  {
+                  <div>
+                    <FacebookIcon size={20} round={false} /> 
+                  </div>
+                  }
+                </FacebookButton>
+              </div>
+              <div>
+                <Comments memId={this.state.mem.ID} className="comments"/>
+              </div>
             </div>
           </div>
         );

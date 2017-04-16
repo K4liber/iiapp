@@ -64,7 +64,6 @@ h2 {
 }
 
 span {
-	color: rgba(150,200,50,1);
 	cursor: pointer;
 }
 
@@ -297,6 +296,7 @@ textarea#commentArea {
 .comments {
 	width: auto;
 	margin: 0 auto;
+	margin-top: 2%;
 	text-align:center;
 	max-width: 800px;
 	height:auto;
@@ -321,6 +321,10 @@ textarea#commentArea {
 	width: 8%;
 	cursor: pointer;
 	background-color: transparent;
+}
+
+span:hover {
+	color: rgba(125,0,50,1);
 }
 
 .uploadLogo:hover {
