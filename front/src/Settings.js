@@ -111,8 +111,9 @@ var Settings = React.createClass({
             <div className="row well well-sm">
               <script src="/static/js/auth0-editprofile.min.js"></script>
               <div className="contentLeft col-md-12" id="contentLeft">
-                <p>{profile.nickname}</p>
+                <p>Your nickname: {profile.nickname}</p>
                 <div>
+                  <p>Your avatar:</p>
                   <img alt="" src={picture} className="avatarImage" />
                 </div>
                 <div className="centering">

@@ -15,24 +15,21 @@ var Comments = React.createClass({
         }
     },
     componentDidMount: function() {
-        let memId = this.props.memId;
-        var client = new HttpClient(true);
-        this.serverRequest = client.get(hostName + '/mem/' + memId, function(result) {
+        if(this.props.result) {
             this.setState({
-                comments: JSON.parse(result).Comments,
-                mem: JSON.parse(result).Mem,
+                comments: this.props.result.Comments,
+                mem: this.props.result.Mem,
             });
-        }.bind(this));
-    },
-    componentWillReceiveProps : function(newProps) {
-        let memId = this.props.memId;
-        var client = new HttpClient(true);
-        this.serverRequest = client.get(hostName + '/mem/' + memId, function(result) {
-            this.setState({
-                comments: JSON.parse(result).Comments,
-                mem: JSON.parse(result).Mem,
-            });
-        }.bind(this));
+        } else {
+            let memId = this.props.memId;
+            var client = new HttpClient(true);
+            this.serverRequest = client.get(hostName + '/mem/' + memId, function(result) {
+                this.setState({
+                    comments: JSON.parse(result).Comments,
+                    mem: JSON.parse(result).Mem,
+                });
+            }.bind(this));
+        }
     },
     goToIdea: function() {
         browserHistory.replace('/idea/' + this.props.memId);

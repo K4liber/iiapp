@@ -44,8 +44,6 @@ var Mem = React.createClass({
   getInitialState: function() {
     return {
       mem: null,
-      points: null,
-      views: null,
       showComments: false,
     }
   },
@@ -61,23 +59,20 @@ var Mem = React.createClass({
   componentWillMount: function() {
       this.setState({
         mem: this.props.mem,
-        points: this.props.mem.Points,
-        views: this.props.mem.Views,
       });
   },
   componentWillReceiveProps : function(newProps) {
     this.setState({
         mem: this.props.mem,
-        points: this.props.mem.Points,
-        views: this.props.mem.Views,
       });
   },
   goToIdea: function() {
     browserHistory.replace('/idea/' + this.state.mem.ID);
   },
   showComments: function() {
+    let mem = this.state.mem;
+    mem.Views = mem.Views+1;
     this.setState({
-      views: this.state.views+1,
       showComments: true,
     });
   },
@@ -100,8 +95,8 @@ var Mem = React.createClass({
         if (response.status === 200 && response.text !== "false") {
           let mem = this.state.mem;
           mem.Like = true;
+          mem.Points = mem.Points+1;
           this.setState({
-            points: this.state.points+1,
             mem: mem,
           });
         }
@@ -124,8 +119,8 @@ var Mem = React.createClass({
         if (response.status === 200 && response.text !== "false"){
           let mem = this.state.mem;
           mem.Like = false;
+          mem.Points = mem.Points-1;
           this.setState({
-            points: this.state.points-1,
             mem: mem,
           });
         }
@@ -182,6 +177,7 @@ var Mem = React.createClass({
               onRequestClose={this.closeComments}
               style={commentsStyle}
               transparent={true}
+              contentLabel={"Comments"}
             >
                 <div className="commentSignature" onClick={this.goToIdea}>
                     #{mem.Signature}
@@ -200,7 +196,7 @@ var Mem = React.createClass({
             {mem.Signature}
           </div>
           <div>
-            Views: {this.state.views}  | Points: {this.state.points} 
+            Views: {this.state.mem.Views}  | Points: {this.state.mem.Points} 
             {!this.state.mem.Like && 
               <img onClick={this.doLike} className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
             }

@@ -23,7 +23,7 @@ var AvatarDropzone = React.createClass({
                             multiple={false}
                             accept="image/*"
                             onDrop={this.props.onDrop}>
-                            <p>Drop an image or click to select a file to upload.</p>
+                            <p>Drop an image or click to select a new avatar.</p>
                         </Dropzone> 
                     </div> 
                 </div>

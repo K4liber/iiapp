@@ -21,35 +21,20 @@ var MemPage = React.createClass({
   getInitialState: function() {
     return {
       mem: null,
-      points: null,
-      views: null,
+      result: null,
     }
   },
-  addView: function() {
-    let upload = request.post(hostName + "/addView")
-      .field('memID', this.state.mem.ID)
-    upload.end((err, response) => {
-      if (err) {
-        console.error(err);
-      }
-      if (response.status === 200)
-        this.setState({
-          views: this.state.views+1,
-        });
-    });
-  },
-  componentDidMount: function() {
+  componentWillMount: function() {
     var res = location.pathname.split("/"); 
     var client = new HttpClient(true);
     var url = hostName + '/mem/' + res[2]
     this.serverRequest = client.get(url, function(result) {
-      let mem = JSON.parse(result).Mem;
+      let res = JSON.parse(result);
+      console.log(res.Mem.Views);
       this.setState({
-        mem: mem,
-        points: mem.Points,
-        views: mem.Views,
+        result: res,
+        mem: res.Mem,
       });
-      this.addView();
     }.bind(this));
   },
   doLike : function() {
@@ -66,8 +51,8 @@ var MemPage = React.createClass({
         if (response.status === 200 && response.text !== "false") {
           let mem = this.state.mem;
           mem.Like = true;
+          mem.Points = mem.Points+1;
           this.setState({
-            points: this.state.points+1,
             mem: mem,
           });
         }
@@ -90,8 +75,8 @@ var MemPage = React.createClass({
         if (response.status === 200 && response.text !== "false"){
           let mem = this.state.mem;
           mem.Like = false;
+          mem.Points = mem.Points-1;
           this.setState({
-            points: this.state.points-1,
             mem: mem,
           });
         }
@@ -121,7 +106,7 @@ var MemPage = React.createClass({
                 {mem.Signature}
               </div>
               <div>
-                Views: {this.state.views}  | Points: {this.state.points} 
+                Views: {this.state.mem.Views}  | Points: {this.state.mem.Points} 
                 {!this.state.mem.Like && 
                   <img onClick={this.doLike} className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
                 }
@@ -137,7 +122,7 @@ var MemPage = React.createClass({
                 </FacebookButton>
               </div>
               <div>
-                <Comments memId={this.state.mem.ID} className="comments"/>
+                <Comments memId={this.state.mem.ID} result={this.state.result} className="comments"/>
               </div>
             </div>
           </div>

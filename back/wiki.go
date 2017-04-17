@@ -463,11 +463,11 @@ func getMem(id string, nickname string) Mem {
 		AuthorNickname: AuthorNickname,
 		Category:       Category,
 		Points:         Points,
-		Views:          Views,
+		Views:          Views + 1,
 		Like:           liked,
 	}
 
-	var views = mem.Views + 1
+	var views = mem.Views
 	update, errUpdate := db.Exec("UPDATE mem SET views=" + strconv.Itoa(views) + " WHERE id=" +
 		strconv.Itoa(mem.ID))
 	if errUpdate != nil {
@@ -712,14 +712,6 @@ var CategoryHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Req
 })
 
 var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
-	mem := getMem(vars["id"], req.Header.Get("nickname"))
-	comments := getComments(vars["id"], req.Header.Get("nickname"))
-	memView := MemView{
-		Comments: comments,
-		Mem:      mem,
-	}
-	payload, _ := json.Marshal(memView)
 	w.Header().Set("Content-Type", "application/json")
 	var origin = req.Header.Get("Origin")
 	w.Header().Set("Access-Control-Allow-Origin", origin)
@@ -730,6 +722,16 @@ var MemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request)
 	if req.Method == "OPTIONS" {
 		return
 	}
+
+	vars := mux.Vars(req)
+	mem := getMem(vars["id"], req.Header.Get("nickname"))
+	comments := getComments(vars["id"], req.Header.Get("nickname"))
+	memView := MemView{
+		Comments: comments,
+		Mem:      mem,
+	}
+	payload, _ := json.Marshal(memView)
+
 	w.Write([]byte(payload))
 })
 
