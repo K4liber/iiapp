@@ -135,7 +135,21 @@ img {
 	text-align: justify;
 	text-justify: inter-word;
 	width: 96%;
+	height: auto;
 	margin: 2% 2% 2% 2%;
+	border: 1px solid white;
+	padding: 1% 1% 1% 1%;
+}
+
+.signatureTextarea {
+	resize: none;
+	background: transparent;
+	text-align: center;
+	width: 96%;
+	height: auto;
+	margin: 2% 2% 2% 2%;
+	font-weight: bold;
+	font-size: 140%;
 	border: 1px solid white;
 	padding: 1% 1% 1% 1%;
 }

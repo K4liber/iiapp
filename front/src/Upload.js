@@ -92,11 +92,9 @@ var Upload = React.createClass({
                             <MemDropzone onX={this.cancelImage} onDrop={this.onImageDrop} 
                             fileUrl={this.state.fileUrl} />
                         </div>
-                        <div>
-                            <textarea maxLength="100" id="titleArea" onChange={this.loadTitle} placeholder="Signature ..."></textarea> 
-                        </div>
-                        <div>
-                            <textarea maxLength="1000" id="commentArea" onChange={this.loadComment} placeholder="Comment (you can optionaly add first comment) ..."></textarea> 
+                        <div className="comments">
+                            <textarea className="signatureTextarea" maxLength="100" onChange={this.loadTitle} placeholder="Signature ..."></textarea> 
+                            <textarea className="commentTextarea" maxLength="1000" onChange={this.loadComment} placeholder="Comment (you can optionaly add first comment) ..."></textarea> 
                         </div>
                         <p>
                             <button onClick={this.postMem} className="btn btn-primary">Send</button>
