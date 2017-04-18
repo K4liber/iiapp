@@ -53,6 +53,10 @@ var Upload = React.createClass({
             alert("Nie dodales tytulu!");
             return
         }
+        if (this.state.uploadedFile.size > 512000) {
+            alert("Image size cannot be more than 500kB");
+            return
+        }
         let profile = JSON.parse(localStorage.getItem('profile'));
         let nickname = profile.nickname;
         var profilePicture = profile.picture;
@@ -97,7 +101,7 @@ var Upload = React.createClass({
                             <textarea className="commentTextarea" maxLength="1000" onChange={this.loadComment} placeholder="Comment (you can optionaly add first comment) ..."></textarea> 
                         </div>
                         <p>
-                            <button onClick={this.postMem} className="btn btn-primary">Send</button>
+                            <button onClick={this.postMem} className="btn btn-primary margin3">Send</button>
                         </p>
                     </div>
                 </div>

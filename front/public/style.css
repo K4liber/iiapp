@@ -28,6 +28,19 @@ h2 {
 	height: auto;
 }
 
+input {
+  max-width: 80px;
+  padding: 1%;
+}
+
+.activitiesSignature {
+	margin: 3% 3% 3% 3%;
+	font-weight: bold;
+	font-size: 140%;
+	text-align: center;
+	height: auto;
+}
+
 .commentSignature:hover {
 	color: rgba(125,0,50,1);
 }
@@ -93,6 +106,7 @@ img {
 	float: left;
 	overflow-y: auto;
 	text-align: center;
+	min-height: 400px;
 	height: auto;
 }
 
@@ -240,6 +254,11 @@ textarea#commentArea {
 
 .pointer {
 	cursor: pointer;
+}
+
+
+.margin3 {
+	margin: 3% 3% 3% 3%;
 }
 
 .memLeaf {

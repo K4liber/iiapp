@@ -5,6 +5,7 @@ import request from 'superagent';
 import { CLIENT_DOMAIN } from './App.js';
 import { hostName } from './App.js';
 import { API_TOKEN } from './App.js';
+import { browserHistory } from './App.js';
 
 import { request as req } from 'request';
 
@@ -44,7 +45,6 @@ var Settings = React.createClass({
             if (response.status === 200) {
                 alert("Success!");
                 let avatarName = nickname + "." + res[1];
-                console.log(avatarName);
                 this.updateProfilePicture(avatarName);
             }
         });
@@ -119,7 +119,7 @@ var Settings = React.createClass({
                 <div className="centering">
                   <AvatarDropzone onX={this.cancelImage} onDrop={this.onImageDrop} 
                           fileUrl={this.state.fileUrl} />
-                  <button onClick={this.uploadAvatar} className="btn btn-primary">Upload</button>
+                  <button onClick={this.uploadAvatar} className="btn btn-primary margin3">Upload</button>
                 </div>
               </div>
             </div>

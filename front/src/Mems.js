@@ -34,7 +34,7 @@ var Mems = React.createClass({
     } else {
       return ( 
         <div>
-          <p>Loading mems...</p>
+          <p>Loading ideas...</p>
         </div>
       );
     }

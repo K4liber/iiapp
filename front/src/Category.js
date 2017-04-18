@@ -37,10 +37,11 @@ var Category = React.createClass({
         </div> 
       );
     } else if(this.state.mems==="null") {
+      var res = location.pathname.split("/"); 
       return ( 
         <div className="row well well-sm">
             <div className="contentLeft col-md-12" id="contentLeft">
-              <p>There are any of mem in this category!</p>
+              <p>There are any ideas in '{res[2]}' category!</p>
             </div>
         </div>
       );
