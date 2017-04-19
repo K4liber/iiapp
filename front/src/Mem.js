@@ -216,7 +216,7 @@ var Mem = React.createClass({
     } else {
       return ( 
         <div>
-          trlalal
+          
         </div>
       );
     }

@@ -46,11 +46,11 @@ var Upload = React.createClass({
         var category = document.getElementById("categoryImage").alt;
         this.setState({category: category});
         if (!this.state.uploadedFile) {
-            alert("Nie dodales zdjecia!");
+            alert("You did not load an image!");
             return
         }
         if (!this.state.title) {
-            alert("Nie dodales tytulu!");
+            alert("You did not tap a title!");
             return
         }
         if (this.state.uploadedFile.size > 512000) {
@@ -63,14 +63,14 @@ var Upload = React.createClass({
         if (profile.user_metadata && profile.user_metadata.picture)
             profilePicture = hostName + "/resources/avatars/" + profile.user_metadata.picture;
         let UPLOAD_URL = hostName + "/addMem";
-        console.log(this.state.category);
         var res = this.state.uploadedFile.type.split("/"); 
         if (res[0] !== "image") {
             alert("Wrong image format!");
             return
         }
         let upload = request.post(UPLOAD_URL)
-                        .field('Bearer ', localStorage.getItem('token'))
+                        .field('userID', profile.user_id)
+                        .field('token', localStorage.getItem('token'))
                         .field('file', this.state.uploadedFile)
                         .field('extension', res[1])
                         .field('enctype', 'multipart/form-data')
@@ -81,10 +81,10 @@ var Upload = React.createClass({
                         .field('profilePicture', profilePicture);
         upload.end((err, response) => {
             if (err) {
-                console.error(err);
+                alert(response.text)
             }
             if (response.status === 200)
-                alert("Success!");
+                this.props.browserHistory.push('/profile/' + nickname);
         });
     },
     render : function() {
@@ -97,8 +97,8 @@ var Upload = React.createClass({
                             fileUrl={this.state.fileUrl} />
                         </div>
                         <div className="comments">
-                            <textarea className="signatureTextarea" maxLength="100" onChange={this.loadTitle} placeholder="Signature ..."></textarea> 
-                            <textarea className="commentTextarea" maxLength="1000" onChange={this.loadComment} placeholder="Comment (you can optionaly add first comment) ..."></textarea> 
+                            <textarea id="titleArea" className="signatureTextarea" maxLength="100" onChange={this.loadTitle} placeholder="Signature ..."></textarea> 
+                            <textarea id="commentArea" className="commentTextarea" maxLength="1000" onChange={this.loadComment} placeholder="Comment (you can optionaly add first comment) ..."></textarea> 
                         </div>
                         <p>
                             <button onClick={this.postMem} className="btn btn-primary margin3">Send</button>

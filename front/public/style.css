@@ -191,26 +191,6 @@ img {
 	width: 15px;
 }
 
-textarea#titleArea {
-	width: 50%;
-	height: auto;
-	min-height: 15px;
-	background-color: rgba(150,150,150,0.5);
-	border: 0px;
-	padding: 8px 8px 8px 8px;
-	text-align: center;
-}
-
-textarea#commentArea {
-	width: 50%;
-	height: auto;
-	min-height: 15px;
-	background-color: rgba(150,150,150,0.5);
-	border: 0px;
-	padding: 8px 8px 8px 8px;
-	text-align: left justify;
-}
-
 .cancelUpload {
 	position: absolute;
 	cursor: pointer;

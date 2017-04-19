@@ -25,7 +25,7 @@ var MemDropzone = React.createClass({
                 <div className="memUpload">
                     <img alt="" className="memImage" src={this.props.fileUrl}/>
                     <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.props.onX}/>
-                    <img alt="own" id="categoryImage" src={this.state.categoryLink} className="uploadLogoChoosen"/>
+                    <img alt="another" id="categoryImage" src={this.state.categoryLink} className="uploadLogoChoosen"/>
                     <div className="uploadCategories">
                         <img data-tip="entertainment" alt="" id="entertainment" onClick={(event)=>this.loadCategoryIcon("entertainment")} src="/img/entertainmentIcon.png" className="uploadLogo"/>
                         <img data-tip="science" alt="" id="science" onClick={(event)=>this.loadCategoryIcon("science")} src="/img/scienceIcon.png" className="uploadLogo"/>
