@@ -605,14 +605,14 @@ func main() {
 	r.Handle("/profile/{nickname}", c.Handler(ProfileHandler))
 	r.Handle("/activities/{nickname}", c.Handler(ActivitiesHandler))
 	r.Handle("/category/{category}", c.Handler(CategoryHandler))
-	r.Handle("/addMem", c.Handler(AddMemHandler))
-	r.Handle("/uploadAvatar", c.Handler(UploadAvatarHandler))
-	r.Handle("/addComment", c.Handler(AddCommentHandler))
-	r.Handle("/addMemPoint", c.Handler(AddMemPointHandler))
-	r.Handle("/deleteMemPoint", c.Handler(DeleteMemPointHandler))
-	r.Handle("/deleteMem", c.Handler(DeleteMemHandler))
-	r.Handle("/addCommentPoint", c.Handler(AddCommentPointHandler))
-	r.Handle("/deleteCommentPoint", c.Handler(DeleteCommentPointHandler))
+	r.Handle("/addMem", c.Handler(PreHandler(AddMemHandler)))
+	r.Handle("/uploadAvatar", c.Handler(PreHandler(UploadAvatarHandler)))
+	r.Handle("/addComment", c.Handler(PreHandler(AddCommentHandler)))
+	r.Handle("/addMemPoint", c.Handler(PreHandler(AddMemPointHandler)))
+	r.Handle("/deleteMemPoint", c.Handler(PreHandler(DeleteMemPointHandler)))
+	r.Handle("/deleteMem", c.Handler(PreHandler(DeleteMemHandler)))
+	r.Handle("/addCommentPoint", c.Handler(PreHandler(AddCommentPointHandler)))
+	r.Handle("/deleteCommentPoint", c.Handler(PreHandler(DeleteCommentPointHandler)))
 	r.Handle("/deleteComment/{id}", c.Handler(DeleteCommentHandler))
 
 	fs := justFilesFilesystem{http.Dir("resources/")}
@@ -759,8 +759,8 @@ func uploadUserComments(nickname string, avatarName string) bool {
 }
 
 var UploadAvatarHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	//Dodawanie mema
-	var nickname = req.FormValue("nickname")
+
+	var nickname = req.FormValue("authorNickname")
 	var extension = req.FormValue("extension")
 	var avatarName = nickname + "." + extension
 	//Zapisanie zdjecia
@@ -791,14 +791,6 @@ var UploadAvatarHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http
 
 var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 
-	var nickname = getNickname(req.FormValue("userID"))
-	var author = req.FormValue("author")
-	if nickname != author {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("500 - Cannot authorize!"))
-		return
-	}
-
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
@@ -810,6 +802,7 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 	var title = req.FormValue("title")
 	var extension = req.FormValue("extension")
 	var category = req.FormValue("category")
+	var author = req.FormValue("authorNickname")
 	datetime := time.Now().Format(time.RFC3339)
 	result, err2 := db.Exec(
 		"INSERT INTO mem (signature, imgExt, dateTime, authorNickname, category) VALUES ('" +
@@ -865,6 +858,7 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 })
 
 var AddCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
@@ -875,7 +869,7 @@ var AddCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.R
 	//Dodawanie komentarza
 	datetime := time.Now().Format(time.RFC3339)
 	var memID = req.FormValue("memID")
-	var nickname = req.FormValue("nickname")
+	var nickname = req.FormValue("authorNickname")
 	var profilePicture = req.FormValue("profilePicture")
 	var comment = req.FormValue("comment")
 	result, errComment := db.Exec(
@@ -927,6 +921,7 @@ var AddCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.R
 })
 
 var DeleteMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
@@ -939,13 +934,9 @@ var DeleteMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Re
 	//Form data
 	var memID = req.FormValue("memID")
 	var authorNickname = req.FormValue("authorNickname")
-	var nickname = req.FormValue("nickname")
 
-	//Check delete post aurhor
-	if authorNickname != nickname {
-		success = false
-		return
-	}
+	fmt.Println(memID)
+	fmt.Println(authorNickname)
 
 	//Delete memPoints
 	_, resErr1 := db.Query("DELETE FROM memPoint WHERE memId=" + memID)
@@ -986,6 +977,7 @@ var DeleteMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Re
 })
 
 var DeleteMemPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
@@ -1052,6 +1044,7 @@ var DeleteMemPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *ht
 })
 
 var AddMemPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
@@ -1116,6 +1109,22 @@ var AddMemPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.
 	w.Write([]byte(payload))
 	defer db.Close()
 })
+
+var PreHandler = func(handler http.HandlerFunc) http.HandlerFunc {
+	// one time scope setup area for middleware
+	return func(w http.ResponseWriter, req *http.Request) {
+		//Autorize
+		var nickname = getNickname(req.FormValue("userID"))
+		var authorNickname = req.FormValue("authorNickname")
+		if nickname != authorNickname {
+			fmt.Println(authorNickname)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("500 - Cannot authorize!"))
+			return
+		}
+		handler(w, req)
+	}
+}
 
 var DeleteCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)

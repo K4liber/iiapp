@@ -55,6 +55,10 @@ input {
 	display: inline-block;
 }
 
+.center {
+	text-align: center;
+}
+
 .uploadInput {
 	display: none;
 }
@@ -228,8 +232,14 @@ img {
 .mem {
 	position: relative;
 	width: auto;
-	display: inline-block;
 	margin: 5% 1% 5% 1%;
+    clear: left;
+}
+
+.memImage {
+	position: relative;
+	width: auto;
+	display: inline-block;
 }
 
 .pointer {
@@ -239,6 +249,10 @@ img {
 
 .margin3 {
 	margin: 3% 3% 3% 3%;
+}
+
+.margin2 {
+	margin: 2% 2% 2% 2%;
 }
 
 .memLeaf {

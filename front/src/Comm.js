@@ -27,19 +27,19 @@ var Comm = React.createClass({
     },
     doLike : function() {
         if (localStorage.getItem('profile')) {
-            let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
+            let profile = JSON.parse(localStorage.getItem('profile'));
             let comment = this.state.comment;
             let commentID = this.props.comment.ID;
             let upload = request.post(hostName + "/addCommentPoint")
                 .field('Bearer ', localStorage.getItem('token'))
                 .field('commentID', commentID)
-                .field('authorNickname', nickname)
-                .field('memId', comment.MemID)
+                .field('authorNickname', profile.nickname)
+                .field('userID', profile.user_id)
             upload.end((err, response) => {
                 if (err) {
                     console.log(err);
                 }
-                if (response.status === 200 && response.text != '') {
+                if (response.status === 200) {
                     this.setState({
                         comment: JSON.parse(response.text),
                     });
@@ -58,12 +58,13 @@ var Comm = React.createClass({
             let upload = request.post(hostName + "/deleteCommentPoint")
                 .field('Bearer ', localStorage.getItem('token'))
                 .field('commentID', commentID)
-                .field('authorNickname', nickname)
+                .field('authorNickname', profile.nickname)
+                .field('userID', profile.user_id)
             upload.end((err, response) => {
                 if (err) {
                     console.log(err);
                 }
-                if (response.status === 200 && response.text != '') {
+                if (response.status === 200) {
                     this.setState({
                         comment: JSON.parse(response.text),
                     });

@@ -11,22 +11,34 @@ var Comments = React.createClass({
     getInitialState: function() {
         return {
             comments: null,
-            mem: null
+            mem: null,
+            lastCommentAuthor: null,
         }
     },
     componentDidMount: function() {
         if(this.props.result) {
+            let lastAuthor = null;
+            let comments = this.props.result.Comments;
+            if(comments[comments.length-1])
+                lastAuthor = comments[comments.length-1].AuthorNickname;
+            console.log(comments[comments.length-1]);
             this.setState({
-                comments: this.props.result.Comments,
+                comments: comments,
                 mem: this.props.result.Mem,
+                lastCommentAuthor: lastAuthor,
             });
         } else {
             let memId = this.props.memId;
             var client = new HttpClient(true);
             this.serverRequest = client.get(hostName + '/mem/' + memId, function(result) {
+                let comments = JSON.parse(result).Comments;
+                let lastAuthor = null;
+                if(comments[comments.length-1])
+                    lastAuthor = comments[comments.length-1].AuthorNickname;
                 this.setState({
-                    comments: JSON.parse(result).Comments,
+                    comments: comments,
                     mem: JSON.parse(result).Mem,
+                    lastCommentAuthor: lastAuthor,
                 });
             }.bind(this));
         }
@@ -56,8 +68,9 @@ var Comments = React.createClass({
                 if (profile.user_metadata && profile.user_metadata.picture)
                     profilePicture = hostName + "/resources/avatars/" + profile.user_metadata.picture;
                 let upload = request.post(hostName + "/addComment")
+                                .field('userID', profile.user_id)
                                 .field('Bearer ', localStorage.getItem('token'))
-                                .field('nickname', profile.nickname)
+                                .field('authorNickname', profile.nickname)
                                 .field('profilePicture', profilePicture)
                                 .field('memID', this.props.memId)
                                 .field('comment', comment)
@@ -96,6 +109,11 @@ var Comments = React.createClass({
         this.forceUpdate();
     },
     render : function () {
+        var lastIsMine = false;
+        if (JSON.parse(localStorage.getItem('profile'))) {
+            lastIsMine = 
+                this.state.lastCommentAuthor === JSON.parse(localStorage.getItem('profile')).nickname;
+        }
         if (this.state.comments) {
             let commentAreaID = "commentArea" + this.state.mem.ID;
             let self = this;
@@ -105,7 +123,7 @@ var Comments = React.createClass({
                         (this.state.comments).map( function(comment, index) { 
                             let key = "comment" + comment.ID;
                             return (
-                                <Comm key={key} comment={comment} index={index} update={self.updateComment} delete={self.deleteComment}/>
+                                <Comm editable={lastIsMine} key={key} comment={comment} index={index} update={self.updateComment} delete={self.deleteComment}/>
                             )
                         })
                     }

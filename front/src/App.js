@@ -15,7 +15,7 @@ import { Route, Router } from 'react-router-dom';
 import { Switch } from 'react-router';
 import { request } from 'request';
 
-export const hostName = "http://192.168.1.20:8080";
+export const hostName = "http://localhost:8080";
 export var browserHistory = createBrowserHistory();
 export var lock;
 export var AppID = 1891449367779446;

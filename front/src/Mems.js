@@ -20,7 +20,7 @@ var Mems = React.createClass({
   render: function() {
     if (this.state.mems) {
       return (
-        <div>
+        <div className="mems">
           {
             JSON.parse(this.state.mems).map( function(mem, index) {
               let key = "mem" + mem.ID;

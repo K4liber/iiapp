@@ -45,6 +45,7 @@ var Mem = React.createClass({
     return {
       mem: null,
       showComments: false,
+      modalIsOpen: false,
     }
   },
   openModal: function () {
@@ -83,11 +84,12 @@ var Mem = React.createClass({
   },
   doLike : function() {
     if (localStorage.getItem('profile')) {
-      let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
+      let profile = JSON.parse(localStorage.getItem('profile'));
       let upload = request.post(hostName + "/addMemPoint")
         .field('Bearer ', localStorage.getItem('token'))
         .field('memID', this.props.mem.ID)
-        .field('authorNickname', nickname)
+        .field('authorNickname', profile.nickname)
+        .field('userID', profile.user_id)
       upload.end((err, response) => {
         if (err) {
           console.log(err);
@@ -130,12 +132,12 @@ var Mem = React.createClass({
     }
   },
   deleteMem: function() {
-    let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
+    let userID = JSON.parse(localStorage.getItem('profile')).user_id;
     let upload = request.post(hostName + "/deleteMem")
         .field('Bearer ', localStorage.getItem('token'))
         .field('memID', this.props.mem.ID)
         .field('authorNickname', this.props.mem.AuthorNickname)
-        .field('nickname', nickname)
+        .field('userID', userID)
       upload.end((err, response) => {
         if (err) {
           console.log(err);
@@ -157,7 +159,7 @@ var Mem = React.createClass({
       if (localStorage.getItem('profile'))
           isMain = mem.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
       return (
-        <div className="mem relative" >
+        <div className="mem" >
           <Modal
               isOpen={this.state.modalIsOpen}
               onAfterOpen={this.afterOpenModal}
@@ -165,11 +167,13 @@ var Mem = React.createClass({
               style={modalStyle}
               contentLabel="Example Modal"
             >
-            You really want to delete this idea and all comments and points belong?
-            <p>
-              <button onClick={this.deleteMem} className="btn btn-primary">Yes</button>
-              <button onClick={this.closeModal} className="rtn rtn-primary">Cancel</button>
-            </p>
+            <div>
+              You really want to delete this idea and all comments, and points belong?
+            </div>
+            <div className="center">
+              <button onClick={this.deleteMem} className="btn btn-danger margin2">Delete</button>
+              <button onClick={this.closeModal} className="btn btn-primary red margin2">Cancel</button>
+            </div>
           </Modal>
           <Modal
               isOpen={this.state.showComments}
@@ -185,13 +189,14 @@ var Mem = React.createClass({
                 <Comments memId={mem.ID} className="comments"/>
                 <img onClick={this.closeComments} alt="" src="/img/xIcon.png" className="cancelUpload" />
           </Modal>
-          
-          <img className="memImage pointer" alt="ASAS" src={memImage}
-            onClick={this.showComments}/>
-          <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
-          {isMain &&
-            <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.openModal}/>
-          }
+          <div className="memImage">
+            <img className="memImage pointer" alt="ASAS" src={memImage}
+              onClick={this.showComments}/>
+            <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
+            {isMain &&
+              <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.openModal}/>
+            }
+          </div>
           <div className="commentSignature" onClick={this.goToIdea}>
             {mem.Signature}
           </div>

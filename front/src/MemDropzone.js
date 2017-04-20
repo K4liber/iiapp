@@ -29,7 +29,7 @@ var MemDropzone = React.createClass({
                     <div className="uploadCategories">
                         <img data-tip="entertainment" alt="" id="entertainment" onClick={(event)=>this.loadCategoryIcon("entertainment")} src="/img/entertainmentIcon.png" className="uploadLogo"/>
                         <img data-tip="science" alt="" id="science" onClick={(event)=>this.loadCategoryIcon("science")} src="/img/scienceIcon.png" className="uploadLogo"/>
-                        <img data-tip="media" alt="" id="media" onClick={(event)=>this.loadCategoryIcon("movie")} src="/img/mediaIcon.png" className="uploadLogo"/>
+                        <img data-tip="media" alt="" id="media" onClick={(event)=>this.loadCategoryIcon("media")} src="/img/mediaIcon.png" className="uploadLogo"/>
                         <img data-tip="people" alt="" id="people" onClick={(event)=>this.loadCategoryIcon("people")} src="/img/peopleIcon.png" className="uploadLogo"/>
                         <img data-tip="politic" alt="" id="politic" onClick={(event)=>this.loadCategoryIcon("politic")} src="/img/politicIcon.png" className="uploadLogo"/>
                         <img data-tip="economy" alt="" id="economy" onClick={(event)=>this.loadCategoryIcon("economy")} src="/img/economyIcon.png" className="uploadLogo"/>

@@ -76,7 +76,7 @@ var Upload = React.createClass({
                         .field('enctype', 'multipart/form-data')
                         .field('title', this.state.title)
                         .field('comment', this.state.comment)
-                        .field('author', nickname)
+                        .field('authorNickname', nickname)
                         .field('category', category)
                         .field('profilePicture', profilePicture);
         upload.end((err, response) => {

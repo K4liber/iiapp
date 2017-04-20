@@ -28,7 +28,7 @@ var Settings = React.createClass({
             alert("Nie dodales zdjecia!");
             return
         }
-        let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
+        let profile = JSON.parse(localStorage.getItem('profile'));
         let UPLOAD_URL = hostName + "/uploadAvatar";
         let res = this.state.uploadedFile.type.split("/"); 
         let upload = request.post(UPLOAD_URL)
@@ -37,14 +37,15 @@ var Settings = React.createClass({
                         .field('extension', res[1])
                         .field('enctype', 'multipart/form-data')
                         .field('Content-Type', 'multipart/form-data')
-                        .field('nickname', nickname)
+                        .field('authorNickname', profile.nickname)
+                        .field('userID', profile.user_id)
         upload.end((err, response) => {
             if (err) {
                 console.error(err);
             }
             if (response.status === 200) {
                 alert("Success!");
-                let avatarName = nickname + "." + res[1];
+                let avatarName = profile.nickname + "." + res[1];
                 this.updateProfilePicture(avatarName);
             }
         });
