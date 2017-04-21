@@ -3,6 +3,7 @@ import AvatarDropzone from './AvatarDropzone.js';
 import request from 'superagent';
 
 import { CLIENT_DOMAIN } from './App.js';
+import { apiHost } from './App.js';
 import { hostName } from './App.js';
 import { API_TOKEN } from './App.js';
 import { browserHistory } from './App.js';
@@ -44,9 +45,9 @@ var Settings = React.createClass({
                 console.error(err);
             }
             if (response.status === 200) {
-                alert("Success!");
                 let avatarName = profile.nickname + "." + res[1];
                 this.updateProfilePicture(avatarName);
+                //window.location.replace (apiHost + "/settings");
             }
         });
     },
@@ -71,10 +72,26 @@ var Settings = React.createClass({
           headers: headers,
           body: payload,
         };
+        let update = request.patch(url)
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .set('Authorization', 'Bearer ' + API_TOKEN)
+          .send(payload)
+        update.end((err, response) => {
+          if (err) {
+              console.error(err);
+          }
+          if (response.status === 200) {
+              console.log(JSON.parse(response.text));
+              //localStorage.setItem('profile', JSON.parse(response.text));
+          }
+        });
+        /*
         req(options, function (error, response, body) {
           if (error) throw new Error(error);
           console.log(response);
         });
+        */
     },
     onImageDrop : function(files) {
         let isOk = true;

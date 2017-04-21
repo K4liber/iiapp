@@ -51,9 +51,6 @@ var Mem = React.createClass({
   openModal: function () {
     this.setState({modalIsOpen: true});
   },
-  afterOpenModal: function () {
-    //
-  },
   closeModal: function () {
     this.setState({modalIsOpen: false});
   },
@@ -109,14 +106,15 @@ var Mem = React.createClass({
   },
   doUnLike : function() {
     if (localStorage.getItem('profile')) {
-      let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
+      let profile = JSON.parse(localStorage.getItem('profile'));
       let upload = request.post(hostName + "/deleteMemPoint")
         .field('Bearer ', localStorage.getItem('token'))
         .field('memID', this.props.mem.ID)
-        .field('authorNickname', nickname)
+        .field('authorNickname', profile.nickname)
+        .field('userID', profile.user_id)
       upload.end((err, response) => {
         if (err) {
-          console.log(err);
+          alert(response.text);
         }
         if (response.status === 200 && response.text !== "false"){
           let mem = this.state.mem;

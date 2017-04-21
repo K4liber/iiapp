@@ -6,6 +6,7 @@ import Profile from './Profile';
 import Activities from './Activities';
 import Category from './Category';
 import Settings from './Settings';
+import AdminPanel from './AdminPanel';
 import Home from './Home';
 import About from './About';
 import MemPage from './MemPage';
@@ -16,6 +17,7 @@ import { Switch } from 'react-router';
 import { request } from 'request';
 
 export const hostName = "http://localhost:8080";
+export const apiHost = "http://localhost:3000";
 export var browserHistory = createBrowserHistory();
 export var lock;
 export var AppID = 1891449367779446;
@@ -48,6 +50,7 @@ export var HttpClient = function(sendToken) {
 }
 
 var App = React.createClass({
+  
   getInitialState: function() {
     return {
       token: null,
@@ -150,6 +153,9 @@ var App = React.createClass({
                 </Route>
                 <Route path="/about">
                   <About/>
+                </Route>
+                <Route path="/admin">
+                  <AdminPanel/>
                 </Route>
               </Switch>
             </div>

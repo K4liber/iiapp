@@ -1,6 +1,9 @@
 import React from 'react';
 import Categories from './Categories';
+
 import { hostName } from './App.js';
+import { lock } from './App.js';
+import { browserHistory } from './App.js';
 
 import ReactTooltip from 'react-tooltip'
 
@@ -24,26 +27,25 @@ var Board = React.createClass({
   },
   showProfile: function() {
     let profile = JSON.parse(localStorage.getItem('profile'));
-    this.props.browserHistory.replace('/profile/' + profile.nickname, {profile: profile,});
+    browserHistory.replace('/profile/' + profile.nickname, {profile: profile,});
   },
   showActivities: function() {
     let profile = JSON.parse(localStorage.getItem('profile'));
-    this.props.browserHistory.replace('/activities/' + profile.nickname, {profile: profile,});
+    browserHistory.replace('/activities/' + profile.nickname, {profile: profile,});
   },
   settings: function() {
-    this.props.browserHistory.push('/settings');
+    browserHistory.push('/settings');
   },
   upload: function() {
-    this.props.browserHistory.push('/upload');
+    browserHistory.push('/upload');
   },
   logout : function(){
-    this.props.browserHistory.push('/logout');
     localStorage.removeItem('token');
     localStorage.removeItem('profile');
-    window.location.replace('http://localhost:3000');
+    browserHistory.push('/logout');
   },
   about: function() {
-    this.props.browserHistory.push('/about');
+    browserHistory.push('/about');
   },
   showLock : function() {
     this.props.lock.show();

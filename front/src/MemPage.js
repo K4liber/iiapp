@@ -1,6 +1,5 @@
 import React from 'react';
 
-import request from 'superagent';
 import { FacebookButton, FacebookCount } from "react-social";
 import Modal from 'react-modal';
 import {
@@ -15,6 +14,7 @@ import { lock } from './App.js';
 import { AppID } from './App.js';
 import { browserHistory } from './App.js';
 
+import request from 'superagent';
 const FacebookIcon = generateShareIcon('facebook');
 
 const modalStyle = {
@@ -25,7 +25,6 @@ const modalStyle = {
     bottom                : 'auto',
     marginRight           : '-50%',
     transform             : 'translate(-50%, -50%)',
-    
   }
 };
 
@@ -63,7 +62,7 @@ var MemPage = React.createClass({
         .field('Bearer ', localStorage.getItem('token'))
         .field('memID', this.state.mem.ID)
         .field('authorNickname', profile.nickname)
-        .filed('userID', profile.user_id)
+        .field('userID', profile.user_id)
       upload.end((err, response) => {
         if (err) {
           console.log(err);
@@ -84,11 +83,11 @@ var MemPage = React.createClass({
   doUnLike : function() {
     if (localStorage.getItem('profile')) {
       let profile = JSON.parse(localStorage.getItem('profile'));
-      let upload = request.post(hostName + "/deleteMemPoint")
+      let upload = request.post(hostName + "/addMemPoint")
         .field('Bearer ', localStorage.getItem('token'))
         .field('memID', this.state.mem.ID)
         .field('authorNickname', profile.nickname)
-        .filed('userID', profile.user_id)
+        .field('userID', profile.user_id)
       upload.end((err, response) => {
         if (err) {
           console.log(err);
@@ -180,11 +179,9 @@ var MemPage = React.createClass({
                 {this.state.mem.Like && 
                   <img onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
                 }| Shares: <FacebookCount/>
-                <FacebookButton url={shareUrl} appId={AppID} message={mem.Signature} media={"http://img.90minut.pl/img/reklama90/logo_zlote.gif"}>
+                <FacebookButton className="fbButton" style={{ border: 0 }} url={shareUrl} appId={AppID} message={mem.Signature} media={"http://img.90minut.pl/img/reklama90/logo_zlote.gif"}>
                   {
-                  <div>
-                    <FacebookIcon size={20} round={false} /> 
-                  </div>
+                    <FacebookIcon size={18} round={true} /> 
                   }
                 </FacebookButton>
               </div>

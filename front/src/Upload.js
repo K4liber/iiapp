@@ -3,6 +3,7 @@ import request from 'superagent';
 import MemDropzone from './MemDropzone'
 
 import { hostName } from './App.js';
+import { lock } from './App.js';
 
 var Upload = React.createClass({
     componentWillMount : function(props) {
@@ -13,6 +14,9 @@ var Upload = React.createClass({
             comment : "null",
             category : "another",
         };
+        if (!localStorage.getItem('profile')) {
+            lock.show();
+        }
     },
     loadTitle : function() {
         var title = document.getElementById("titleArea").value;
@@ -107,8 +111,6 @@ var Upload = React.createClass({
                 </div>
             )
         } else {
-            this.props.browserHistory.push('/');
-            this.props.lock.show();
             return (
                 <div className="row well well-sm">
                     <div className="contentLeft col-md-12" id="contentLeft">

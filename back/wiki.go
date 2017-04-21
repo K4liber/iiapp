@@ -611,9 +611,11 @@ func main() {
 	r.Handle("/addMemPoint", c.Handler(PreHandler(AddMemPointHandler)))
 	r.Handle("/deleteMemPoint", c.Handler(PreHandler(DeleteMemPointHandler)))
 	r.Handle("/deleteMem", c.Handler(PreHandler(DeleteMemHandler)))
+	r.Handle("/adminDeleteMem", c.Handler(PreHandler(AdminDeleteMemHandler)))
 	r.Handle("/addCommentPoint", c.Handler(PreHandler(AddCommentPointHandler)))
 	r.Handle("/deleteCommentPoint", c.Handler(PreHandler(DeleteCommentPointHandler)))
-	r.Handle("/deleteComment/{id}", c.Handler(DeleteCommentHandler))
+	r.Handle("/deleteComment", c.Handler(PreHandler(DeleteCommentHandler)))
+	r.Handle("/adminDeleteComment", c.Handler(PreHandler(AdminDeleteCommentHandler)))
 
 	fs := justFilesFilesystem{http.Dir("resources/")}
 	http.Handle("/resources/", http.StripPrefix("/resources", http.FileServer(fs)))
@@ -920,6 +922,65 @@ var AddCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.R
 	defer db.Close()
 })
 
+var AdminDeleteMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+	}
+
+	//Form data
+	var memID = req.FormValue("memID")
+	var authorNickname = req.FormValue("authorNickname")
+
+	if authorNickname != "janbielecki94" {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500 - You are not an admin!"))
+		return
+	}
+
+	var success = true
+
+	//Delete memPoints
+	_, resErr1 := db.Query("DELETE FROM memPoint WHERE memId=" + memID)
+	if resErr1 != nil {
+		fmt.Println(resErr1)
+		success = false
+		return
+	}
+
+	//Delete comments
+	_, resErr2 := db.Query("DELETE FROM comment WHERE memId=" + memID)
+	if resErr2 != nil {
+		fmt.Println(resErr2)
+		success = false
+		return
+	}
+
+	//Delete commentsPoints
+	_, resErr3 := db.Query("DELETE FROM commentPoint WHERE memId=" + memID)
+	if resErr3 != nil {
+		fmt.Println(resErr3)
+		success = false
+		return
+	}
+
+	//Delete mem
+	_, resErr4 := db.Query("DELETE FROM mem WHERE id=" + memID)
+	if resErr4 != nil {
+		fmt.Println(resErr4)
+		success = false
+		return
+	}
+
+	//Wysylanie odpowiedzi
+	payload, _ := json.Marshal(success)
+	w.Write([]byte(payload))
+	defer db.Close()
+})
+
 var DeleteMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 
 	//DataBase connection
@@ -1126,30 +1187,40 @@ var PreHandler = func(handler http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-var DeleteCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
-	var reqId = vars["id"]
-	var success = true
+var AdminDeleteCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
+	var commentID = req.FormValue("commentID")
+	var authorNickname = req.FormValue("authorNickname")
+
+	if authorNickname != "janbielecki94" {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500 - You are not an admin!"))
+		return
+	}
+
 	//DataBase connection
 	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
 	if err != nil {
 		fmt.Println(err.Error())
 		fmt.Println(db)
-	}
-	_, err3 :=
-		db.Query("DELETE FROM commentPoint WHERE commentId=" + reqId)
-	if err3 != nil {
-		fmt.Println(err3)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500 - Cannot connect to database!"))
 		return
 	}
+	_, err3 :=
+		db.Query("DELETE FROM commentPoint WHERE commentId=" + commentID)
+	if err3 != nil {
+		fmt.Println(err3)
+	}
 	_, err4 :=
-		db.Query("DELETE FROM comment WHERE id=" + reqId)
+		db.Query("DELETE FROM comment WHERE id=" + commentID)
 	if err4 != nil {
 		fmt.Println(err4)
-		success = false
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500 - Cannot delete comment from database!"))
+		return
 	}
 	//Wysylanie odpowiedzi
-	payload, _ := json.Marshal(success)
 	w.Header().Set("Content-Type", "application/json")
 	var origin = req.Header.Get("Origin")
 	w.Header().Set("Access-Control-Allow-Origin", origin)
@@ -1160,7 +1231,46 @@ var DeleteCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *htt
 	if req.Method == "OPTIONS" {
 		return
 	}
-	w.Write([]byte(payload))
+	defer db.Close()
+})
+
+var DeleteCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
+	var commentID = req.FormValue("commentID")
+
+	//DataBase connection
+	db, err := sql.Open("mysql", "root:Potoczek30@tcp/iidb")
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(db)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500 - Cannot connect to database!"))
+		return
+	}
+	_, err3 :=
+		db.Query("DELETE FROM commentPoint WHERE commentId=" + commentID)
+	if err3 != nil {
+		fmt.Println(err3)
+	}
+	_, err4 :=
+		db.Query("DELETE FROM comment WHERE id=" + commentID)
+	if err4 != nil {
+		fmt.Println(err4)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500 - Cannot delete comment from database!"))
+		return
+	}
+	//Wysylanie odpowiedzi
+	w.Header().Set("Content-Type", "application/json")
+	var origin = req.Header.Get("Origin")
+	w.Header().Set("Access-Control-Allow-Origin", origin)
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers",
+		"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, nickname")
+	w.Header().Set("Allow", "*")
+	if req.Method == "OPTIONS" {
+		return
+	}
 	defer db.Close()
 })
 
@@ -1273,7 +1383,7 @@ var AddCommentPointHandler = http.HandlerFunc(func(w http.ResponseWriter, req *h
 	dateTime := time.Now().Format(time.RFC3339)
 	var commentID = req.FormValue("commentID")
 	var authorNickname = req.FormValue("authorNickname")
-	var memID = req.FormValue("memId")
+	var memID = req.FormValue("memID")
 	res, resErr := db.Query("SELECT * FROM commentPoint WHERE commentId=" + commentID + " AND authorNickname='" +
 		authorNickname + "' LIMIT 1")
 

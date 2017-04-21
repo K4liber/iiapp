@@ -1,16 +1,36 @@
 import React from 'react';
 import request from 'superagent';
+import Modal from 'react-modal';
 
 import { hostName } from './App.js';
 import { lock } from './App.js';
 import { browserHistory } from './App.js';
 import { HttpClient } from './App.js';
 
+const modalStyle = {
+  content : {
+    top                   : '50%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)',
+    
+  }
+};
+
 var Comm = React.createClass({
     getInitialState: function() {
         return {
             comment: null,
+            modalIsOpen: false,
         }
+    },
+    openModal: function () {
+    this.setState({modalIsOpen: true});
+    },
+    closeModal: function () {
+        this.setState({modalIsOpen: false});
     },
     componentDidMount: function() {
         this.setState({
@@ -29,12 +49,12 @@ var Comm = React.createClass({
         if (localStorage.getItem('profile')) {
             let profile = JSON.parse(localStorage.getItem('profile'));
             let comment = this.state.comment;
-            let commentID = this.props.comment.ID;
             let upload = request.post(hostName + "/addCommentPoint")
                 .field('Bearer ', localStorage.getItem('token'))
-                .field('commentID', commentID)
+                .field('commentID', comment.ID)
                 .field('authorNickname', profile.nickname)
                 .field('userID', profile.user_id)
+                .field('memID', this.state.comment.MemID)
             upload.end((err, response) => {
                 if (err) {
                     console.log(err);
@@ -43,7 +63,8 @@ var Comm = React.createClass({
                     this.setState({
                         comment: JSON.parse(response.text),
                     });
-                    this.updateComment(JSON.parse(response.text));
+                    let comm = JSON.parse(response.text);
+                    this.updateComment(comm);
                 }
             });
         } else {
@@ -54,7 +75,7 @@ var Comm = React.createClass({
         if (localStorage.getItem('profile')) {
             let profile = JSON.parse(localStorage.getItem('profile'));
             let nickname = profile.nickname;
-            let commentID = this.props.comment.ID;
+            let commentID = this.state.comment.ID;
             let upload = request.post(hostName + "/deleteCommentPoint")
                 .field('Bearer ', localStorage.getItem('token'))
                 .field('commentID', commentID)
@@ -80,15 +101,25 @@ var Comm = React.createClass({
         browserHistory.replace('/profile/' + nickname);
     },
     deleteComment: function() {
-        let self = this;
-        if (confirm("You really want to delete this comment?")) {
-            var client = new HttpClient(true);
-            let url = hostName + "/deleteComment/" + this.state.comment.ID;
-            this.serverRequest = client.get(url, function(result) {
-                if(result) {
-                    self.deleteFromComments(self.state.comment.ID)
+        if (localStorage.getItem('profile')) {
+            let profile = JSON.parse(localStorage.getItem('profile'));
+            let nickname = profile.nickname;
+            let commentID = this.props.comment.ID;
+            let upload = request.post(hostName + "/deleteComment")
+                .field('Bearer ', localStorage.getItem('token'))
+                .field('commentID', commentID)
+                .field('authorNickname', profile.nickname)
+                .field('userID', profile.user_id)
+            upload.end((err, response) => {
+                if (err) {
+                    console.log(err);
+                }
+                if (response.status === 200) {
+                    this.deleteFromComments(this.state.comment.ID)
                 }
             });
+        } else {
+            lock.show();
         }
     },
     deleteFromComments: function(ID) {
@@ -105,6 +136,21 @@ var Comm = React.createClass({
                 isMain = comment.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
             return (
                 <div className="center relative">
+                    <Modal
+                        isOpen={this.state.modalIsOpen}
+                        onAfterOpen={this.afterOpenModal}
+                        onRequestClose={this.closeComments}
+                        style={modalStyle}
+                        contentLabel="Example Modal"
+                        >
+                        <div>
+                        You really want to delete this idea and all comments, and points belong?
+                        </div>
+                        <div className="center">
+                        <button onClick={this.deleteComment} className="btn btn-danger margin2">Delete</button>
+                        <button onClick={this.closeModal} className="btn btn-primary red margin2">Cancel</button>
+                        </div>
+                    </Modal>
                     <div onMouseEnter={this.showDetails} onMouseLeave={this.hideDetails}>
                         <div>
                             <img alt="" onClick={() => this.showProfile(comment.AuthorNickname)} src={picture} className="commentPhoto"/>
@@ -118,7 +164,7 @@ var Comm = React.createClass({
                                     className="thumbImage" alt="ASAS" src="/img/thumbDownIcon.png"/>
                             }
                             {isMain &&
-                                <img alt="" src="/img/xIcon.png" className="deleteComment right" onClick={this.deleteComment}/>
+                                <img alt="" src="/img/xIcon.png" className="deleteComment right" onClick={this.openModal}/>
                             }
                         </div>
                         <div className="comment">
