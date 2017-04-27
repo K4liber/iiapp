@@ -1,0 +1,409 @@
+body {
+	background-color: #150202 !important;
+	color: black;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+    min-height: 100%;
+	max-height: 100%;
+}
+
+h2 {
+	margin: 0 0 1.5% 0;
+	padding: 0;
+	background-color: rgba(255, 240, 200, 1);
+	color: rgba(0, 15, 55, 1);
+}
+
+.memImage {
+	max-width: 95%;
+}
+
+.commentSignature {
+	margin: 3% 3% 3% 3%;
+	cursor: pointer;
+	font-weight: bold;
+	font-size: 140%;
+	text-align: center;
+	height: auto;
+}
+
+input {
+  max-width: 80px;
+  padding: 1%;
+}
+
+.activitiesSignature {
+	margin: 3% 3% 3% 3%;
+	font-weight: bold;
+	font-size: 140%;
+	text-align: center;
+	height: auto;
+}
+
+.commentSignature:hover {
+	color: rgba(125,0,50,1);
+}
+
+.title {
+	float: left;
+	margin: 2px 2px 2px 2px;
+}
+
+.centering {
+	text-align: center;
+	display: inline-block;
+}
+
+.center {
+	text-align: center;
+}
+
+.uploadInput {
+	display: none;
+}
+
+.imageLeft {
+	float: left;
+	margin: 10px 10px 10px 10px;
+	cursor: pointer;
+}
+
+.imageRight {
+	margin: 10px 10px 10px 10px;
+	float: right;
+	cursor: pointer;
+}
+
+.imageCenter {
+	width: 90%;
+	margin: 0;
+}
+
+span {
+	cursor: pointer;
+}
+
+img {
+	padding: 2% 2% 2% 2%;
+}
+
+.apiContent {
+	margin: 0;
+	text-align: justify;
+    text-justify: inter-word;
+	height: 100%;
+}
+
+.menu {
+	background-color: black;
+	color: white;
+}
+
+.container {
+	height: 100%;
+}
+
+.contentLeft {
+	padding: 0% 0% 0% 0%;
+	width: 100%;
+	float: left;
+	overflow-y: auto;
+	text-align: center;
+	min-height: 400px;
+	height: auto;
+}
+
+.contentRight {
+	padding: 0% 2% 0% 2%;
+	width: 0%;
+	float: right;
+	overflow: auto;
+	height: 530px;
+	max-height: 530px;
+	min-height: 530px;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+
+.iconImage {
+	width: 30px;
+	float: right;
+	margin: 5px 5px 5px 5px;
+	padding: 0;
+	cursor: pointer;
+	background-color: transparent;
+}
+
+.memUpload {
+	position: relative;
+	width: auto;
+	margin: 0 auto;
+}
+
+.commentTextarea {
+	resize: none;
+	background: transparent;
+	text-align: justify;
+	text-justify: inter-word;
+	width: 96%;
+	height: auto;
+	margin: 2% 2% 2% 2%;
+	border: 1px solid white;
+	padding: 1% 1% 1% 1%;
+}
+
+.signatureTextarea {
+	resize: none;
+	background: transparent;
+	text-align: center;
+	width: 96%;
+	height: auto;
+	margin: 2% 2% 2% 2%;
+	font-weight: bold;
+	font-size: 140%;
+	border: 1px solid white;
+	padding: 1% 1% 1% 1%;
+}
+
+.comment {
+	text-align: justify;
+	text-justify: inter-word;
+	width: 100%;
+	padding: 0% 3% 0% 3%;
+	background-color: transparent;
+}
+
+.uploadCategories {
+	height: auto;
+	width: 100%;
+	background-color: rgba(150,150,150,0.5);
+	position: absolute;
+	bottom: 20px;
+}
+
+.thumbImage {
+	cursor: pointer;
+	margin: 0;
+	padding: 0;
+	width: 15px;
+}
+
+.cancelUpload {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+    right: 0;
+	background-color:  rgba(150,150,150,0.5);
+	width: 8%;
+	max-width: 40px;
+	min-width: 15px;
+	padding: 1% 1% 1% 1%;
+}
+
+.deleteComment {
+	cursor: pointer;
+	top: 0;
+    right: 0;
+	background-color:  rgba(150,150,150,0.5);
+	width: 8%;
+	max-width: 25px;
+	min-width: 15px;
+	padding: 1% 1% 1% 1%;
+}
+
+.uploadLogoChoosen {
+	position: absolute;
+	top: 0;
+    left: 0;
+	background-color:  rgba(150,150,150,0.5);
+	width: 8%;
+	max-width: 40px;
+	min-width: 15px;
+	padding: 1% 1% 1% 1%;
+}
+
+.mem {
+	position: relative;
+	width: auto;
+	margin: 5% 1% 5% 1%;
+    clear: left;
+}
+
+.memImage {
+	position: relative;
+	width: auto;
+	display: inline-block;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+
+.margin3 {
+	margin: 3% 3% 3% 3%;
+}
+
+.margin2 {
+	margin: 2% 2% 2% 2%;
+}
+
+.memLeaf {
+	position: absolute;
+	width: 98%;
+	margin: 5% 1% 5% 1%;
+	display: none;
+	background-color: transparent;
+	border: solid 1px black;
+}
+
+.iconCenter {
+	width: 20px;
+	margin: 5px 5px 5px 5px;
+	padding: 0;
+	cursor: pointer;
+	background-color: transparent;
+}
+
+.changeColor {
+	width: 28px;
+	height: 28px;
+	cursor: pointer;
+	background-color: white;
+	border: 1px black solid;
+}
+
+.iconLogo {
+	width: 3%;
+	min-width: 25px;
+	cursor: pointer;
+	padding: 0;
+	margin: 5px 5px 5px 5px;
+	background-color: black;
+}
+
+.relative {
+	position: relative;
+}
+
+.absolute {
+	position: relative;
+}
+
+.video {
+	position: absolute;
+	top:50;
+	left:0;
+	display:none;
+	width: 100%;
+	height: auto;
+}
+
+.canvas {
+	position: absolute;
+	top:50;
+	left:0;
+	display:none;
+	width: 100%;
+	height: auto;
+}
+
+.loadMem {
+	width: 100%;
+	height: auto;
+}
+
+.comments {
+	width: auto;
+	margin: 0 auto;
+	margin-top: 2%;
+	text-align:center;
+	max-width: 800px;
+	height:auto;
+}
+
+.commentPhoto {
+	width: 40px;
+	cursor: pointer;
+	padding: 0;
+	margin: 3px 3px 3px 3px;
+}
+
+.iconLogo:hover {
+	background-color: rgba(255,0,100,0.5);
+}
+
+.uploadLogo {
+	max-width: 40px;
+	min-width: 15px;
+	margin: 3px 3px 3px 3px;
+	padding: 3px 3px 3px 3px;
+	width: 8%;
+	cursor: pointer;
+	background-color: transparent;
+}
+
+span:hover {
+	color: rgba(125,0,50,1);
+}
+
+.uploadLogo:hover {
+	background-color: rgba(255,0,100,0.5);
+}
+
+#1Column {
+	width: 60%;
+}
+
+.articlesTable {
+	width: 90%;
+}
+
+.articlesCellRight {
+	float: right;
+}
+
+.avatarImage {
+	max-width: 200px;
+	max-height: 200px;
+}
+
+.fullImage {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: normal;
+}
+
+.imageBox {
+	position: absolute;
+	width:100%;
+	display: none;
+	text-align: center;
+}
+
+.xIcon {
+	cursor: pointer;
+	position: absolute;
+	width: 20px;
+	margin: 0;
+	padding: 0;
+	background-color: transparent;
+}
+
+.insideImageBox {
+	overflow: auto;
+	color:black;
+	z-index: 99999;
+}
+
+.categories {
+	height: auto;
+	text-align: center;
+}

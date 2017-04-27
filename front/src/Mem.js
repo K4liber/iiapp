@@ -23,11 +23,23 @@ const modalStyle = {
 };
 
 const commentsStyle = {
+  overlay : {
+    position          : 'fixed',
+    top               : '3%',
+    left              : '3%',
+    right             : '3%',
+    bottom            : '3%',
+    backgroundColor   : 'rgba(255, 255, 255, 0.75)'
+  },
   content : {
     overlfow: 'scroll',
+    top               : 0,
+    left              : 0,
+    right             : 0,
+    bottom            : 0,
     width: 'auto',
     margin: '0 0 0 0',
-    padding: '0 0 0 0',
+    padding: '0px',
     backgroundColor : 'rgba(248,248,248, 0.9)',
   }
 };
@@ -65,7 +77,7 @@ var Mem = React.createClass({
       });
   },
   goToIdea: function() {
-    browserHistory.replace('/idea/' + this.state.mem.ID);
+    browserHistory.push('/idea/' + this.state.mem.ID);
   },
   showComments: function() {
     let mem = this.state.mem;
@@ -151,7 +163,8 @@ var Mem = React.createClass({
     if (this.state.mem) {
       let mem = this.state.mem;
       //let shareUrl = hostName + "/mem/" + mem.ID;
-      let shareUrl = "90minut.pl";
+      let shareUrl = "taptapp.pl/mem/" + mem.ID;
+      var picture = mem.AuthorPhoto;
       var isMain = false;
       let memImage = hostName + "/resources/mems/" + mem.ID +mem.ImgExt;
       if (localStorage.getItem('profile'))
@@ -206,11 +219,9 @@ var Mem = React.createClass({
             {this.state.mem.Like && 
               <img onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
             }| Shares: <FacebookCount/>
-            <FacebookButton url={shareUrl} appId={AppID} message={mem.Signature} media={"http://img.90minut.pl/img/reklama90/logo_zlote.gif"}>
+            <FacebookButton className="fbButton" style={{ border: 0 }} url={shareUrl} appId={AppID} message={mem.Signature} media={picture}>
               {
-              <div>
-                <FacebookIcon size={20} round={false} /> 
-              </div>
+                <FacebookIcon size={18} round={true} /> 
               }
             </FacebookButton>
           </div>

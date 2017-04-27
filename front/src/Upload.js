@@ -11,7 +11,7 @@ var Upload = React.createClass({
             uploadedFile: null,
             fileUrl : null,
             title : null,
-            comment : "null",
+            comment : null,
             category : "another",
         };
         if (!localStorage.getItem('profile')) {

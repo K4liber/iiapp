@@ -13,7 +13,6 @@ var MemDropzone = React.createClass({
     loadCategoryIcon : function(category) {
         let link = "/img/" + category + "Icon.png";
         document.getElementById("categoryImage").alt = category;
-        console.log(link);
         this.setState({
             fileUrl : this.props.fileUrl,
             categoryLink : link,

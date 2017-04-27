@@ -42,7 +42,7 @@ var Board = React.createClass({
   logout : function(){
     localStorage.removeItem('token');
     localStorage.removeItem('profile');
-    browserHistory.push('/logout');
+    browserHistory.push('/');
   },
   about: function() {
     browserHistory.push('/about');

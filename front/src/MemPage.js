@@ -48,7 +48,6 @@ var MemPage = React.createClass({
     var url = hostName + '/mem/' + res[2]
     this.serverRequest = client.get(url, function(result) {
       let res = JSON.parse(result);
-      console.log(res.Mem.Views);
       this.setState({
         result: res,
         mem: res.Mem,
@@ -133,7 +132,7 @@ var MemPage = React.createClass({
   render: function() {
     if (this.state.mem) {
       let mem = this.state.mem;
-      let shareUrl = "90minut.pl";
+      let shareUrl = "taptapp.pl/mem/" + mem.ID;
       var picture = mem.AuthorPhoto;
       var date = new Date(Date.parse(mem.DateTime));
       var dateTime = date.toString();
@@ -179,7 +178,7 @@ var MemPage = React.createClass({
                 {this.state.mem.Like && 
                   <img onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
                 }| Shares: <FacebookCount/>
-                <FacebookButton className="fbButton" style={{ border: 0 }} url={shareUrl} appId={AppID} message={mem.Signature} media={"http://img.90minut.pl/img/reklama90/logo_zlote.gif"}>
+                <FacebookButton className="fbButton" style={{ border: 0 }} url={shareUrl} appId={AppID} message={mem.Signature} media={picture}>
                   {
                     <FacebookIcon size={18} round={true} /> 
                   }

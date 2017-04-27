@@ -21,7 +21,6 @@ var Comments = React.createClass({
             let comments = this.props.result.Comments;
             if(comments[comments.length-1])
                 lastAuthor = comments[comments.length-1].AuthorNickname;
-            console.log(comments[comments.length-1]);
             this.setState({
                 comments: comments,
                 mem: this.props.result.Mem,
@@ -44,7 +43,7 @@ var Comments = React.createClass({
         }
     },
     goToIdea: function() {
-        browserHistory.replace('/idea/' + this.props.memId);
+        browserHistory.push('/idea/' + this.props.memId);
     },
     updateComment: function(comment) {
         let comments = this.state.comments;

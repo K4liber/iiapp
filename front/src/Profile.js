@@ -14,7 +14,6 @@ var Profile = React.createClass({
     var res = location.pathname.split("/"); 
     var client = new HttpClient(true);
     this.serverRequest = client.get(hostName + '/profile/' + res[2], function(result) {
-      console.log(result);
       this.setState({
         mems: result,
         username: res[2],

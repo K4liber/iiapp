@@ -82,7 +82,7 @@ var Settings = React.createClass({
               console.error(err);
           }
           if (response.status === 200) {
-              console.log(JSON.parse(response.text));
+              window.location.replace (apiHost + "/settings");
               //localStorage.setItem('profile', JSON.parse(response.text));
           }
         });

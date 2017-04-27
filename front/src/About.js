@@ -29,7 +29,6 @@ var About = React.createClass({
     var url = hostName + '/mem/' + 3
     this.serverRequest = client.get(url, function(result) {
       let res = JSON.parse(result);
-      console.log(res.Mem.Views);
       this.setState({
         result: res,
         mem: res.Mem,

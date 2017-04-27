@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -19,13 +18,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	"github.com/rs/cors"
 )
 
 var db *sql.DB
 
-const hostName = "http://localhost:8080"
+//const hostName = "http://localhost:8080"
+const hostName = "http://46.41.136.25/app"
 const CLIENT_ID = "ANOkwl33Ja5JX2ctrzF6FSXwhDbgiGU6"
 const CLIENT_DOMAIN = "k4liber.eu.auth0.com"
 const CLIENT_SECRET = "6I_oCVGgrCJ4bQz1AhoUuixbbIOL4BRSXmOyAackQAP37sMsyOfXig5AjG9jzkhQ"
@@ -587,11 +586,13 @@ func getProfileComments(nickname string) []Comment {
 }
 
 func main() {
-	// Here we are loading in our .env file which will contain our Auth0 Client Secret and Domain
-	errEnv := godotenv.Load()
-	if errEnv != nil {
-		log.Fatal("Error loading .env file")
-	}
+	/*
+		// Here we are loading in our .env file which will contain our Auth0 Client Secret and Domain
+		errEnv := godotenv.Load()
+		if errEnv != nil {
+			log.Fatal("Error loading .env file")
+		}
+	*/
 
 	r := mux.NewRouter()
 	r.Handle("/", http.FileServer(http.Dir("./views/")))
@@ -600,27 +601,32 @@ func main() {
 		OptionsPassthrough: true,
 		AllowedHeaders:     []string{"nickname"},
 	})
-	r.Handle("/mems", c.Handler(MemsHandler))
-	r.Handle("/mem/{id}", c.Handler(MemHandler))
-	r.Handle("/profile/{nickname}", c.Handler(ProfileHandler))
-	r.Handle("/activities/{nickname}", c.Handler(ActivitiesHandler))
-	r.Handle("/category/{category}", c.Handler(CategoryHandler))
-	r.Handle("/addMem", c.Handler(PreHandler(AddMemHandler)))
-	r.Handle("/uploadAvatar", c.Handler(PreHandler(UploadAvatarHandler)))
-	r.Handle("/addComment", c.Handler(PreHandler(AddCommentHandler)))
-	r.Handle("/addMemPoint", c.Handler(PreHandler(AddMemPointHandler)))
-	r.Handle("/deleteMemPoint", c.Handler(PreHandler(DeleteMemPointHandler)))
-	r.Handle("/deleteMem", c.Handler(PreHandler(DeleteMemHandler)))
-	r.Handle("/adminDeleteMem", c.Handler(PreHandler(AdminDeleteMemHandler)))
-	r.Handle("/addCommentPoint", c.Handler(PreHandler(AddCommentPointHandler)))
-	r.Handle("/deleteCommentPoint", c.Handler(PreHandler(DeleteCommentPointHandler)))
-	r.Handle("/deleteComment", c.Handler(PreHandler(DeleteCommentHandler)))
-	r.Handle("/adminDeleteComment", c.Handler(PreHandler(AdminDeleteCommentHandler)))
+	r.Handle("/app/mems", c.Handler(MemsHandler))
+	r.Handle("/app/mem/{id}", c.Handler(MemHandler))
+	r.Handle("/app/profile/{nickname}", c.Handler(ProfileHandler))
+	r.Handle("/app/activities/{nickname}", c.Handler(ActivitiesHandler))
+	r.Handle("/app/category/{category}", c.Handler(CategoryHandler))
+	r.Handle("/app/addMem", c.Handler(PreHandler(AddMemHandler)))
+	r.Handle("/app/uploadAvatar", c.Handler(PreHandler(UploadAvatarHandler)))
+	r.Handle("/app/addComment", c.Handler(PreHandler(AddCommentHandler)))
+	r.Handle("/app/addMemPoint", c.Handler(PreHandler(AddMemPointHandler)))
+	r.Handle("/app/deleteMemPoint", c.Handler(PreHandler(DeleteMemPointHandler)))
+	r.Handle("/app/deleteMem", c.Handler(PreHandler(DeleteMemHandler)))
+	r.Handle("/app/adminDeleteMem", c.Handler(PreHandler(AdminDeleteMemHandler)))
+	r.Handle("/app/addCommentPoint", c.Handler(PreHandler(AddCommentPointHandler)))
+	r.Handle("/app/deleteCommentPoint", c.Handler(PreHandler(DeleteCommentPointHandler)))
+	r.Handle("/app/deleteComment", c.Handler(PreHandler(DeleteCommentHandler)))
+	r.Handle("/app/adminDeleteComment", c.Handler(PreHandler(AdminDeleteCommentHandler)))
 
 	fs := justFilesFilesystem{http.Dir("resources/")}
-	http.Handle("/resources/", http.StripPrefix("/resources", http.FileServer(fs)))
-	http.Handle("/", handlers.LoggingHandler(os.Stdout, r))
-	http.ListenAndServe(":8080", nil)
+	http.Handle("/app/resources/", http.StripPrefix("/app/resources", http.FileServer(fs)))
+
+	fsa := justFilesFilesystem{http.Dir("build/")}
+	http.Handle("/", http.StripPrefix("/", http.FileServer(fsa)))
+
+	http.Handle("/app/", handlers.LoggingHandler(os.Stdout, r))
+
+	http.ListenAndServe(":80", nil)
 }
 
 var NotImplemented = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -819,21 +825,22 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 	}
 
 	//Dodawanie komentarza
-	var profilePicture = req.FormValue("profilePicture")
 	var comment = req.FormValue("comment")
-	result2, errComment := db.Exec(
-		"INSERT INTO comment (memId, authorNickname, authorPhoto, content, dateTime) VALUES ('" +
-			strconv.FormatInt(memID, 10) + "', '" + author + "', '" + profilePicture + "', '" + comment + "', '" + datetime + "')",
-	)
-	if errComment != nil {
-		fmt.Println(errComment.Error())
+	if comment != "" {
+		var profilePicture = req.FormValue("profilePicture")
+		result2, errComment := db.Exec(
+			"INSERT INTO comment (memId, authorNickname, authorPhoto, content, dateTime) VALUES ('" +
+				strconv.FormatInt(memID, 10) + "', '" + author + "', '" + profilePicture + "', '" + comment + "', '" + datetime + "')",
+		)
+		if errComment != nil {
+			fmt.Println(errComment.Error())
+		}
+		commentID, errCommentID := result2.LastInsertId()
+		if errCommentID != nil {
+			fmt.Println(errCommentID)
+			fmt.Println(commentID)
+		}
 	}
-	commentID, errCommentID := result2.LastInsertId()
-	if errCommentID != nil {
-		fmt.Println(errCommentID)
-		fmt.Println(commentID)
-	}
-
 	//Zapisanie zdjecia
 	req.ParseMultipartForm(32 << 20)
 	file, handler, err := req.FormFile("file")
