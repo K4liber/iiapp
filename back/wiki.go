@@ -813,8 +813,12 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 	var author = req.FormValue("authorNickname")
 	datetime := time.Now().Format(time.RFC3339)
 	result, err2 := db.Exec(
-		"INSERT INTO mem (signature, imgExt, dateTime, authorNickname, category) VALUES ('" +
-			title + "', '." + extension + "', '" + datetime + "', '" + author + "', '" + category + "')",
+		"INSERT INTO mem (signature, imgExt, dateTime, authorNickname, category) VALUES (?, ?, ?, ?, ?)",
+		title,
+		extension,
+		datetime,
+		author,
+		category,
 	)
 	if err2 != nil {
 		fmt.Println(err2.Error())
@@ -829,8 +833,12 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 	if comment != "" {
 		var profilePicture = req.FormValue("profilePicture")
 		result2, errComment := db.Exec(
-			"INSERT INTO comment (memId, authorNickname, authorPhoto, content, dateTime) VALUES ('" +
-				strconv.FormatInt(memID, 10) + "', '" + author + "', '" + profilePicture + "', '" + comment + "', '" + datetime + "')",
+			"INSERT INTO comment (memId, authorNickname, authorPhoto, content, dateTime) VALUES (?, ?, ?, ?, ?)",
+			strconv.FormatInt(memID, 10),
+			author,
+			profilePicture,
+			comment,
+			datetime,
 		)
 		if errComment != nil {
 			fmt.Println(errComment.Error())
@@ -882,8 +890,12 @@ var AddCommentHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.R
 	var profilePicture = req.FormValue("profilePicture")
 	var comment = req.FormValue("comment")
 	result, errComment := db.Exec(
-		"INSERT INTO comment (memId, authorNickname, authorPhoto, content, dateTime) VALUES ('" +
-			memID + "', '" + nickname + "', '" + profilePicture + "', '" + comment + "', '" + datetime + "')",
+		"INSERT INTO comment (memId, authorNickname, authorPhoto, content, dateTime) VALUES (?, ?, ?, ?, ?)",
+		memID,
+		nickname,
+		profilePicture,
+		comment,
+		datetime,
 	)
 	if errComment != nil {
 		fmt.Println(errComment.Error())

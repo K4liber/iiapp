@@ -17,7 +17,7 @@ import { Switch } from 'react-router';
 import { request } from 'request';
 
 //export const hostName = "http://localhost:8080/app";
-//export const apiHost = "http://localhost:8080";
+//export const apiHost = "http://localhost:8080/";
 export const hostName = "http://46.41.136.25:80/app";
 export const apiHost = "http://46.41.136.25:80/app";
 export var browserHistory = createBrowserHistory();
