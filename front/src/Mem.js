@@ -190,6 +190,7 @@ var Mem = React.createClass({
               isOpen={this.state.showComments}
               onAfterOpen={this.afterOpenModal}
               onRequestClose={this.closeComments}
+              animationType={"fade"}
               style={commentsStyle}
               transparent={true}
               contentLabel={"Comments"}

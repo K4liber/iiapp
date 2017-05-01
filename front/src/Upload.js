@@ -1,9 +1,23 @@
 import React from 'react';
 import request from 'superagent';
+import Modal from 'react-modal';
+
 import MemDropzone from './MemDropzone'
 
 import { hostName } from './App.js';
 import { lock } from './App.js';
+
+const warningsStyle = {
+  content : {
+    top                   : '50%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)',
+    
+  }
+};
 
 var Upload = React.createClass({
     componentWillMount : function(props) {
@@ -13,10 +27,23 @@ var Upload = React.createClass({
             title : null,
             comment : null,
             category : "another",
+            warnings: [],
+            showWarnings: false,
+            showLoading: false,
+            loadingMessage: "Please wait a second...",
         };
         if (!localStorage.getItem('profile')) {
             lock.show();
         }
+    },
+    closeWarnings: function() {
+        this.setState({showWarnings: false});
+    },
+    openWarnings: function(warnings) {
+        this.setState({
+            showWarnings: true,
+            warnings: warnings,
+        });
     },
     loadTitle : function() {
         var title = document.getElementById("titleArea").value;
@@ -47,31 +74,41 @@ var Upload = React.createClass({
             return false;
     },
     postMem : function() {
-        var category = document.getElementById("categoryImage").alt;
-        this.setState({category: category});
+        var warnings = [];
         if (!this.state.uploadedFile) {
-            alert("You did not load an image!");
-            return
+            warnings.push("You have to load vision's image.")
+        }
+        if (document.getElementById("categoryImage")) {
+            var category = document.getElementById("categoryImage").alt;
+            this.setState({category: category});
+        } else {
+            warnings.push("You have to choose vision's image category.")
         }
         if (!this.state.title) {
-            alert("You did not tap a title!");
+            warnings.push("You did not tap a title!");
+        }
+        if (this.state.uploadedFile) {
+            if (this.state.uploadedFile.size > 512000) {
+                warnings.push("Image size cannot be more than 500kB");
+            }
+            var res = this.state.uploadedFile.type.split("/"); 
+            if (res[0] !== "image") {
+                warnings.push("Wrong image format.");
+            }
+        }
+        if (warnings.length !== 0) {
+            this.openWarnings(warnings);
             return
         }
-        if (this.state.uploadedFile.size > 512000) {
-            alert("Image size cannot be more than 500kB");
-            return
-        }
+        this.setState({
+            showLoading : true,
+        });
         let profile = JSON.parse(localStorage.getItem('profile'));
         let nickname = profile.nickname;
         var profilePicture = profile.picture;
         if (profile.user_metadata && profile.user_metadata.picture)
             profilePicture = hostName + "/resources/avatars/" + profile.user_metadata.picture;
         let UPLOAD_URL = hostName + "/addMem";
-        var res = this.state.uploadedFile.type.split("/"); 
-        if (res[0] !== "image") {
-            alert("Wrong image format!");
-            return
-        }
         let upload = request.post(UPLOAD_URL)
                         .field('userID', profile.user_id)
                         .field('token', localStorage.getItem('token'))
@@ -85,17 +122,59 @@ var Upload = React.createClass({
                         .field('profilePicture', profilePicture);
         upload.end((err, response) => {
             if (err) {
-                alert(response.text)
+                this.setState({
+                    loadingMessage : "Error while uploading.",
+                });
             }
-            if (response.status === 200)
+            if (response.status === 200){
+                this.setState({
+                    showLoading : false,
+                });
                 this.props.browserHistory.push('/profile/' + nickname);
+            }
         });
     },
     render : function() {
         if (localStorage.getItem('profile')) {
+            let warnings = this.state.warnings;
+            let loadingMessage = this.state.loadingMessage;
             return (
                 <div className="row well well-sm">
                     <div className="contentLeft col-md-12" id="contentLeft">
+                        <Modal
+                            isOpen={this.state.showLoading}
+                            onRequestClose={this.closeLoading}
+                            animationType={"fade"}
+                            style={warningsStyle}
+                            transparent={true}
+                            contentLabel={"Uploading"}
+                        >   
+                            <div className="centering">
+                                <p>Uploading</p>
+                                <p><img alt="" src="/img/loading.gif"/></p>
+                                <p>{loadingMessage}</p>
+                            </div>
+                        </Modal>
+                        <Modal
+                            isOpen={this.state.showWarnings}
+                            onRequestClose={this.closeWarnings}
+                            animationType={"fade"}
+                            style={warningsStyle}
+                            transparent={true}
+                            contentLabel={"Comments"}
+                        >   
+                            <div className="centering">
+                                {warnings &&
+                                    warnings.map( function(warning, index) {
+                                        let key= "warning" + index;
+                                        return (
+                                            <div key={key}>{warning}</div>
+                                        )
+                                    })
+                                }
+                                <button onClick={this.closeWarnings} className="btn btn-primary margin3">OK</button>
+                            </div>
+                        </Modal>
                         <div className="mem centering" style={{ width: "80%" }} >
                             <MemDropzone onX={this.cancelImage} onDrop={this.onImageDrop} 
                             fileUrl={this.state.fileUrl} />

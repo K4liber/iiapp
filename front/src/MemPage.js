@@ -157,35 +157,37 @@ var MemPage = React.createClass({
                   <button onClick={this.closeModal} className="btn btn-primary red margin2">Cancel</button>
                 </div>
               </Modal>
-              <div>
-                Uploaded by <span onClick={() => this.showProfile(mem.AuthorNickname)}>{mem.AuthorNickname}</span> at {dateTime}
-              </div>
-              <div className="memImage">
-                <img className="memImage" alt="ASAS" src={hostName + "/resources/mems/" + mem.ID +mem.ImgExt}/>
-                <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
-                {isMain &&
-                  <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.openModal}/>
-                }
-              </div>
-              <div className="commentSignature" onClick={this.goToIdea}>
-                {mem.Signature}
-              </div>
-              <div>
-                Views: {this.state.mem.Views}  | Points: {this.state.mem.Points} 
-                {!this.state.mem.Like && 
-                  <img onClick={this.doLike} className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
-                }
-                {this.state.mem.Like && 
-                  <img onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
-                }| Shares: <FacebookCount/>
-                <FacebookButton className="fbButton" style={{ border: 0 }} url={shareUrl} appId={AppID} message={mem.Signature} media={picture}>
-                  {
-                    <FacebookIcon size={18} round={true} /> 
+              <div className="mem">
+                <div>
+                  Uploaded by <span onClick={() => this.showProfile(mem.AuthorNickname)}>{mem.AuthorNickname}</span> at {dateTime}
+                </div>
+                <div className="memImage">
+                  <img className="memImage" alt="ASAS" src={hostName + "/resources/mems/" + mem.ID +mem.ImgExt}/>
+                  <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
+                  {isMain &&
+                    <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.openModal}/>
                   }
-                </FacebookButton>
-              </div>
-              <div>
-                <Comments memId={this.state.mem.ID} result={this.state.result} className="comments"/>
+                </div>
+                <div className="commentSignature" onClick={this.goToIdea}>
+                  {mem.Signature}
+                </div>
+                <div>
+                  Views: {this.state.mem.Views}  | Points: {this.state.mem.Points} 
+                  {!this.state.mem.Like && 
+                    <img onClick={this.doLike} className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
+                  }
+                  {this.state.mem.Like && 
+                    <img onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
+                  }| Shares: <FacebookCount/>
+                  <FacebookButton className="fbButton" style={{ border: 0 }} url={shareUrl} appId={AppID} message={mem.Signature} media={picture}>
+                    {
+                      <FacebookIcon size={18} round={true} /> 
+                    }
+                  </FacebookButton>
+                </div>
+                <div>
+                  <Comments memId={this.state.mem.ID} result={this.state.result} className="comments"/>
+                </div>
               </div>
             </div>
           </div>

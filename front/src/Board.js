@@ -48,7 +48,7 @@ var Board = React.createClass({
     browserHistory.push('/about');
   },
   showLock : function() {
-    this.props.lock.show();
+    lock.show();
   },
   showOptions : function() {
     this.setState({

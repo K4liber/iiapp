@@ -618,15 +618,23 @@ func main() {
 	r.Handle("/app/deleteComment", c.Handler(PreHandler(DeleteCommentHandler)))
 	r.Handle("/app/adminDeleteComment", c.Handler(PreHandler(AdminDeleteCommentHandler)))
 
+	/* Produkcja
+	fsa := justFilesFilesystem{http.Dir("build/")}
+	http.Handle("/", http.StripPrefix("/", http.FileServer(fsa)))
+	*/
+	/*
+		http.Handle("/idea/cos", http.StripPrefix("/idea", http.FileServer(fsa)))
+		http.Handle("/activities/cos", http.StripPrefix("/activities", http.FileServer(fsa)))
+		http.Handle("/settings", http.StripPrefix("/settings", http.FileServer(fsa)))
+		http.Handle("/upload", http.StripPrefix("/upload", http.FileServer(fsa)))
+		http.Handle("/about", http.StripPrefix("/about", http.FileServer(fsa)))
+	*/
+
+	http.Handle("/app/", handlers.LoggingHandler(os.Stdout, r))
 	fs := justFilesFilesystem{http.Dir("resources/")}
 	http.Handle("/app/resources/", http.StripPrefix("/app/resources", http.FileServer(fs)))
 
-	fsa := justFilesFilesystem{http.Dir("build/")}
-	http.Handle("/", http.StripPrefix("/", http.FileServer(fsa)))
-
-	http.Handle("/app/", handlers.LoggingHandler(os.Stdout, r))
-
-	http.ListenAndServe(":80", nil)
+	http.ListenAndServe(":8080", nil)
 }
 
 var NotImplemented = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -815,7 +823,7 @@ var AddMemHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Reque
 	result, err2 := db.Exec(
 		"INSERT INTO mem (signature, imgExt, dateTime, authorNickname, category) VALUES (?, ?, ?, ?, ?)",
 		title,
-		extension,
+		"."+extension,
 		datetime,
 		author,
 		category,

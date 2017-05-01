@@ -232,8 +232,10 @@ img {
 .mem {
 	position: relative;
 	width: auto;
-	margin: 5% 1% 5% 1%;
+	margin: 0 auto;
+	margin-top: 5%;
     clear: left;
+	max-width: 800px;
 }
 
 .memImage {
