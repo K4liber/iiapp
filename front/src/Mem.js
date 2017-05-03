@@ -9,6 +9,7 @@ import { AppID } from './App.js';
 import request from 'superagent';
 import { FacebookButton, FacebookCount } from "react-social";
 import Modal from 'react-modal';
+import ReactTooltip from 'react-tooltip'
 
 const modalStyle = {
   content : {
@@ -163,9 +164,10 @@ var Mem = React.createClass({
     if (this.state.mem) {
       let mem = this.state.mem;
       //let shareUrl = hostName + "/mem/" + mem.ID;
-      let shareUrl = "taptapp.pl/mem/" + mem.ID;
+      let shareUrl = "visionaries.pl/idea" + mem.ID;
       var picture = mem.AuthorPhoto;
       var isMain = false;
+      let categoryTip = mem.Category + " category";
       let memImage = hostName + "/resources/mems/" + mem.ID +mem.ImgExt;
       if (localStorage.getItem('profile'))
           isMain = mem.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
@@ -196,17 +198,18 @@ var Mem = React.createClass({
               contentLabel={"Comments"}
             >
                 <div className="commentSignature" onClick={this.goToIdea}>
-                    #{mem.Signature}
+                    {mem.Signature}
                 </div>
                 <Comments memId={mem.ID} className="comments"/>
                 <img onClick={this.closeComments} alt="" src="/img/xIcon.png" className="cancelUpload" />
           </Modal>
           <div className="memImage">
-            <img className="memImage pointer" alt="ASAS" src={memImage}
+            <ReactTooltip />
+            <img data-tip="check out comments" className="memImage pointer resize" alt="" src={memImage}
               onClick={this.showComments}/>
-            <img alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
+            <img data-tip={categoryTip} alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
             {isMain &&
-              <img alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.openModal}/>
+              <img data-tip="delete" alt="" src="/img/xIcon.png" className="cancelUpload" onClick={this.openModal}/>
             }
           </div>
           <div className="commentSignature" onClick={this.goToIdea}>
@@ -215,12 +218,12 @@ var Mem = React.createClass({
           <div>
             Views: {this.state.mem.Views}  | Points: {this.state.mem.Points} 
             {!this.state.mem.Like && 
-              <img onClick={this.doLike} className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
+              <img data-tip="add point" onClick={this.doLike} className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
             }
             {this.state.mem.Like && 
-              <img onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
+              <img data-tip="delete point" onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
             }| Shares: <FacebookCount/>
-            <FacebookButton className="fbButton" style={{ border: 0 }} url={shareUrl} appId={AppID} message={mem.Signature} media={picture}>
+            <FacebookButton data-tip="share on facebook" className="fbButton" style={{ border: 0 }} url={shareUrl} appId={AppID} message={mem.Signature} media={picture}>
               {
                 <FacebookIcon size={18} round={true} /> 
               }

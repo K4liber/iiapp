@@ -284,9 +284,16 @@ func getProfileActivities(nickname string) []Activity {
 	var memID int
 	var description string
 	var dateTime string
+	var signature string
+	var commentContent string
 	for _, mem := range mems {
 		memID = mem.ID
-		description = "Your mem '" + mem.Signature + "' has been added."
+		if len(mem.Signature) > 30 {
+			signature = mem.Signature[0:29] + "..."
+		} else {
+			signature = mem.Signature
+		}
+		description = "Your mem '" + signature + "' has been added."
 		dateTime = mem.DateTime
 		activity := &Activity{
 			MemID:       memID,
@@ -296,8 +303,13 @@ func getProfileActivities(nickname string) []Activity {
 		slice = append(slice, *activity)
 	}
 	for _, comment := range comments {
+		if len(comment.Content) > 30 {
+			commentContent = comment.Content[0:29] + "..."
+		} else {
+			commentContent = comment.Content
+		}
 		memID = comment.MemID
-		description = "Your comment '" + comment.Content + "' has been added."
+		description = "Your comment '" + commentContent + "' has been added."
 		dateTime = comment.DateTime
 		activity := &Activity{
 			MemID:       memID,

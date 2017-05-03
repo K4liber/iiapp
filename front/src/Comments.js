@@ -42,6 +42,11 @@ var Comments = React.createClass({
             }.bind(this));
         }
     },
+    textAreaAdjust: function(id) {
+        let textArea = document.getElementById(id);
+        textArea.style.height = "0px";
+        textArea.style.height = (textArea.scrollHeight)+"px";
+    },
     goToIdea: function() {
         browserHistory.push('/idea/' + this.props.memId);
     },
@@ -108,7 +113,7 @@ var Comments = React.createClass({
         this.forceUpdate();
     },
     render : function () {
-        var lastIsMine = false;
+        let lastIsMine = false;
         if (JSON.parse(localStorage.getItem('profile'))) {
             lastIsMine = 
                 this.state.lastCommentAuthor === JSON.parse(localStorage.getItem('profile')).nickname;
@@ -127,7 +132,7 @@ var Comments = React.createClass({
                         })
                     }
                     <div>
-                        <textarea className="commentTextarea" maxLength="1000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ..."></textarea> 
+                        <textarea onChangeCapture={() => this.textAreaAdjust(commentAreaID)} className="commentTextarea" maxLength="1000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ..."></textarea> 
                     </div>
                     <p>
                         <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Send</button>
@@ -138,8 +143,8 @@ var Comments = React.createClass({
             let commentAreaID = "commentArea" + this.state.mem.ID;
             return (
                 <div>
-                    <div>
-                        <textarea className="commentTextarea" maxLength="1000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ..."></textarea> 
+                    <div className="block">
+                        <textarea onChangeCapture={() => this.textAreaAdjust(commentAreaID)} className="commentTextarea" maxLength="1000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ..."></textarea> 
                     </div>
                     <p>
                         <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Send</button>

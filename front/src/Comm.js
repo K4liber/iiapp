@@ -1,6 +1,7 @@
 import React from 'react';
 import request from 'superagent';
 import Modal from 'react-modal';
+import ReactTooltip from 'react-tooltip'
 
 import { hostName } from './App.js';
 import { lock } from './App.js';
@@ -136,6 +137,7 @@ var Comm = React.createClass({
                 isMain = comment.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
             return (
                 <div className="center relative">
+                    <ReactTooltip />
                     <Modal
                         isOpen={this.state.modalIsOpen}
                         onAfterOpen={this.afterOpenModal}
@@ -153,18 +155,18 @@ var Comm = React.createClass({
                     </Modal>
                     <div onMouseEnter={this.showDetails} onMouseLeave={this.hideDetails}>
                         <div>
-                            <img alt="" onClick={() => this.showProfile(comment.AuthorNickname)} src={picture} className="commentPhoto"/>
-                            {comment.AuthorNickname} | {dateTime} | Points: {this.state.comment.Points}
+                            <img data-tip="check profile" alt="" onClick={() => this.showProfile(comment.AuthorNickname)} src={picture} className="commentPhoto"/>
+                            <span data-tip="check profile" onClick={() => this.showProfile(comment.AuthorNickname)} >{comment.AuthorNickname}</span> | {dateTime} | Points: {this.state.comment.Points}
                             {!this.state.comment.Like && 
-                                <img onClick={this.doLike}
+                                <img data-tip="add point" onClick={this.doLike}
                                     className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
                             }
                             {this.state.comment.Like && 
-                                <img onClick={this.doUnLike}
+                                <img data-tip="delete point" onClick={this.doUnLike}
                                     className="thumbImage" alt="ASAS" src="/img/thumbDownIcon.png"/>
                             }
                             {isMain &&
-                                <img alt="" src="/img/xIcon.png" className="deleteComment right" onClick={this.openModal}/>
+                                <img data-tip="delete" alt="" src="/img/xIcon.png" className="deleteComment right" onClick={this.openModal}/>
                             }
                         </div>
                         <div className="comment">
