@@ -3,6 +3,7 @@ import request from 'superagent';
 import Comm from './Comm.js';
 
 import { hostName } from './App.js';
+import { host } from './App.js';
 import { HttpClient } from './App.js';
 import { browserHistory } from './App.js';
 import { lock } from './App.js';
@@ -70,7 +71,7 @@ var Comments = React.createClass({
                 let profile = JSON.parse(localStorage.getItem('profile'));
                 var profilePicture = profile.picture;
                 if (profile.user_metadata && profile.user_metadata.picture)
-                    profilePicture = hostName + "/resources/avatars/" + profile.user_metadata.picture;
+                    profilePicture = host + "/resources/avatars/" + profile.user_metadata.picture;
                 let upload = request.post(hostName + "/addComment")
                                 .field('userID', profile.user_id)
                                 .field('Bearer ', localStorage.getItem('token'))

@@ -5,6 +5,7 @@ import request from 'superagent';
 import { CLIENT_DOMAIN } from './App.js';
 import { apiHost } from './App.js';
 import { hostName } from './App.js';
+import { host } from './App.js';
 import { API_TOKEN } from './App.js';
 import { browserHistory } from './App.js';
 
@@ -124,7 +125,7 @@ var Settings = React.createClass({
         let profile = JSON.parse(localStorage.getItem('profile'));
         var picture = profile.picture;
         if (profile.user_metadata && profile.user_metadata.picture)
-          picture = hostName + "/resources/avatars/" + profile.user_metadata.picture
+          picture = host + "/resources/avatars/" + profile.user_metadata.picture
         return (
             <div className="row well well-sm">
               <script src="/static/js/auth0-editprofile.min.js"></script>

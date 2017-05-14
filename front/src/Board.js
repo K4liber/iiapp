@@ -2,6 +2,7 @@ import React from 'react';
 import Categories from './Categories';
 
 import { hostName } from './App.js';
+import { host } from './App.js';
 import { lock } from './App.js';
 import { browserHistory } from './App.js';
 
@@ -65,7 +66,7 @@ var Board = React.createClass({
       let profile = JSON.parse(localStorage.getItem('profile'));
       var picture = profile.picture;
       if (profile.user_metadata && profile.user_metadata.picture)
-        picture = hostName + "/resources/avatars/" + profile.user_metadata.picture
+        picture = host+ "/resources/avatars/" + profile.user_metadata.picture
       if(this.state.showOptions) {
         return (
         <div className="menu right col-md-12">

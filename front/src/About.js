@@ -2,11 +2,13 @@ import React from 'react';
 
 import request from 'superagent';
 import { FacebookButton, FacebookCount } from "react-social";
+import ReactTooltip from 'react-tooltip'
 
 import Comments from './Comments';
 
 import { HttpClient } from './App.js';
 import { hostName } from './App.js';
+import { host } from './App.js';
 import { lock } from './App.js';
 import { AppID } from './App.js';
 import { browserHistory } from './App.js';
@@ -89,7 +91,7 @@ var About = React.createClass({
   render: function() {
     if (this.state.mem) {
       let mem = this.state.mem;
-      let shareUrl = "90minut.pl";
+      let shareUrl = "visionaries.pl/about";
       var picture = mem.AuthorPhoto;
       var date = new Date(Date.parse(mem.DateTime));
       var dateTime = date.toString();
@@ -99,7 +101,7 @@ var About = React.createClass({
               <div>
                 Uploaded by <span onClick={() => this.showProfile(mem.AuthorNickname)}>{mem.AuthorNickname}</span> at {dateTime}
               </div>
-              <img className="memImage" alt="ASAS" src={hostName + "/resources/mems/" + mem.ID +mem.ImgExt}/>
+              <img className="memImage" alt="ASAS" src={host + "/resources/mems/" + mem.ID +mem.ImgExt}/>
               <div className="commentSignature" onClick={this.goToIdea}>
                 {mem.Signature}
               </div>
@@ -110,8 +112,9 @@ var About = React.createClass({
                 }
                 {this.state.mem.Like && 
                   <img onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
-                }| Shares: <FacebookCount/>
-                <FacebookButton url={shareUrl} appId={AppID} message={mem.Signature} media={"http://img.90minut.pl/img/reklama90/logo_zlote.gif"}>
+                }| Shares: <FacebookCount url={shareUrl}/>
+                <ReactTooltip />
+                <FacebookButton data-tip="share on facebook" className="fbButton"  style={{ border: 0, backgroundColor: 'transparent' }} url={shareUrl} appId={AppID} message={mem.Signature} media={host + "/resources/mems/" + mem.ID +mem.ImgExt}>
                   {
                   <div>
                     <FacebookIcon size={20} round={false} /> 

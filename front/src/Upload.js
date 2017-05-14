@@ -5,6 +5,7 @@ import Modal from 'react-modal';
 import MemDropzone from './MemDropzone'
 
 import { hostName } from './App.js';
+import { host } from './App.js';
 import { lock } from './App.js';
 
 const warningsStyle = {
@@ -25,7 +26,7 @@ var Upload = React.createClass({
             uploadedFile: null,
             fileUrl : null,
             title : null,
-            comment : null,
+            comment : "",
             category : "another",
             warnings: [],
             showWarnings: false,
@@ -73,6 +74,11 @@ var Upload = React.createClass({
         else    
             return false;
     },
+    textAreaAdjust: function() {
+        let textArea = document.getElementById("commentArea");
+        textArea.style.height = "0px";
+        textArea.style.height = (textArea.scrollHeight)+"px";
+    },
     postMem : function() {
         var warnings = [];
         if (!this.state.uploadedFile) {
@@ -107,7 +113,7 @@ var Upload = React.createClass({
         let nickname = profile.nickname;
         var profilePicture = profile.picture;
         if (profile.user_metadata && profile.user_metadata.picture)
-            profilePicture = hostName + "/resources/avatars/" + profile.user_metadata.picture;
+            profilePicture = host + "/resources/avatars/" + profile.user_metadata.picture;
         let UPLOAD_URL = hostName + "/addMem";
         let upload = request.post(UPLOAD_URL)
                         .field('userID', profile.user_id)
@@ -181,7 +187,7 @@ var Upload = React.createClass({
                         </div>
                         <div className="comments">
                             <textarea id="titleArea" className="signatureTextarea" maxLength="100" onChange={this.loadTitle} placeholder="Signature ..."></textarea> 
-                            <textarea id="commentArea" className="commentTextarea" maxLength="1000" onChange={this.loadComment} placeholder="Comment (you can optionaly add first comment) ..."></textarea> 
+                            <textarea onChangeCapture={this.textAreaAdjust} id="commentArea" className="commentTextarea" maxLength="1000" onChange={this.loadComment} placeholder="Be the first to comment!"></textarea> 
                         </div>
                         <p>
                             <button onClick={this.postMem} className="btn btn-primary margin3">Send</button>

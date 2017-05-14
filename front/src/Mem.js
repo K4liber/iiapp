@@ -3,6 +3,7 @@ import Comments from './Comments';
 
 import { browserHistory } from './App.js';
 import { hostName } from './App.js';
+import { host } from './App.js';
 import { lock } from './App.js';
 import { AppID } from './App.js';
 
@@ -164,11 +165,11 @@ var Mem = React.createClass({
     if (this.state.mem) {
       let mem = this.state.mem;
       //let shareUrl = hostName + "/mem/" + mem.ID;
-      let shareUrl = "visionaries.pl/idea" + mem.ID;
+      let shareUrl = "visionaries.pl/idea/" + mem.ID;
       var picture = mem.AuthorPhoto;
       var isMain = false;
       let categoryTip = mem.Category + " category";
-      let memImage = hostName + "/resources/mems/" + mem.ID +mem.ImgExt;
+      let memImage = host + "/resources/mems/" + mem.ID +mem.ImgExt;
       if (localStorage.getItem('profile'))
           isMain = mem.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
       return (
@@ -222,10 +223,10 @@ var Mem = React.createClass({
             }
             {this.state.mem.Like && 
               <img data-tip="delete point" onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
-            }| Shares: <FacebookCount/>
-            <FacebookButton data-tip="share on facebook" className="fbButton" style={{ border: 0 }} url={shareUrl} appId={AppID} message={mem.Signature} media={picture}>
+            }| Shares: <FacebookCount  url={shareUrl}/>
+            <FacebookButton data-tip="share on facebook" className="fbButton" style={{ border: 0, backgroundColor: 'transparent' }} url={shareUrl} appId={AppID} message={mem.Signature} media={memImage}>
               {
-                <FacebookIcon size={18} round={true} /> 
+                <FacebookIcon size={18} round={false} /> 
               }
             </FacebookButton>
           </div>

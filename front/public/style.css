@@ -252,6 +252,11 @@ img {
 	max-width: 800px;
 }
 
+button.fbButton {
+	border: 0; 
+	background-color: transparent;
+}
+
 .memImage {
 	position: relative;
 	width: auto;

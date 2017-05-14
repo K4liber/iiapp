@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -605,48 +607,76 @@ func main() {
 			log.Fatal("Error loading .env file")
 		}
 	*/
+	var entry string
+	var static string
+	var port string
+
+	flag.StringVar(&entry, "entry", "./build/index.html", "the entrypoint to serve.")
+	flag.StringVar(&static, "static", ".", "the directory to serve static files from.")
+	flag.StringVar(&port, "port", "80", "the `port` to listen on.")
+	flag.Parse()
 
 	r := mux.NewRouter()
-	r.Handle("/", http.FileServer(http.Dir("./views/")))
+
+	//r.Handle("/", http.FileServer(http.Dir("./views/")))
 	c := cors.New(cors.Options{
-		AllowedOrigins:     []string{"http://localhost:3000", "*"},
+		AllowedOrigins:     []string{"*", "46.41.136.25", "visionaries.pl"},
 		OptionsPassthrough: true,
-		AllowedHeaders:     []string{"nickname"},
+		AllowedHeaders:     []string{"*"},
 	})
-	r.Handle("/app/mems", c.Handler(MemsHandler))
-	r.Handle("/app/mem/{id}", c.Handler(MemHandler))
-	r.Handle("/app/profile/{nickname}", c.Handler(ProfileHandler))
-	r.Handle("/app/activities/{nickname}", c.Handler(ActivitiesHandler))
-	r.Handle("/app/category/{category}", c.Handler(CategoryHandler))
-	r.Handle("/app/addMem", c.Handler(PreHandler(AddMemHandler)))
-	r.Handle("/app/uploadAvatar", c.Handler(PreHandler(UploadAvatarHandler)))
-	r.Handle("/app/addComment", c.Handler(PreHandler(AddCommentHandler)))
-	r.Handle("/app/addMemPoint", c.Handler(PreHandler(AddMemPointHandler)))
-	r.Handle("/app/deleteMemPoint", c.Handler(PreHandler(DeleteMemPointHandler)))
-	r.Handle("/app/deleteMem", c.Handler(PreHandler(DeleteMemHandler)))
-	r.Handle("/app/adminDeleteMem", c.Handler(PreHandler(AdminDeleteMemHandler)))
-	r.Handle("/app/addCommentPoint", c.Handler(PreHandler(AddCommentPointHandler)))
-	r.Handle("/app/deleteCommentPoint", c.Handler(PreHandler(DeleteCommentPointHandler)))
-	r.Handle("/app/deleteComment", c.Handler(PreHandler(DeleteCommentHandler)))
-	r.Handle("/app/adminDeleteComment", c.Handler(PreHandler(AdminDeleteCommentHandler)))
 
-	/* Produkcja
-	fsa := justFilesFilesystem{http.Dir("build/")}
-	http.Handle("/", http.StripPrefix("/", http.FileServer(fsa)))
-	*/
-	/*
-		http.Handle("/idea/cos", http.StripPrefix("/idea", http.FileServer(fsa)))
-		http.Handle("/activities/cos", http.StripPrefix("/activities", http.FileServer(fsa)))
-		http.Handle("/settings", http.StripPrefix("/settings", http.FileServer(fsa)))
-		http.Handle("/upload", http.StripPrefix("/upload", http.FileServer(fsa)))
-		http.Handle("/about", http.StripPrefix("/about", http.FileServer(fsa)))
-	*/
+	api := r.PathPrefix("/app/").Subrouter()
+	api.Handle("/mems", c.Handler(MemsHandler))
+	api.Handle("/mem/{id}", c.Handler(MemHandler))
+	api.Handle("/profile/{nickname}", c.Handler(ProfileHandler))
+	api.Handle("/activities/{nickname}", c.Handler(ActivitiesHandler))
+	api.Handle("/category/{category}", c.Handler(CategoryHandler))
+	api.Handle("/addMem", c.Handler(PreHandler(AddMemHandler)))
+	api.Handle("/uploadAvatar", c.Handler(PreHandler(UploadAvatarHandler)))
+	api.Handle("/addComment", c.Handler(PreHandler(AddCommentHandler)))
+	api.Handle("/addMemPoint", c.Handler(PreHandler(AddMemPointHandler)))
+	api.Handle("/deleteMemPoint", c.Handler(PreHandler(DeleteMemPointHandler)))
+	api.Handle("/deleteMem", c.Handler(PreHandler(DeleteMemHandler)))
+	api.Handle("/adminDeleteMem", c.Handler(PreHandler(AdminDeleteMemHandler)))
+	api.Handle("/addCommentPoint", c.Handler(PreHandler(AddCommentPointHandler)))
+	api.Handle("/deleteCommentPoint", c.Handler(PreHandler(DeleteCommentPointHandler)))
+	api.Handle("/deleteComment", c.Handler(PreHandler(DeleteCommentHandler)))
+	api.Handle("/adminDeleteComment", c.Handler(PreHandler(AdminDeleteCommentHandler)))
 
-	http.Handle("/app/", handlers.LoggingHandler(os.Stdout, r))
-	fs := justFilesFilesystem{http.Dir("resources/")}
-	http.Handle("/app/resources/", http.StripPrefix("/app/resources", http.FileServer(fs)))
+	// Serve static assets directly.
+	r.PathPrefix("/resources").Handler(http.FileServer(http.Dir(static)))
+	r.PathPrefix("/img").Handler(http.FileServer(http.Dir(static)))
+	r.PathPrefix("/static").Handler(http.FileServer(http.Dir(static)))
+	// Catch-all: Serve our JavaScript application's entry-point (index.html).
+	r.PathPrefix("/favicon.ico").HandlerFunc(IconHandler("./build/favicon.ico"))
+	r.PathPrefix("/").HandlerFunc(IndexHandler(entry))
+	//r.PathPrefix("/").Handler(http.FileServer(http.Dir(static)))
+	//46.41.136.25
+	srv := &http.Server{
+		Handler: handlers.LoggingHandler(os.Stdout, r),
+		Addr:    "46.41.136.25:" + port,
+		// Good practice: enforce timeouts for servers you create!
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
 
-	http.ListenAndServe(":8080", nil)
+	log.Fatal(srv.ListenAndServe())
+
+	//http.ListenAndServe(":8080", nil)
+}
+
+func IconHandler(entrypoint string) func(w http.ResponseWriter, r *http.Request) {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, entrypoint)
+	}
+	return http.HandlerFunc(fn)
+}
+
+func IndexHandler(entrypoint string) func(w http.ResponseWriter, r *http.Request) {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, entrypoint)
+	}
+	return http.HandlerFunc(fn)
 }
 
 var NotImplemented = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

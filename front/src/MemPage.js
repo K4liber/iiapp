@@ -2,7 +2,7 @@ import React from 'react';
 
 import { FacebookButton, FacebookCount } from "react-social";
 import Modal from 'react-modal';
-import ReactTooltip from 'react-tooltip'
+import ReactTooltip from 'react-tooltip';
 import {
   generateShareIcon
 } from 'react-share';
@@ -11,6 +11,7 @@ import Comments from './Comments';
 
 import { HttpClient } from './App.js';
 import { hostName } from './App.js';
+import { host } from './App.js';
 import { lock } from './App.js';
 import { AppID } from './App.js';
 import { browserHistory } from './App.js';
@@ -134,7 +135,7 @@ var MemPage = React.createClass({
     if (this.state.mem) {
       let mem = this.state.mem;
       let categoryTip = mem.Category + " category";
-      let shareUrl = "taptapp.pl/mem/" + mem.ID;
+      let shareUrl = "visionaries.pl/idea/" + mem.ID;
       var picture = mem.AuthorPhoto;
       var date = new Date(Date.parse(mem.DateTime));
       var dateTime = date.toString();
@@ -164,7 +165,7 @@ var MemPage = React.createClass({
                   Uploaded by <span data-tip="check profile" onClick={() => this.showProfile(mem.AuthorNickname)}>{mem.AuthorNickname}</span> at {dateTime}
                 </div>
                 <div className="memImage">
-                  <img className="memImage" alt="" src={hostName + "/resources/mems/" + mem.ID +mem.ImgExt}/>
+                  <img className="memImage" alt="" src={host + "/resources/mems/" + mem.ID +mem.ImgExt}/>
                   <ReactTooltip />
                   <img data-tip={categoryTip} alt="" src={"/img/" + mem.Category + "Icon.png"} className="uploadLogoChoosen"/>
                   {isMain &&
@@ -177,14 +178,14 @@ var MemPage = React.createClass({
                 <div>
                   Views: {this.state.mem.Views}  | Points: {this.state.mem.Points} 
                   {!this.state.mem.Like && 
-                    <img data-tip="add point" onClick={this.doLike} className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
+                    <img data-tip="add point" onClick={this.doLike} className="thumbImage" alt="" src="/img/thumbIcon.png"/>
                   }
                   {this.state.mem.Like && 
                     <img data-tip="delete point" onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
-                  }| Shares: <FacebookCount/>
-                  <FacebookButton data-tip="share on facebook" className="fbButton" style={{ border: 0 }} url={shareUrl} appId={AppID} message={mem.Signature} media={picture}>
+                  }| Shares: <FacebookCount  url={shareUrl}/>
+                  <FacebookButton data-tip="share on facebook"  style={{ border: 0, backgroundColor: 'transparent' }} className="fbButton" url={shareUrl} appId={AppID} message={mem.Signature} media={host + "/resources/mems/" + mem.ID +mem.ImgExt}>
                     {
-                      <FacebookIcon size={18} round={true} /> 
+                      <FacebookIcon size={18} round={false} /> 
                     }
                   </FacebookButton>
                 </div>
