@@ -11,6 +11,7 @@
     "react-router-dom": "^4.0.0",
     "react-share": "^1.13.0",
     "react-social": "^1.8.0",
+    "react-toastr": "^2.8.2",
     "superagent": "^3.5.2"
   },
   "devDependencies": {

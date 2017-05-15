@@ -122,6 +122,7 @@ func getCategoryMems(category string, nickname string) []Mem {
 	var Points int
 	var Views int
 	var slice []Mem
+	var turnedSlice []Mem
 	for rows.Next() {
 		err3 = rows.Scan(&ID, &Signature, &ImgExt, &DateTime, &AuthorNickname, &Category, &Points, &Views)
 		var liked = false
@@ -140,9 +141,14 @@ func getCategoryMems(category string, nickname string) []Mem {
 			Like:           liked,
 		}
 		slice = append(slice, *mem)
+		turnedSlice = append(turnedSlice, *mem)
+	}
+	for index := range slice {
+		var indexTurned = len(slice) - 1 - index
+		turnedSlice[indexTurned] = slice[index]
 	}
 	defer db.Close()
-	return slice
+	return turnedSlice
 }
 
 func getMemLike(ID int, authorNickname string) MemPoint {

@@ -8,6 +8,12 @@ import { browserHistory } from './App.js';
 
 import ReactTooltip from 'react-tooltip'
 
+var ReactToastr = require("react-toastr");
+var {ToastContainer} = ReactToastr; // This is a React Element.
+// For Non ES6...
+// var ToastContainer = ReactToastr.ToastContainer;
+var ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
+
 var Board = React.createClass({
   getInitialState: function() {
     return {
@@ -24,6 +30,14 @@ var Board = React.createClass({
           showOptions: false,
         });
       }
+    } else {
+      this.refs.container.success(
+        <em>Click <button onClick={this.about} className="btn btn-primary">here</button> to find out what this site is about.</em>,
+        <strong>Welcome to the Visionaries!</strong>,{
+          timeOut: 30000,
+          extendedTimeOut: 10000
+        }
+      );
     }
   },
   showProfile: function() {
@@ -94,11 +108,15 @@ var Board = React.createClass({
       }
     } else {
       return (
-      <div className="menu right col-md-12">
+      <div className="menu right col-md-12 relative">
         <Categories/>
         <img data-tip="login" alt="" onClick={this.showLock} src="/img/loginIcon2.png" className="iconLogo right"/>
         <img data-tip="upload" alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo right"/>
         <img data-tip="about" alt="" onClick={this.about} src="/img/infoIcon.png" className="iconLogo right"/>
+        <ToastContainer ref="container"
+                        toastMessageFactory={ToastMessageFactory}
+                        className="toast-top-right absolute" 
+                        style={{top: "50px", right: "50px"}}/>
         <ReactTooltip />
       </div>
       );
