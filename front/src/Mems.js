@@ -33,8 +33,8 @@ var Mems = React.createClass({
       );
     } else {
       return ( 
-        <div>
-          <p>Loading ideas...</p>
+        <div className="centering">
+            <p><img alt="" src="/img/loading.gif"/></p>
         </div>
       );
     }

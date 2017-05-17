@@ -28,8 +28,12 @@ const commentsStyle = {
   overlay : {
     position          : 'fixed',
     top               : '3%',
-    left              : '3%',
+    left: '3%',
+    transform: 'translate(25%)',
     right             : '3%',
+    margin: '0 0 0 0',
+    textAlign: 'center',
+    maxWidth: '800px',
     bottom            : '3%',
     backgroundColor   : 'rgba(255, 255, 255, 0.75)'
   },
@@ -40,8 +44,7 @@ const commentsStyle = {
     right             : 0,
     bottom            : 0,
     width: 'auto',
-    margin: '0 0 0 0',
-    padding: '0px',
+    padding: '3% 3% 3% 3%',
     backgroundColor : 'rgba(248,248,248, 0.9)',
   }
 };
@@ -234,8 +237,8 @@ var Mem = React.createClass({
       );
     } else {
       return ( 
-        <div>
-          
+        <div className="centering">
+            <p><img alt="" src="/img/loading.gif"/></p>
         </div>
       );
     }

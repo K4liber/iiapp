@@ -15,6 +15,7 @@ import createBrowserHistory from 'history/createBrowserHistory';
 import { Route, Router } from 'react-router-dom';
 import { Switch } from 'react-router';
 import { request } from 'request';
+import FacebookProvider, { Like } from 'react-facebook';
 
 //export const hostName = "http://localhost:3000/app";
 //export const apiHost = "http://localhost:3000/app";
@@ -161,6 +162,11 @@ var App = React.createClass({
                   <AdminPanel/>
                 </Route>
               </Switch>
+              <div className="footer">
+                <FacebookProvider appId={'' + AppID}>
+                  <Like href="https://www.facebook.com/visionariesDOTpl" colorScheme="dark" share />
+                </FacebookProvider>
+              </div>
             </div>
       </Router>
     );

@@ -197,7 +197,15 @@ var MemPage = React.createClass({
           </div>
         );
       } else 
-        return ( <div>Loading mems...</div> );
+        return ( 
+          <div className="row well well-sm">
+            <div className="contentLeft col-md-12" id="contentLeft">
+              <div className="centering">
+                <p><img alt="" src="/img/loading.gif"/></p>
+              </div>
+            </div>
+          </div>
+        );
   }
 });
 

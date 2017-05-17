@@ -9,7 +9,7 @@ import { browserHistory } from './App.js';
 import ReactTooltip from 'react-tooltip'
 
 var ReactToastr = require("react-toastr");
-var {ToastContainer} = ReactToastr; // This is a React Element.
+var { ToastContainer } = ReactToastr; // This is a React Element.
 // For Non ES6...
 // var ToastContainer = ReactToastr.ToastContainer;
 var ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);

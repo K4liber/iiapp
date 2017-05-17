@@ -43,7 +43,9 @@ var Home = React.createClass({
       return (
         <div className="row well well-sm">
           <div className="contentLeft col-md-12" id="contentLeft">
-            Loading ...
+            <div className="centering">
+              <p><img alt="" src="/img/loading.gif"/></p>
+            </div>
           </div>
         </div> 
       );

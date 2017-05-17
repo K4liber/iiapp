@@ -15,6 +15,12 @@ h2 {
 	color: rgba(0, 15, 55, 1);
 }
 
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
 .memImage {
 	max-width: 95%;
 }
