@@ -28,14 +28,16 @@ const commentsStyle = {
   overlay : {
     position          : 'fixed',
     top               : '3%',
-    left: '3%',
-    transform: 'translate(25%)',
-    right             : '3%',
-    margin: '0 0 0 0',
-    textAlign: 'center',
-    maxWidth: '800px',
     bottom            : '3%',
-    backgroundColor   : 'rgba(255, 255, 255, 0.75)'
+    backgroundColor   : 'rgba(255, 255, 255, 0.75)',
+    left: '50%',
+    padding: '2rem',
+    position: 'fixed',
+    right: 'auto',
+    transform: 'translate(-50%)',
+    minWidth: '30rem',
+    width: '90%',
+    maxWidth: '70rem'
   },
   content : {
     overlfow: 'scroll',
@@ -45,6 +47,7 @@ const commentsStyle = {
     bottom            : 0,
     width: 'auto',
     padding: '3% 3% 3% 3%',
+    marign: '0px',
     backgroundColor : 'rgba(248,248,248, 0.9)',
   }
 };

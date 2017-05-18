@@ -19,6 +19,7 @@ h2 {
     position: fixed;
     bottom: 0;
     width: 100%;
+	-webkit-transform: scale3d(1,1,1);
 }
 
 .memImage {
