@@ -98,10 +98,6 @@ input {
 	margin: 0;
 }
 
-span {
-	cursor: pointer;
-}
-
 img {
 	padding: 2% 2% 2% 2%;
 }
@@ -377,7 +373,11 @@ button.fbButton {
 	background-color: transparent;
 }
 
-span:hover {
+span.span {
+	cursor: pointer
+}
+
+.span:hover {
 	color: rgba(125,0,50,1);
 }
 

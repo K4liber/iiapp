@@ -93,6 +93,9 @@ var Upload = React.createClass({
         if (!this.state.title) {
             warnings.push("You did not tap a title!");
         }
+        if (this.state.comment.length > 2000) {
+            warnings.push("Comments can be up to 2000 characters!");
+        }
         if (this.state.uploadedFile) {
             if (this.state.uploadedFile.size > 512000) {
                 warnings.push("Image size cannot be more than 500kB");
@@ -187,7 +190,7 @@ var Upload = React.createClass({
                         </div>
                         <div className="comments">
                             <textarea id="titleArea" className="signatureTextarea" maxLength="100" onChange={this.loadTitle} placeholder="Signature ..."></textarea> 
-                            <textarea onChangeCapture={this.textAreaAdjust} id="commentArea" className="commentTextarea" maxLength="1000" onChange={this.loadComment} placeholder="Be the first to comment!"></textarea> 
+                            <textarea onChangeCapture={this.textAreaAdjust} id="commentArea" className="commentTextarea" maxLength="2000" onChange={this.loadComment} placeholder="Be the first to comment!"></textarea> 
                         </div>
                         <p>
                             <button onClick={this.postMem} className="btn btn-primary margin3">Send</button>

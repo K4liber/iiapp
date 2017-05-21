@@ -7,6 +7,7 @@ import { hostName } from './App.js';
 import { lock } from './App.js';
 import { browserHistory } from './App.js';
 import { HttpClient } from './App.js';
+var Latex = require('react-latex');
 
 const modalStyle = {
   content : {
@@ -156,7 +157,7 @@ var Comm = React.createClass({
                     <div onMouseEnter={this.showDetails} onMouseLeave={this.hideDetails}>
                         <div>
                             <img data-tip="check profile" alt="" onClick={() => this.showProfile(comment.AuthorNickname)} src={picture} className="commentPhoto"/>
-                            <span data-tip="check profile" onClick={() => this.showProfile(comment.AuthorNickname)} >{comment.AuthorNickname}</span> | {dateTime} | Points: {this.state.comment.Points}
+                            <span className="span" data-tip="check profile" onClick={() => this.showProfile(comment.AuthorNickname)} >{comment.AuthorNickname}</span> | {dateTime} | Points: {this.state.comment.Points}
                             {!this.state.comment.Like && 
                                 <img data-tip="add point" onClick={this.doLike}
                                     className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
@@ -170,7 +171,7 @@ var Comm = React.createClass({
                             }
                         </div>
                         <div className="comment">
-                            {comment.Content}
+                            <Latex>{comment.Content}</Latex> 
                         </div>
                     </div>
                 </div>

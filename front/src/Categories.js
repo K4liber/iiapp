@@ -31,7 +31,7 @@ var Categories = React.createClass({
       return (
         <div>
           <img data-tip="hide categories" alt="" src="/img/arrowLeft.png" onClick={this.hideCategories} className="iconLogo left"/>
-          <img data-tip="home" alt="" src="/img/homeIcon.png" onClick={this.goHome} className="iconLogo left"/>
+          <img data-tip="technology category" alt="" src="/img/technologyIcon.png" onClick={(event)=>this.selectCategory("technology")} className="iconLogo left"/>
           <img data-tip="entertainment category" alt="" src="/img/entertainmentIcon.png" onClick={(event)=>this.selectCategory("entertainment")} className="iconLogo left"/>
           <img data-tip="science category" alt="" src="/img/scienceIcon.png" onClick={(event)=>this.selectCategory("science")} className="iconLogo left"/>
           <img data-tip="people category" alt="" src="/img/peopleIcon.png" onClick={(event)=>this.selectCategory("people")} className="iconLogo left"/>

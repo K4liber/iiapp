@@ -7,14 +7,47 @@ import { host } from './App.js';
 import { HttpClient } from './App.js';
 import { browserHistory } from './App.js';
 import { lock } from './App.js';
+var Latex = require('react-latex');
 
 var Comments = React.createClass({
     getInitialState: function() {
+        this.timer();
         return {
             comments: null,
             mem: null,
             lastCommentAuthor: null,
+            showExpressions: false,
+            expressions:  this.loadExpressions(),
+            showPreview: false,
+            comment: null,
         }
+    },
+    loadExpressions: function() {
+        var expressions = [
+            '$ a_{1} $',
+            '$ \\frac{a}{b} $',
+            '$ \\overline{x}  $',
+            '$ \\sqrt{x} $',
+            '$ x^{y} $',
+            '$ \\bar{a} $',
+            '$ \\hat{a} $',
+            '$ \\alpha $',
+            '$ \\beta $',
+            '$ \\gamma $',
+            '$ \\delta $',
+            '$ \\eta $',
+            '$ \\theta $',
+            '$ \\pi $',
+            '$ \\Sigma $',
+            '$ \\Psi $',
+            '$ \\lim_{x \\rightarrow 0} $',
+            '$ \\sum_{i=1}^{n} \\quad $',
+            '$ \\int_{0}^{\\frac{\pi}{2}} \\quad $',
+            '$ \\oplus $',
+            '$ \\otimes $',
+            '$ \\odot $',
+        ]
+        return expressions;
     },
     componentDidMount: function() {
         if(this.props.result) {
@@ -43,10 +76,30 @@ var Comments = React.createClass({
             }.bind(this));
         }
     },
+    timer : function() {
+        let self = this;
+        setTimeout(function () { 
+            self.setState({
+                actualDateTime: new Date().toString(),
+            });
+            self.timer();
+        }, 1000)
+    },
     textAreaAdjust: function(id) {
         let textArea = document.getElementById(id);
         textArea.style.height = "0px";
         textArea.style.height = (textArea.scrollHeight)+"px";
+        if (document.getElementById(id).value !== "") {
+            this.setState({
+                comment: document.getElementById(id).value,
+                showPreview: true,
+            })
+        } else {
+            this.setState({
+                comment: "",
+                showPreview: false,
+            })
+        }
     },
     goToIdea: function() {
         browserHistory.push('/idea/' + this.props.memId);
@@ -90,6 +143,7 @@ var Comments = React.createClass({
                             comments: actualComments
                         })
                         document.getElementById("commentArea" + id).value = "";
+                        this.textAreaAdjust("commentArea" + id);
                     }
                 });
                 
@@ -113,15 +167,43 @@ var Comments = React.createClass({
         });
         this.forceUpdate();
     },
+    addExpression : function(expression) {
+        let id = "commentArea" + this.state.mem.ID;
+        var el = document.getElementById(id)
+        var start = el.selectionStart;
+        var end = el.selectionEnd;
+        var text = el.value;
+        var before = text.substring(0, start);
+        var after  = text.substring(end, text.length);
+        el.value = before + expression + after;
+        el.selectionStart = el.selectionEnd = start + expression.length;
+        el.focus()
+
+        this.textAreaAdjust(id);
+    },
+    showExpressions : function() {
+        this.setState({
+            showExpressions: true,
+        });
+    },
     render : function () {
         let lastIsMine = false;
         if (JSON.parse(localStorage.getItem('profile'))) {
+            var profile =  JSON.parse(localStorage.getItem('profile'));
+            var authorNickname = profile.nickname;
             lastIsMine = 
-                this.state.lastCommentAuthor === JSON.parse(localStorage.getItem('profile')).nickname;
+                this.state.lastCommentAuthor === authorNickname;
+            var profilePicture = profile.picture;
+            if (profile.user_metadata && profile.user_metadata.picture)
+                profilePicture = host + "/resources/avatars/" + profile.user_metadata.picture;
         }
         if (this.state.comments) {
             let commentAreaID = "commentArea" + this.state.mem.ID;
             let self = this;
+            let a1 = '$ a_{1} $';
+            let aFracb = '$ \\frac{a}{b} $';
+            let overx = '$ \\overline{x}  $';
+            
             return (
                 <div className="comments center">
                     {
@@ -132,12 +214,46 @@ var Comments = React.createClass({
                             )
                         })
                     }
+                    { this.state.showPreview &&
+                        <div className="center relative">
+                            <div>
+                                <img data-tip="check profile" alt="" src={profilePicture} className="commentPhoto"/>
+                                <span className="span" data-tip="check profile" >{authorNickname}</span> | {this.state.actualDateTime} | Points: 0
+                                <img data-tip="add point" className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
+                            </div>
+                            <div className="comment">
+                                <Latex>{this.state.comment}</Latex> 
+                            </div>
+                        </div>
+                    }
                     <div>
-                        <textarea onChangeCapture={() => this.textAreaAdjust(commentAreaID)} className="commentTextarea" maxLength="1000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ..."></textarea> 
+                        <textarea onChangeCapture={() => this.textAreaAdjust(commentAreaID)} className="commentTextarea" maxLength="2000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ...">
+                           
+                        </textarea> 
                     </div>
-                    <p>
-                        <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Send</button>
-                    </p>
+                    { this.state.showExpressions &&
+                        <div>
+                            <div className="margin3">
+                                {
+                                    (this.state.expressions).map( function(expression, index) { 
+                                        let key = "expression" + index;
+                                        return (
+                                            <button className="btn btn-default" onClick={() => self.addExpression(expression)} ><Latex>{expression}</Latex></button>
+                                        )
+                                    })
+                                }
+                            </div>
+                            <p>
+                                <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Send</button>
+                            </p>
+                        </div>
+                    }
+                    { !this.state.showExpressions &&
+                        <div>
+                            <button className="btn btn-info" onClick={this.showExpressions} ><Latex>LaTeX Expressions</Latex></button>
+                            <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Send</button>
+                        </div>
+                    }
                 </div>
             )
         } else if (this.state.mem){
