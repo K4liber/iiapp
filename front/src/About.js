@@ -5,6 +5,7 @@ import { FacebookButton, FacebookCount } from "react-social";
 import ReactTooltip from 'react-tooltip'
 
 import Comments from './Comments';
+import Loading from './Loading';
 
 import { HttpClient } from './App.js';
 import { hostName } from './App.js';
@@ -98,7 +99,7 @@ var About = React.createClass({
       return (
           <div className="row well well-sm">
             <div className="contentLeft col-md-12" id="contentLeft">
-              <div>
+              <div className="maginTop10">
                 Uploaded by <span onClick={() => this.showProfile(mem.AuthorNickname)}>{mem.AuthorNickname}</span> at {dateTime}
               </div>
               <img className="memImage" alt="ASAS" src={host + "/resources/mems/" + mem.ID +mem.ImgExt}/>
@@ -129,7 +130,7 @@ var About = React.createClass({
           </div>
         );
       } else 
-        return ( <div>Loading mems...</div> );
+        return ( <Loading/> );
   }
 });
 

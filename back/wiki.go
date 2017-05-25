@@ -515,8 +515,12 @@ func getNickname(userID string) string {
 
 	var raw map[string]string
 	json.Unmarshal(body, &raw)
-
-	return raw["nickname"]
+	fmt.Println(raw)
+	if raw["nickname"] != "" {
+		return raw["nickname"]
+	} else {
+		return raw["name"]
+	}
 }
 
 func getComments(id string, nickname string) []Comment {
@@ -660,7 +664,7 @@ func main() {
 	//46.41.136.25
 	srv := &http.Server{
 		Handler: handlers.LoggingHandler(os.Stdout, r),
-		Addr:    "46.41.136.25:" + port,
+		Addr:    "46.41.149.6:" + port,
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
@@ -1254,6 +1258,7 @@ var PreHandler = func(handler http.HandlerFunc) http.HandlerFunc {
 		var authorNickname = req.FormValue("authorNickname")
 		if nickname != authorNickname {
 			fmt.Println(authorNickname)
+			fmt.Println(nickname)
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("500 - Cannot authorize!"))
 			return

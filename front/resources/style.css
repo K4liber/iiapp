@@ -67,6 +67,11 @@ img {
 	color: white;
 }
 
+.alwaysTop {
+	top: 0;
+	position: fixed
+}
+
 .container {
 	height: 100%;
 }

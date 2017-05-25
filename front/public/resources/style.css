@@ -21,6 +21,18 @@ h2 {
     width: 100%;
 }
 
+.marginTop10{
+	margin-top:10%;
+}
+
+.alwaysTop {
+	width: 100%;
+	top: 0;
+	left: 0;
+	position: fixed;
+	z-index: 100;
+}
+
 .memImage {
 	max-width: 95%;
 }
@@ -110,6 +122,8 @@ img {
 }
 
 .menu {
+	height: auto;
+	float: left;
 	background-color: black;
 	color: white;
 }
@@ -391,6 +405,10 @@ span.span {
 
 .articlesTable {
 	width: 90%;
+}
+
+.marginTop3 {
+	margin-top: 3%;
 }
 
 .articlesCellRight {

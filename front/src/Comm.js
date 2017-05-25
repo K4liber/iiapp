@@ -17,7 +17,7 @@ const modalStyle = {
     bottom                : 'auto',
     marginRight           : '-50%',
     transform             : 'translate(-50%, -50%)',
-    
+    zIndex: '101',
   }
 };
 
@@ -155,7 +155,7 @@ var Comm = React.createClass({
                         </div>
                     </Modal>
                     <div onMouseEnter={this.showDetails} onMouseLeave={this.hideDetails}>
-                        <div>
+                        <div className="margin3">
                             <img data-tip="check profile" alt="" onClick={() => this.showProfile(comment.AuthorNickname)} src={picture} className="commentPhoto"/>
                             <span className="span" data-tip="check profile" onClick={() => this.showProfile(comment.AuthorNickname)} >{comment.AuthorNickname}</span> | {dateTime} | Points: {this.state.comment.Points}
                             {!this.state.comment.Like && 
@@ -166,12 +166,24 @@ var Comm = React.createClass({
                                 <img data-tip="delete point" onClick={this.doUnLike}
                                     className="thumbImage" alt="ASAS" src="/img/thumbDownIcon.png"/>
                             }
-                            {isMain &&
+                            { (isMain && !this.props.lastIsMine) &&
                                 <img data-tip="delete" alt="" src="/img/xIcon.png" className="deleteComment right" onClick={this.openModal}/>
+                            }
+                            { this.props.lastIsMine &&
+                                <img data-tip="edit" alt="" src="/img/anotherIcon.png" className="deleteComment right" onClick={this.openModal}/>
                             }
                         </div>
                         <div className="comment">
-                            <Latex>{comment.Content}</Latex> 
+                            {
+                                comment.Content.split('\\#').map(function(item, key) {
+                                    return (
+                                        <span key={"commentPart" + comment.ID + "key" + key}>
+                                            <Latex>{item}</Latex>
+                                            <br/>
+                                        </span>
+                                    )
+                                })
+                            }
                         </div>
                     </div>
                 </div>

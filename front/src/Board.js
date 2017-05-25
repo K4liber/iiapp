@@ -42,11 +42,11 @@ var Board = React.createClass({
   },
   showProfile: function() {
     let profile = JSON.parse(localStorage.getItem('profile'));
-    browserHistory.replace('/profile/' + profile.nickname, {profile: profile,});
+    browserHistory.push('/profile/' + profile.nickname, {profile: profile,});
   },
   showActivities: function() {
     let profile = JSON.parse(localStorage.getItem('profile'));
-    browserHistory.replace('/activities/' + profile.nickname, {profile: profile,});
+    browserHistory.push('/activities/' + profile.nickname, {profile: profile,});
   },
   settings: function() {
     browserHistory.push('/settings');
@@ -63,6 +63,7 @@ var Board = React.createClass({
     browserHistory.push('/about');
   },
   showLock : function() {
+    browserHistory.replace('/');
     lock.show();
   },
   showOptions : function() {
@@ -83,7 +84,7 @@ var Board = React.createClass({
         picture = host+ "/resources/avatars/" + profile.user_metadata.picture
       if(this.state.showOptions) {
         return (
-        <div className="menu right col-md-12">
+        <div className="menu right alwaysTop">
           <Categories/>
           <img data-tip="hide options" alt="" src="/img/arrowRight.png" onClick={this.hideOptions} className="iconLogo right"/>
           <img data-tip="logout" alt="" onClick={this.logout} src="/img/logoutIcon.png" className="iconLogo right"/>
@@ -98,7 +99,7 @@ var Board = React.createClass({
       }
       else {
         return (
-          <div className="menu right col-md-12">
+          <div className="menu right alwaysTop">
             <Categories/>
             <img data-tip="logout" alt="" onClick={this.logout} src="/img/logoutIcon.png" className="iconLogo right"/>
             <img data-tip="show options" alt="" src="/img/arrowLeft.png" onClick={this.showOptions} className="iconLogo right"/>
@@ -108,7 +109,7 @@ var Board = React.createClass({
       }
     } else {
       return (
-      <div className="menu right col-md-12 relative">
+      <div className="menu right alwaysTop">
         <Categories/>
         <img data-tip="login" alt="" onClick={this.showLock} src="/img/loginIcon2.png" className="iconLogo right"/>
         <img data-tip="upload" alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo right"/>

@@ -1,7 +1,10 @@
 import React from 'react';
+
 import { hostName } from './App.js'
 import { HttpClient } from './App.js'
+
 import Mems from './Mems';
+import Loading from './Loading';
 
 var Category = React.createClass({
   getInitialState: function() {
@@ -47,13 +50,7 @@ var Category = React.createClass({
       );
     } else {
       return ( 
-        <div className="row well well-sm">
-          <div className="contentLeft col-md-12" id="contentLeft">
-            <div className="centering">
-              <p><img alt="" src="/img/loading.gif"/></p>
-            </div>
-          </div>
-        </div>
+        <Loading/>
       );
     }
   }

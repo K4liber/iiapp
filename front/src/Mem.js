@@ -1,5 +1,7 @@
 import React from 'react';
+
 import Comments from './Comments';
+import Loading from './Loading';
 
 import { browserHistory } from './App.js';
 import { hostName } from './App.js';
@@ -37,7 +39,8 @@ const commentsStyle = {
     transform: 'translate(-50%)',
     minWidth: '30rem',
     width: '90%',
-    maxWidth: '70rem'
+    maxWidth: '70rem',
+    zIndex: '101',
   },
   content : {
     overlfow: 'scroll',
@@ -240,9 +243,7 @@ var Mem = React.createClass({
       );
     } else {
       return ( 
-        <div className="centering">
-            <p><img alt="" src="/img/loading.gif"/></p>
-        </div>
+        <Loading/>
       );
     }
   }

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Activity from './Activity';
 
 import { HttpClient } from './App.js';
@@ -70,7 +71,16 @@ var Activities = React.createClass({
           </div>
         );
       } else 
-        return ( <div>Loading mems...</div> );
+        return (
+          <div className="row well well-sm">
+            <div className="contentLeft col-md-12" id="contentLeft">
+              <div className="activitiesSignature">
+                  Your last <input id="days" onChange={this.sortActivities} defaultValue="7" min="1" max="365" type="number" /> days activties:
+              </div>
+              You do not have any acitivities on Visionaries yet.
+            </div>
+          </div>
+        );
   }
 });
 

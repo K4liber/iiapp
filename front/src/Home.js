@@ -1,5 +1,6 @@
 import React from 'react';
 import Mems from './Mems';
+import Loading from './Loading';
 
 import { hostName } from './App.js'
 import { HttpClient } from './App.js'
@@ -41,13 +42,7 @@ var Home = React.createClass({
       );
     } else {
       return (
-        <div className="row well well-sm">
-          <div className="contentLeft col-md-12" id="contentLeft">
-            <div className="centering">
-              <p><img alt="" src="/img/loading.gif"/></p>
-            </div>
-          </div>
-        </div> 
+        <Loading/>
       );
     }
   }
