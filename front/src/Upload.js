@@ -148,7 +148,7 @@ var Upload = React.createClass({
             let warnings = this.state.warnings;
             let loadingMessage = this.state.loadingMessage;
             return (
-                <div className="row well well-sm">
+                <div className="row">
                     <div className="contentLeft col-md-12" id="contentLeft">
                         <Modal
                             isOpen={this.state.showLoading}
@@ -200,7 +200,7 @@ var Upload = React.createClass({
             )
         } else {
             return (
-                <div className="row well well-sm">
+                <div className="row">
                     <div className="contentLeft col-md-12" id="contentLeft">
                         You have to log in to add new Idea.
                     </div>

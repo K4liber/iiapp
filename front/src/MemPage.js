@@ -8,6 +8,7 @@ import {
 } from 'react-share';
 
 import Comments from './Comments';
+import Loading from './Loading';
 
 import { HttpClient } from './App.js';
 import { hostName } from './App.js';
@@ -143,7 +144,7 @@ var MemPage = React.createClass({
       if (localStorage.getItem('profile'))
           isMain = mem.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
       return (
-          <div className="row well well-sm">
+          <div className="row">
             <div className="contentLeft col-md-12" id="contentLeft">
               <Modal
                 isOpen={this.state.modalIsOpen}
@@ -198,13 +199,7 @@ var MemPage = React.createClass({
         );
       } else 
         return ( 
-          <div className="row well well-sm">
-            <div className="contentLeft col-md-12" id="contentLeft">
-              <div className="centering">
-                <p><img alt="" src="/img/loading.gif"/></p>
-              </div>
-            </div>
-          </div>
+          <Loading/>
         );
   }
 });

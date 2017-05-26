@@ -72,7 +72,7 @@ var Activities = React.createClass({
         );
       } else 
         return (
-          <div className="row well well-sm">
+          <div className="row">
             <div className="contentLeft col-md-12" id="contentLeft">
               <div className="activitiesSignature">
                   Your last <input id="days" onChange={this.sortActivities} defaultValue="7" min="1" max="365" type="number" /> days activties:

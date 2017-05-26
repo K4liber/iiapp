@@ -33,7 +33,7 @@ var Category = React.createClass({
   render: function() {
     if (this.state.mems && this.state.mems!=="null") {
       return (
-        <div className="row well well-sm">
+        <div className="row">
           <div className="contentLeft col-md-12" id="contentLeft">
               <Mems mems={this.state.mems} />
            </div>
@@ -42,7 +42,7 @@ var Category = React.createClass({
     } else if(this.state.mems==="null") {
       var res = location.pathname.split("/"); 
       return ( 
-        <div className="row well well-sm">
+        <div className="row">
             <div className="contentLeft col-md-12" id="contentLeft">
               <p>There are any ideas in '{res[2]}' category!</p>
             </div>

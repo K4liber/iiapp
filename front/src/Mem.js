@@ -22,7 +22,7 @@ const modalStyle = {
     bottom                : 'auto',
     marginRight           : '-50%',
     transform             : 'translate(-50%, -50%)',
-    
+    zIndex: '99',
   }
 };
 
@@ -40,7 +40,7 @@ const commentsStyle = {
     minWidth: '30rem',
     width: '90%',
     maxWidth: '70rem',
-    zIndex: '101',
+    zIndex: '98',
   },
   content : {
     overlfow: 'scroll',

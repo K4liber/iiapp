@@ -129,6 +129,7 @@ var App = React.createClass({
       <Router history={browserHistory}>
             <div>
               <Board lock={this.lock} browserHistory={browserHistory}/>
+              <div className="marginTop5"></div>
               <Switch>
                 <Route exact path="/" >
                   <Home token={this.state.token}/>

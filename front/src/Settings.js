@@ -127,7 +127,7 @@ var Settings = React.createClass({
         if (profile.user_metadata && profile.user_metadata.picture)
           picture = host + "/resources/avatars/" + profile.user_metadata.picture
         return (
-            <div className="row well well-sm">
+            <div className="row">
               <script src="/static/js/auth0-editprofile.min.js"></script>
               <div className="contentLeft col-md-12" id="contentLeft">
                 <p>Your nickname: {profile.nickname}</p>

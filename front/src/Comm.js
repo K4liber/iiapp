@@ -10,6 +10,9 @@ import { HttpClient } from './App.js';
 var Latex = require('react-latex');
 
 const modalStyle = {
+  overlay: {
+    zIndex: '99',
+  },
   content : {
     top                   : '50%',
     left                  : '50%',
@@ -17,7 +20,7 @@ const modalStyle = {
     bottom                : 'auto',
     marginRight           : '-50%',
     transform             : 'translate(-50%, -50%)',
-    zIndex: '101',
+    zIndex: '99',
   }
 };
 

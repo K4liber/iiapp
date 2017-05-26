@@ -4,7 +4,7 @@ var Loading = React.createClass({
   render: function() {
     
       return (
-        <div className="row well well-sm">
+        <div className="row">
           <div className="contentLeft col-md-12" id="contentLeft">
             <div className="centering marginTop10">
               <p><img alt="" src="/img/loading.gif"/></p>

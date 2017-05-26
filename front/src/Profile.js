@@ -23,7 +23,7 @@ var Profile = React.createClass({
   render: function() {
     if (this.state.mems) {
       return (
-          <div className="row well well-sm">
+          <div className="row">
             <div className="contentLeft col-md-12" id="contentLeft">
               <Mems mems={this.state.mems}/>
             </div>

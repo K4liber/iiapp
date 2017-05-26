@@ -97,7 +97,7 @@ var About = React.createClass({
       var date = new Date(Date.parse(mem.DateTime));
       var dateTime = date.toString();
       return (
-          <div className="row well well-sm">
+          <div className="row">
             <div className="contentLeft col-md-12" id="contentLeft">
               <div className="maginTop10">
                 Uploaded by <span onClick={() => this.showProfile(mem.AuthorNickname)}>{mem.AuthorNickname}</span> at {dateTime}

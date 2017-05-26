@@ -61,7 +61,7 @@ var AdminPanel = React.createClass({
   render: function() {
     if(this.state.isAdmin) {
       return (
-        <div className="row well well-sm">
+        <div className="row">
           <div className="contentLeft col-md-12" id="contentLeft">
             Admin Panel
             <div>
@@ -75,7 +75,7 @@ var AdminPanel = React.createClass({
       );
     } else {
       return (
-        <div className="row well well-sm">
+        <div className="row">
           <div className="contentLeft col-md-12" id="contentLeft">
             You are not an admin!
           </div>
