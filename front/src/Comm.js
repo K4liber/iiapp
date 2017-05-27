@@ -130,6 +130,11 @@ var Comm = React.createClass({
     deleteFromComments: function(ID) {
         this.props.delete(ID);
     },
+    editComment: function() {
+        let commentAreaID = "commentArea" + this.state.comment.MemID;
+        let textArea = document.getElementById(commentAreaID);
+        textArea.value = this.state.comment.Content;
+    },
     render : function () {
         if (this.state.comment) {
             let comment = this.state.comment;
@@ -169,11 +174,11 @@ var Comm = React.createClass({
                                 <img data-tip="delete point" onClick={this.doUnLike}
                                     className="thumbImage" alt="ASAS" src="/img/thumbDownIcon.png"/>
                             }
-                            { (isMain && !this.props.lastIsMine) &&
-                                <img data-tip="delete" alt="" src="/img/xIcon.png" className="deleteComment right" onClick={this.openModal}/>
-                            }
-                            { this.props.lastIsMine &&
-                                <img data-tip="edit" alt="" src="/img/anotherIcon.png" className="deleteComment right" onClick={this.openModal}/>
+                            { isMain  &&
+                                <p className="right">
+                                    <img data-tip="edit comment" alt="" src="/img/spannerIcon.png" className="margin3 deleteComment" onClick={this.editComment}/>
+                                    <img data-tip="delete comment" alt="" src="/img/xIcon.png" className="margin3 deleteComment" onClick={this.openModal}/>
+                                </p>
                             }
                         </div>
                         <div className="comment">

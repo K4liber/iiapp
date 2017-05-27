@@ -23,115 +23,42 @@ const FacebookIcon = generateShareIcon('facebook');
 var About = React.createClass({
   getInitialState: function() {
     return {
-      mem: null,
       result: null,
     }
   },
-  componentWillMount: function() {
-    var client = new HttpClient(true);
-    var url = hostName + '/mem/' + 3
-    this.serverRequest = client.get(url, function(result) {
-      let res = JSON.parse(result);
-      this.setState({
-        result: res,
-        mem: res.Mem,
-      });
-    }.bind(this));
-  },
-  doLike : function() {
-    if (localStorage.getItem('profile')) {
-      let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
-      let upload = request.post(hostName + "/addMemPoint")
-        .field('Bearer ', localStorage.getItem('token'))
-        .field('memID', this.state.mem.ID)
-        .field('authorNickname', nickname)
-      upload.end((err, response) => {
-        if (err) {
-          console.log(err);
-        }
-        if (response.status === 200 && response.text !== "false") {
-          let mem = this.state.mem;
-          mem.Like = true;
-          mem.Points = mem.Points+1;
-          this.setState({
-            mem: mem,
-          });
-        }
-      });
-    } else {
+  showLock: function() {
+      browserHistory.push("/");
       lock.show();
-    }
-  },
-  doUnLike : function() {
-    if (localStorage.getItem('profile')) {
-      let nickname = JSON.parse(localStorage.getItem('profile')).nickname;
-      let upload = request.post(hostName + "/deleteMemPoint")
-        .field('Bearer ', localStorage.getItem('token'))
-        .field('memID', this.state.mem.ID)
-        .field('authorNickname', nickname)
-      upload.end((err, response) => {
-        if (err) {
-          console.log(err);
-        }
-        if (response.status === 200 && response.text !== "false"){
-          let mem = this.state.mem;
-          mem.Like = false;
-          mem.Points = mem.Points-1;
-          this.setState({
-            mem: mem,
-          });
-        }
-      });
-    } else {
-      lock.show();
-    }
-  },
-  showProfile: function(nickname) {
-      browserHistory.replace('/profile/' + nickname);
   },
   render: function() {
-    if (this.state.mem) {
-      let mem = this.state.mem;
-      let shareUrl = "visionaries.pl/about";
-      var picture = mem.AuthorPhoto;
-      var date = new Date(Date.parse(mem.DateTime));
-      var dateTime = date.toString();
       return (
           <div className="row">
             <div className="contentLeft col-md-12" id="contentLeft">
               <div className="maginTop10">
-                Uploaded by <span onClick={() => this.showProfile(mem.AuthorNickname)}>{mem.AuthorNickname}</span> at {dateTime}
               </div>
-              <img className="memImage" alt="ASAS" src={host + "/resources/mems/" + mem.ID +mem.ImgExt}/>
+              <img className="memImage" alt="ASAS" src={host + "/resources/aboutPage.png"}/>
               <div className="commentSignature" onClick={this.goToIdea}>
-                {mem.Signature}
+                What is this page about?
               </div>
-              <div>
-                Views: {this.state.mem.Views}  | Points: {this.state.mem.Points} 
-                {!this.state.mem.Like && 
-                  <img onClick={this.doLike} className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
-                }
-                {this.state.mem.Like && 
-                  <img onClick={this.doUnLike} className="thumbImage" alt="" src="/img/thumbDownIcon.png"/>
-                }| Shares: <FacebookCount url={shareUrl}/>
-                <ReactTooltip />
-                <FacebookButton data-tip="share on facebook" className="fbButton"  style={{ border: 0, backgroundColor: 'transparent' }} url={shareUrl} appId={AppID} message={mem.Signature} media={host + "/resources/mems/" + mem.ID +mem.ImgExt}>
-                  {
+              <div className="comments">
+                <div className="center">
                   <div>
-                    <FacebookIcon size={20} round={false} /> 
+                    <p>Visionaries is an educational platform.</p>
+                    <p>You can find here interesting articles and learn something new.</p>
+                    <p>Anyone can add an article.</p>
+                    <p>All content is public so everybody can read, comment and like articles.</p>
+                    <p>If you want to be an active user, please:</p>
                   </div>
-                  }
-                </FacebookButton>
-              </div>
-              <div>
-                <Comments memId={this.state.mem.ID} result={this.state.result} className="comments"/>
+                  <div><button className="btn btn-primary" onClick={this.showLock}>sign up</button></div>
+                  <div>
+                    <p>This is our beginning, hope you will follow and support our development.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         );
-      } else 
-        return ( <Loading/> );
-  }
+     }
 });
 
 export default About;

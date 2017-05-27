@@ -158,6 +158,7 @@ img {
 
 .right {
 	float: right;
+	min-height: 25px;
 }
 
 .iconImage {
@@ -318,7 +319,7 @@ button.fbButton {
 }
 
 .iconLogo {
-	width: 3%;
+	width: 2%;
 	min-width: 25px;
 	cursor: pointer;
 	padding: 0;

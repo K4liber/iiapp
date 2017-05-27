@@ -295,7 +295,7 @@ var Comments = React.createClass({
                         </p>
                     }
                     <p>
-                        <textarea onKeyPress={this.keyPressed} onChangeCapture={() => this.textAreaAdjust(commentAreaID)} className="commentTextarea" maxLength="2000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ...">
+                        <textarea onKeyPress={this.keyPressed} onChangeCapture={() => this.textAreaAdjust(commentAreaID)} className="commentTextarea" maxLength="3000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ...">
                         
                         </textarea> 
                     </p>
@@ -306,7 +306,7 @@ var Comments = React.createClass({
             return (
                 <div>
                     <div className="block">
-                        <textarea onChangeCapture={() => this.textAreaAdjust(commentAreaID)} className="commentTextarea" maxLength="1000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ..."></textarea> 
+                        <textarea onChangeCapture={() => this.textAreaAdjust(commentAreaID)} className="commentTextarea" maxLength="3000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ..."></textarea> 
                     </div>
                     <p>
                         <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Send</button>

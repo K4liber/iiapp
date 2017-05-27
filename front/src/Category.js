@@ -44,7 +44,7 @@ var Category = React.createClass({
       return ( 
         <div className="row">
             <div className="contentLeft col-md-12" id="contentLeft">
-              <p>There are any ideas in '{res[2]}' category!</p>
+              <p>There are any articles in '{res[2]}' category!</p>
             </div>
         </div>
       );

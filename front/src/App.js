@@ -1,4 +1,9 @@
 import React from 'react';
+import { Route, Router } from 'react-router-dom';
+import { Switch } from 'react-router';
+import { createStore } from 'redux'
+import FacebookProvider, { Like } from 'react-facebook';
+
 import './App.css';
 import Upload from './Upload';
 import Board from './Board';
@@ -10,15 +15,11 @@ import AdminPanel from './AdminPanel';
 import Home from './Home';
 import About from './About';
 import MemPage from './MemPage';
+
 import Auth0Lock from 'auth0-lock';
 import createBrowserHistory from 'history/createBrowserHistory';
-import { Route, Router } from 'react-router-dom';
-import { Switch } from 'react-router';
 import { request } from 'request';
-import FacebookProvider, { Like } from 'react-facebook';
 
-//export const hostName = "http://localhost:3000/app";
-//export const apiHost = "http://localhost:3000/app";
 export const hostName = "http://46.41.149.6:80/app";
 export const host = "http://46.41.149.6:80";
 export const apiHost = "http://46.41.149.6:80/app";
