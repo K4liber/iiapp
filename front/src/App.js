@@ -4,6 +4,19 @@ import { Switch } from 'react-router';
 import { createStore } from 'redux'
 import FacebookProvider, { Like } from 'react-facebook';
 
+const reducer = (state = false, action) => {
+  switch (action.type) {
+    case 'SHOWLATEX':
+      return true;
+    case 'HIDELATEX':
+      return false;
+    default :
+      return state;
+  }
+}
+
+export const store = createStore(reducer);
+
 import './App.css';
 import Upload from './Upload';
 import Board from './Board';

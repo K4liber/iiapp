@@ -3,6 +3,7 @@ import request from 'superagent';
 
 import Comm from './Comm.js';
 import Loading from './Loading.js';
+import CommArea from './CommArea';
 
 import { hostName } from './App.js';
 import { host } from './App.js';
@@ -91,31 +92,9 @@ var Comments = React.createClass({
             }
         }, 1000)
     },
-    clearTextarean: function(id) {
-        let textArea = document.getElementById(id);
+    clearTextarean: function() {
+        let textArea = document.getElementById("commentArea");
         textArea.value="";
-        this.textAreaAdjust(id);
-    },
-    textAreaAdjust: function(id) {
-        let textArea = document.getElementById(id);
-        if (!JSON.parse(localStorage.getItem('profile'))) {
-            textArea.value="";
-            browserHistory.replace('/');
-            lock.show();
-        }
-        textArea.style.height = "0px";
-        textArea.style.height = (textArea.scrollHeight)+"px";
-        if (document.getElementById(id).value !== "") {
-            this.setState({
-                comment: document.getElementById(id).value,
-                showPreview: true,
-            })
-        } else {
-            this.setState({
-                comment: "",
-                showPreview: false,
-            })
-        }
     },
     goToIdea: function() {
         browserHistory.push('/idea/' + this.props.memId);
@@ -133,8 +112,9 @@ var Comments = React.createClass({
         });
         this.forceUpdate();
     },
-    sendComment : function(id) {
-        var comment = document.getElementById("commentArea" + id).value;
+    sendComment : function() {
+        let id = "commentArea";
+        var comment = document.getElementById(id).value;
         if (comment !== "") {
             if(localStorage.getItem('profile')) {
                 let profile = JSON.parse(localStorage.getItem('profile'));
@@ -159,8 +139,8 @@ var Comments = React.createClass({
                         this.setState({
                             comments: actualComments
                         })
-                        document.getElementById("commentArea" + id).value = "";
-                        this.textAreaAdjust("commentArea" + id);
+                        document.getElementById(id).value = "";
+                        this.textAreaAdjust(id);
                     }
                 });
                 
@@ -217,100 +197,26 @@ var Comments = React.createClass({
         return;
     },
     render : function () {
-        let lastIsMine = false;
-        if (JSON.parse(localStorage.getItem('profile'))) {
-            var profile =  JSON.parse(localStorage.getItem('profile'));
-            var authorNickname = profile.nickname;
-            lastIsMine = 
-                this.state.lastCommentAuthor === authorNickname;
-            var profilePicture = profile.picture;
-            if (profile.user_metadata && profile.user_metadata.picture)
-                profilePicture = host + "/resources/avatars/" + profile.user_metadata.picture;
-        }
         if (this.state.comments) {
-            let commentAreaID = "commentArea" + this.state.mem.ID;
-            let self = this;
-            let a1 = '$ a_{1} $';
-            let aFracb = '$ \\frac{a}{b} $';
-            let overx = '$ \\overline{x}  $';
-            
+            let self = this;  
             return (
                 <div className="comments center" id="comments">
                     {
                         (this.state.comments).map( function(comment, index) { 
                             let key = "comment" + comment.ID;
                             return (
-                                <Comm editable={lastIsMine} key={key} comment={comment} index={index} update={self.updateComment} delete={self.deleteComment}/>
+                                <Comm key={key} comment={comment} index={index} update={self.updateComment} delete={self.deleteComment}/>
                             )
                         })
                     }
-                    { (profile && this.state.showPreview) &&
-                        <div className="center relative">
-                            <div className="margin3">
-                                <img data-tip="check profile" alt="" src={profilePicture} className="commentPhoto"/>
-                                <span className="span" data-tip="check profile" >{authorNickname}</span> | {this.state.actualDateTime} | Points: 0
-                                <img data-tip="add point" className="thumbImage" alt="ASAS" src="/img/thumbIcon.png"/>
-                                <img data-tip="delete" alt="" src="/img/xIcon.png" className="deleteComment right" onClick={() => this.clearTextarean(commentAreaID)}/>
-                            </div>
-                            <div className="comment">
-                                {
-                                    this.state.comment.split('\\#').map(function(item, key) {
-                                       return (
-                                            <span key={key}>
-                                                <Latex>{item}</Latex>
-                                                <br/>
-                                            </span>
-                                            
-                                       )
-                                    })
-                                }
-                            </div>
-                        </div>
-                    }
-                    { (this.state.showPreview && this.state.showExpressions) &&
-                        <div>
-                            <div className="margin3">
-                                {
-                                    (this.state.expressions).map( function(expression, index) { 
-                                        let key = "expression" + index;
-                                        return (
-                                            <button key={key} className="btn btn-default" onClick={() => self.addExpression(expression)} ><Latex>{expression}</Latex></button>
-                                        )
-                                    })
-                                }
-                                <button key="expressionEnter" className="btn btn-default" onClick={() => self.addExpression("\\#")} >Enter</button>
-                            </div>
-                            <p className="margin3">
-                                <button className="btn btn-primary" onClick={() => this.clearTextarean(commentAreaID)} >Clear</button>
-                                <button className="btn btn-info" onClick={this.hideExpressions} >LaTeX</button>
-                                <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Send</button>
-                            </p>
-                        </div>
-                    }
-                    { (this.state.showPreview && !this.state.showExpressions) &&
-                        <p className="margin3">
-                            <button className="btn btn-primary" onClick={() => this.clearTextarean(commentAreaID)} >Clear</button>
-                            <button className="btn btn-primary" onClick={this.showExpressions} >LaTeX</button>
-                            <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Send</button>
-                        </p>
-                    }
-                    <p>
-                        <textarea onKeyPress={this.keyPressed} onChangeCapture={() => this.textAreaAdjust(commentAreaID)} className="commentTextarea" maxLength="3000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ...">
-                        
-                        </textarea> 
-                    </p>
+                    <CommArea onSend={this.sendComment}/>
                 </div>
             )
         } else if (this.state.mem){
             let commentAreaID = "commentArea" + this.state.mem.ID;
             return (
                 <div>
-                    <div className="block">
-                        <textarea onChangeCapture={() => this.textAreaAdjust(commentAreaID)} className="commentTextarea" maxLength="3000" id={commentAreaID} onChange={this.loadDescription} placeholder="Your comment ..."></textarea> 
-                    </div>
-                    <p>
-                        <button onClick={() => this.sendComment(this.state.mem.ID)} className="btn btn-primary">Send</button>
-                    </p>
+                    <CommArea onSend={this.sendComment}/>
                 </div>
             )
         } else {

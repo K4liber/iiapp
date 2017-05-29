@@ -3,9 +3,7 @@ import React from 'react';
 import { FacebookButton, FacebookCount } from "react-social";
 import Modal from 'react-modal';
 import ReactTooltip from 'react-tooltip';
-import {
-  generateShareIcon
-} from 'react-share';
+import { generateShareIcon } from 'react-share';
 
 import Comments from './Comments';
 import Loading from './Loading';

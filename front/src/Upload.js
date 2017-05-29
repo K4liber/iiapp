@@ -1,12 +1,17 @@
 import React from 'react';
 import request from 'superagent';
 import Modal from 'react-modal';
+import { generateShareIcon } from 'react-share';
+import { FacebookButton } from "react-social";
 
 import MemDropzone from './MemDropzone'
+import CommArea from './CommArea';
 
 import { hostName } from './App.js';
 import { host } from './App.js';
 import { lock } from './App.js';
+
+const FacebookIcon = generateShareIcon('facebook');
 
 const warningsStyle = {
   content : {
@@ -19,10 +24,10 @@ const warningsStyle = {
     
   }
 };
-
 var Upload = React.createClass({
     componentWillMount : function(props) {
-        this.state = {
+        this.timer();
+        this.setState({
             uploadedFile: null,
             fileUrl : null,
             title : null,
@@ -32,10 +37,21 @@ var Upload = React.createClass({
             showWarnings: false,
             showLoading: false,
             loadingMessage: "Please wait a second...",
-        };
+        });
         if (!localStorage.getItem('profile')) {
             lock.show();
         }
+    },
+    timer : function() {
+        let self = this;
+        setTimeout(function () { 
+            if (self.isMounted()) {
+                self.setState({
+                    actualDateTime: new Date().toString(),
+                });
+                self.timer();
+            }
+        }, 1000)
     },
     closeWarnings: function() {
         this.setState({showWarnings: false});
@@ -80,6 +96,8 @@ var Upload = React.createClass({
         textArea.style.height = (textArea.scrollHeight)+"px";
     },
     postMem : function() {
+        var comment = document.getElementById("commentArea").value;
+        this.setState({comment: comment});
         var warnings = [];
         if (!this.state.uploadedFile) {
             warnings.push("You have to load vision's image.")
@@ -93,8 +111,8 @@ var Upload = React.createClass({
         if (!this.state.title) {
             warnings.push("You did not tap a title!");
         }
-        if (this.state.comment.length > 2000) {
-            warnings.push("Comments can be up to 2000 characters!");
+        if (this.state.comment.length > 3000) {
+            warnings.push("Comments can be up to 3000 characters!");
         }
         if (this.state.uploadedFile) {
             if (this.state.uploadedFile.size > 512000) {
@@ -125,7 +143,7 @@ var Upload = React.createClass({
                         .field('extension', res[1])
                         .field('enctype', 'multipart/form-data')
                         .field('title', this.state.title)
-                        .field('comment', this.state.comment)
+                        .field('comment', document.getElementById("commentArea").value)
                         .field('authorNickname', nickname)
                         .field('category', category)
                         .field('profilePicture', profilePicture);
@@ -145,6 +163,8 @@ var Upload = React.createClass({
     },
     render : function() {
         if (localStorage.getItem('profile')) {
+            let profile = JSON.parse(localStorage.getItem('profile'));
+            let nickname = profile.nickname;
             let warnings = this.state.warnings;
             let loadingMessage = this.state.loadingMessage;
             return (
@@ -184,17 +204,27 @@ var Upload = React.createClass({
                                 <button onClick={this.closeWarnings} className="btn btn-primary margin3">OK</button>
                             </div>
                         </Modal>
+                        <div>
+                            Uploaded by <span data-tip="check profile" >{nickname}</span> at {this.state.actualDateTime}
+                        </div>
                         <div className="mem centering" style={{ width: "80%" }} >
                             <MemDropzone onX={this.cancelImage} onDrop={this.onImageDrop} 
                             fileUrl={this.state.fileUrl} />
                         </div>
                         <div className="comments">
                             <textarea id="titleArea" className="signatureTextarea" maxLength="100" onChange={this.loadTitle} placeholder="Signature ..."></textarea> 
-                            <textarea onChangeCapture={this.textAreaAdjust} id="commentArea" className="commentTextarea" maxLength="2000" onChange={this.loadComment} placeholder="Be the first to comment!"></textarea> 
+                            <div>
+                                Views: 0  | Points: 0
+                                <img data-tip="add point" onClick={this.doLike} className="thumbImage" alt="" src="/img/thumbIcon.png"/>
+                                | Shares: 0 
+                                 <FacebookButton onClick={this.closeWarnings} style={{ border: 0, backgroundColor: 'transparent' }} className="fbButton" >
+                                     {
+                                         <FacebookIcon size={18} round={false} /> 
+                                     }
+                                 </FacebookButton>
+                            </div>
+                            <CommArea onSend={this.postMem}/>
                         </div>
-                        <p>
-                            <button onClick={this.postMem} className="btn btn-primary margin3">Send</button>
-                        </p>
                     </div>
                 </div>
             )
