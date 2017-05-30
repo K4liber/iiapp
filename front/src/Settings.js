@@ -1,6 +1,7 @@
 import React from 'react';
+import ReactTooltip from 'react-tooltip';
+
 import AvatarDropzone from './AvatarDropzone.js';
-import request from 'superagent';
 
 import { CLIENT_DOMAIN } from './App.js';
 import { apiHost } from './App.js';
@@ -8,13 +9,16 @@ import { hostName } from './App.js';
 import { host } from './App.js';
 import { API_TOKEN } from './App.js';
 import { browserHistory } from './App.js';
+import { store } from './App.js';
 
+import request from 'superagent';
 import { request as req } from 'request';
 
 var Settings = React.createClass({
   getInitialState: function() {
     return {
       profile: null,
+      showDropzone: false,
     }
   },
   componentDidMount: function() {
@@ -120,6 +124,20 @@ var Settings = React.createClass({
         });
         this.render();
     },
+    edit : function() {
+      if (this.state.showDropzone) {
+        this.setState({
+          showDropzone: false
+        })
+      } else {
+        this.setState({
+          showDropzone: true
+        })
+      }
+    },
+    changeTooltip : function() {
+
+    },
     render: function() {
       if (this.state.profile) {
         let profile = JSON.parse(localStorage.getItem('profile'));
@@ -128,18 +146,24 @@ var Settings = React.createClass({
           picture = host + "/resources/avatars/" + profile.user_metadata.picture
         return (
             <div className="row">
-              <script src="/static/js/auth0-editprofile.min.js"></script>
-              <div className="contentLeft col-md-12" id="contentLeft">
-                <p>Your nickname: {profile.nickname}</p>
-                <div>
-                  <p>Your avatar:</p>
-                  <img alt="" src={picture} className="avatarImage" />
+                <div className="contentLeft col-md-12" id="contentLeft">
+                <p>Hello {profile.nickname}!</p>
+                <div className="checkbox">
+                  <label><input type="checkbox" defaultChecked onChange={this.changeTooltip}/> Show tooltips</label>
                 </div>
-                <div className="centering">
-                  <AvatarDropzone onX={this.cancelImage} onDrop={this.onImageDrop} 
-                          fileUrl={this.state.fileUrl} />
-                  <button onClick={this.uploadAvatar} className="btn btn-primary margin3">Upload</button>
+                <div className="mem">
+                  <div className="memImage">
+                    <img alt="" src={picture} className="avatarImage" />
+                    <img data-tip="edit" alt="" src="/img/spannerIcon.png" className="cancelUpload" onClick={this.edit}/>
+                  </div>
                 </div>
+                { this.state.showDropzone &&
+                  <div className="centering comments">
+                    <AvatarDropzone onX={this.cancelImage} onDrop={this.onImageDrop} 
+                            fileUrl={this.state.fileUrl} />
+                    <button onClick={this.uploadAvatar} className="btn btn-primary margin3">Upload</button>
+                  </div>
+                }
               </div>
             </div>
           );

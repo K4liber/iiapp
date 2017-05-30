@@ -1,5 +1,7 @@
 import React from 'react';
+
 import Mem from './Mem';
+import Loading from './Loading';
 
 import { HttpClient } from './App.js';
 import { hostName } from './App.js';
@@ -62,9 +64,7 @@ var Activity = React.createClass({
       );
     } else {
       return ( 
-        <div>
-          Loading...
-        </div>
+        <Loading/>
       );
     }
   }

@@ -78,10 +78,6 @@ var Board = React.createClass({
   },
   render: function() {
     if (localStorage.getItem('profile')) {
-      let profile = JSON.parse(localStorage.getItem('profile'));
-      var picture = profile.picture;
-      if (profile.user_metadata && profile.user_metadata.picture)
-        picture = host+ "/resources/avatars/" + profile.user_metadata.picture
       if(this.state.showOptions) {
         return (
         <div className="menu right alwaysTop">
@@ -90,9 +86,9 @@ var Board = React.createClass({
           <img data-tip="logout" alt="" onClick={this.logout} src="/img/logoutIcon.png" className="iconLogo right"/>
           <img data-tip="about" alt="" onClick={this.about} src="/img/infoIcon.png" className="iconLogo right"/>
           <img data-tip="upload" alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo right"/>
-          <img data-tip="your activities" alt="" onClick={this.showActivities} src="/img/galleryIcon.png" className="iconLogo right"/>
+          <img data-tip="my acticity" alt="" onClick={this.showActivities} src="/img/galleryIcon.png" className="iconLogo right"/>
           <img data-tip="settings" alt="" onClick={this.settings} src="/img/settingsIcon.png" className="iconLogo right"/>
-          <img data-tip="your ideas" alt="" onClick={this.showProfile} src={picture} className="iconLogo right"/>
+          <img data-tip="my articles" alt="" onClick={this.showProfile} src="/img/articlesIcon.png" className="iconLogo right"/>
           <ReactTooltip />
         </div>
         );
@@ -108,18 +104,21 @@ var Board = React.createClass({
         );
       }
     } else {
+      let showToast=false;
       return (
-      <div className="menu right alwaysTop">
-        <Categories/>
-        <img data-tip="login" alt="" onClick={this.showLock} src="/img/loginIcon2.png" className="iconLogo right"/>
-        <img data-tip="upload" alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo right"/>
-        <img data-tip="about" alt="" onClick={this.about} src="/img/infoIcon.png" className="iconLogo right"/>
-        <ToastContainer ref="container"
-                        toastMessageFactory={ToastMessageFactory}
-                        className="toast-top-right absolute" 
-                        style={{top: "50px", right: "50px"}}/>
-        <ReactTooltip />
-      </div>
+        <div className="menu right alwaysTop">
+          <Categories/>
+          <img data-tip="login" alt="" onClick={this.showLock} src="/img/loginIcon2.png" className="iconLogo right"/>
+          <img data-tip="upload" alt="" onClick={this.upload} src="/img/uploadIcon.png" className="iconLogo right"/>
+          <img data-tip="about" alt="" onClick={this.about} src="/img/infoIcon.png" className="iconLogo right"/>
+          { showToast &&
+          <ToastContainer ref="container"
+                          toastMessageFactory={ToastMessageFactory}
+                          className="toast-top-right absolute" 
+                          style={{top: "50px", right: "50px"}}/>
+          }
+          <ReactTooltip />
+        </div>
       );
     }
   }

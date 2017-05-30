@@ -29,23 +29,40 @@ var Comm = React.createClass({
         return {
             comment: null,
             modalIsOpen: false,
+            images: [],
         }
     },
     openModal: function () {
-    this.setState({modalIsOpen: true});
+        this.setState({modalIsOpen: true});
     },
     closeModal: function () {
         this.setState({modalIsOpen: false});
     },
     componentDidMount: function() {
+        var m,
+        urls = [], 
+        str = this.props.comment.Content,
+        rex = /<img[^>]+src="?([^"\s]+)"?\s*\/>/g;
+        while ( m = rex.exec( str ) ) {
+            urls.push( m[1] );
+        }
         this.setState({
             comment: this.props.comment,
-        });  
+            images: urls,
+        });   
     },
-    componentWillReceiveProps : function(newProps) {
+    componentWillReceiveProps : function(newProps) { 
+        var m,
+        urls = [], 
+        str = this.props.comment.Content,
+        rex = /<img[^>]+src="?([^"\s]+)"?\s*\/>/g;
+        while ( m = rex.exec( str ) ) {
+            urls.push( m[1] );
+        }
         this.setState({
             comment: this.props.comment,
-        });  
+            images: urls,
+        }); 
     },
     updateComment: function(comment) {
         this.props.update(comment);
@@ -131,15 +148,17 @@ var Comm = React.createClass({
         this.props.delete(ID);
     },
     editComment: function() {
-        let commentAreaID = "commentArea" + this.state.comment.MemID;
+        let commentAreaID = "commentArea";
         let textArea = document.getElementById(commentAreaID);
         textArea.value = this.state.comment.Content;
     },
     render : function () {
+        var imageIndex=0;
         if (this.state.comment) {
             let comment = this.state.comment;
             var picture = comment.AuthorPhoto;
             var isMain = false;
+            let self = this;
             var date = new Date(Date.parse(comment.DateTime));
             var dateTime = date.toString();
             if (localStorage.getItem('profile'))
@@ -182,16 +201,38 @@ var Comm = React.createClass({
                             }
                         </div>
                         <div className="comment">
-                            {
-                                comment.Content.split('\\#').map(function(item, key) {
-                                    return (
-                                        <span key={"commentPart" + comment.ID + "key" + key}>
-                                            <Latex>{item}</Latex>
-                                            <br/>
-                                        </span>
-                                    )
-                                })
-                            }
+                        {
+                            this.state.comment.Content.split("<end>").map(function(item, index) {
+                                var rex = /<title[^>]+value="?([^]+)?"\s*\/>/g;
+                                var m = rex.exec(item);
+                                var itemKey = "latex" + index;
+                                if (m && m[1])
+                                    imageIndex++;
+                                return (
+                                    <div key={itemKey}>
+                                        { (m && m[1] && self.state.images[imageIndex-1]) &&
+                                            <div>
+                                                <Latex>{item}</Latex>
+                                                <div className="center">
+                                                    <figure>
+                                                        <img src={self.state.images[imageIndex-1]}/>
+                                                            <figcaption>
+                                                                Fig. {imageIndex} {m[1]}
+                                                            </figcaption>
+                                                    </figure>
+                                                </div>
+                                            </div>
+                                        }
+                                        { (!m || !m[1]) &&
+                                            <span>
+                                                <Latex>{item}</Latex>
+                                                <br/>
+                                            </span>
+                                        }
+                                    </div>
+                                )
+                            })
+                        }
                         </div>
                     </div>
                 </div>

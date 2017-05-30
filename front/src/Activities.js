@@ -54,10 +54,10 @@ var Activities = React.createClass({
   render: function() {
     if (this.state.activities) {
       return (
-          <div className="row well well-sm">
+          <div className="row">
             <div className="contentLeft col-md-12" id="contentLeft">
               <div className="activitiesSignature">
-                  Your last <input id="days" onChange={this.sortActivities} defaultValue="7" min="1" max="365" type="number" /> days activties:
+                  Your last <input id="days" onChange={this.sortActivities} defaultValue="7" min="1" max="365" type="number" /> days activity:
               </div>
               {
                 this.state.activities.map( function(activity, index) {
@@ -77,7 +77,7 @@ var Activities = React.createClass({
               <div className="activitiesSignature">
                   Your last <input id="days" onChange={this.sortActivities} defaultValue="7" min="1" max="365" type="number" /> days activties:
               </div>
-              You do not have any acitivities on Visionaries yet.
+              You do not have any activity on Visionaries yet.
             </div>
           </div>
         );

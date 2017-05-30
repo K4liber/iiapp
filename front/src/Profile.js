@@ -1,5 +1,8 @@
 import React from 'react';
+
 import Mems from './Mems';
+import Loading from './Loading';
+
 import { HttpClient } from './App.js'
 import { hostName } from './App.js'
 
@@ -30,9 +33,15 @@ var Profile = React.createClass({
           </div>
         );
       } else if (this.state.username) {
-        return ( <div>User {this.state.username} have not upload any idea yet.</div> );
+        return ( 
+          <div>
+            User {this.state.username} have not upload any idea yet.
+          </div> 
+        );
       } else
-        return ( <div>Loading ...</div> );
+        return ( 
+          <Loading/> 
+        );
   }
 });
 

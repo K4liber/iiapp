@@ -61,7 +61,7 @@ var Expressions = React.createClass({
                         )
                     })
                 }
-                <button key="expressionEnter" className="btn btn-default" onClick={() => self.addExpression("\\#")} >Enter</button>
+                <button key="expressionEnter" className="btn btn-default" onClick={() => self.addExpression("<end>")} >Enter</button>
             </div>      
         )
     }

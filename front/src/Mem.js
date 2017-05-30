@@ -182,7 +182,7 @@ var Mem = React.createClass({
       if (localStorage.getItem('profile'))
           isMain = mem.AuthorNickname === JSON.parse(localStorage.getItem('profile')).nickname;
       return (
-        <div className="mem" >
+        <div className="mem">
           <Modal
               isOpen={this.state.modalIsOpen}
               onAfterOpen={this.afterOpenModal}

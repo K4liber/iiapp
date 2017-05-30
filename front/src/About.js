@@ -50,7 +50,7 @@ var About = React.createClass({
                     <p>If you want to be an active user, please:</p>
                   </div>
                   <div><button className="btn btn-primary" onClick={this.showLock}>sign up</button></div>
-                  <div>
+                  <div style={{ marginBottom: "5%" }}>
                     <p>This is our beginning, hope you will follow and support our development.</p>
                   </div>
                 </div>

@@ -15,7 +15,6 @@ var Latex = require('react-latex');
 
 var Comments = React.createClass({
     getInitialState: function() {
-        this.timer();
         return {
             comments: null,
             mem: null,
@@ -80,17 +79,6 @@ var Comments = React.createClass({
                 });
             }.bind(this));
         }
-    },
-    timer : function() {
-        let self = this;
-        setTimeout(function () { 
-            if (self.isMounted()) {
-                self.setState({
-                    actualDateTime: new Date().toString(),
-                });
-                self.timer();
-            }
-        }, 1000)
     },
     clearTextarean: function() {
         let textArea = document.getElementById("commentArea");

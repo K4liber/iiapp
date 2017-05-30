@@ -74,7 +74,7 @@ input {
 }
 
 .commentSignature:hover {
-	color: rgba(125,0,50,1);
+	color: rgba(0,127,255,0.3);
 }
 
 .title {
@@ -243,7 +243,7 @@ img {
 }
 
 .cancelUpload:hover {
-	background-color: rgba(255,0,100,0.2);
+	background-color: rgba(0,127,255,0.3);
 }
 
 .deleteComment {
@@ -258,7 +258,7 @@ img {
 }
 
 .deleteComment:hover {
-	background-color: rgba(255,0,100,0.2);
+	background-color: rgba(0,127,255,0.3);
 }
 
 .uploadLogoChoosen {
@@ -391,7 +391,7 @@ button.fbButton {
 }
 
 .iconLogo:hover {
-	background-color: rgba(255,0,100,0.2);
+	background-color: rgba(0,127,255,0.3);
 }
 
 .uploadLogo {
@@ -409,11 +409,11 @@ span.span {
 }
 
 .span:hover {
-	color: rgba(125,0,50,1);
+	color: rgba(0,127,255,0.3);
 }
 
 .uploadLogo:hover {
-	background-color: rgba(255,0,100,0.5);
+	background-color: rgba(0,127,255,0.3);
 }
 
 #1Column {
