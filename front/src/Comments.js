@@ -3,15 +3,13 @@ import request from 'superagent';
 
 import Comm from './Comm.js';
 import Loading from './Loading.js';
-import CommArea from './CommArea';
+import CommArea from './AddComment/CommArea';
 
 import { hostName } from './App.js';
 import { host } from './App.js';
 import { HttpClient } from './App.js';
 import { browserHistory } from './App.js';
 import { lock } from './App.js';
-
-var Latex = require('react-latex');
 
 var Comments = React.createClass({
     getInitialState: function() {
@@ -20,38 +18,9 @@ var Comments = React.createClass({
             mem: null,
             lastCommentAuthor: null,
             showExpressions: false,
-            expressions:  this.loadExpressions(),
             showPreview: false,
             comment: null,
         }
-    },
-    loadExpressions: function() {
-        var expressions = [
-            '$ a_{1} $',
-            '$ \\frac{a}{b} $',
-            '$ \\overline{x}  $',
-            '$ \\sqrt{x} $',
-            '$ x^{y} $',
-            '$ \\bar{a} $',
-            '$ \\hat{a} $',
-            '$ \\alpha $',
-            '$ \\beta $',
-            '$ \\gamma $',
-            '$ \\delta $',
-            '$ \\eta $',
-            '$ \\theta $',
-            '$ \\pi $',
-            '$ \\Sigma $',
-            '$ \\Psi $',
-            '$ \\lim_{x \\rightarrow 0} $',
-            '$ \\sum_{i=1}^{n} \\quad $',
-            '$ \\int_{0}^{\\pi} \\quad $',
-            '$ \\oplus $',
-            '$ \\otimes $',
-            '$ \\odot $',
-            '$ \\neq $',
-        ]
-        return expressions;
     },
     componentDidMount: function() {
         if(this.props.result) {
@@ -152,38 +121,6 @@ var Comments = React.createClass({
         });
         this.forceUpdate();
     },
-    addExpression : function(expression) {
-        let id = "commentArea" + this.state.mem.ID;
-        var el = document.getElementById(id)
-        var start = el.selectionStart;
-        var end = el.selectionEnd;
-        var text = el.value;
-        var before = text.substring(0, start);
-        var after  = text.substring(end, text.length);
-        el.value = before + expression + after;
-        el.selectionStart = el.selectionEnd = start + expression.length;
-        el.focus()
-
-        this.textAreaAdjust(id);
-    },
-    showExpressions : function() {
-        this.setState({
-            showExpressions: true,
-        });
-    },
-    hideExpressions : function() {
-        this.setState({
-            showExpressions: false,
-        });
-    },
-    keyPressed : function(e) {
-        e = e || window.event;
-        var key = e.keyCode ? e.keyCode : e.which;
-        if (key == 13) {
-            this.addExpression("\\#");
-        }
-        return;
-    },
     render : function () {
         if (this.state.comments) {
             let self = this;  
@@ -201,7 +138,6 @@ var Comments = React.createClass({
                 </div>
             )
         } else if (this.state.mem){
-            let commentAreaID = "commentArea" + this.state.mem.ID;
             return (
                 <div>
                     <CommArea onSend={this.sendComment}/>

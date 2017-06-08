@@ -8,6 +8,7 @@ import { hostName } from './App.js';
 import { host } from './App.js';
 import { lock } from './App.js';
 import { AppID } from './App.js';
+import { domain } from './App.js';
 
 import request from 'superagent';
 import { FacebookButton, FacebookCount } from "react-social";
@@ -28,7 +29,6 @@ const modalStyle = {
 
 const commentsStyle = {
   overlay : {
-    position          : 'fixed',
     top               : '3%',
     bottom            : '3%',
     backgroundColor   : 'rgba(255, 255, 255, 0.75)',
@@ -56,8 +56,6 @@ const commentsStyle = {
 };
 
 import {
-  ShareButtons,
-  ShareCounts,
   generateShareIcon
 } from 'react-share';
 
@@ -92,7 +90,7 @@ var Mem = React.createClass({
   },
   showComments: function() {
     let mem = this.state.mem;
-    mem.Views = mem.Views+1;
+    mem.Views++;
     this.setState({
       showComments: true,
     });
@@ -117,7 +115,7 @@ var Mem = React.createClass({
         if (response.status === 200 && response.text !== "false") {
           let mem = this.state.mem;
           mem.Like = true;
-          mem.Points = mem.Points+1;
+          mem.Points++;
           this.setState({
             mem: mem,
           });
@@ -142,7 +140,7 @@ var Mem = React.createClass({
         if (response.status === 200 && response.text !== "false"){
           let mem = this.state.mem;
           mem.Like = false;
-          mem.Points = mem.Points-1;
+          mem.Points--;
           this.setState({
             mem: mem,
           });
@@ -173,9 +171,7 @@ var Mem = React.createClass({
   render: function() {
     if (this.state.mem) {
       let mem = this.state.mem;
-      //let shareUrl = hostName + "/mem/" + mem.ID;
-      let shareUrl = "visionaries.pl/idea/" + mem.ID;
-      var picture = mem.AuthorPhoto;
+      let shareUrl = domain + "/idea/" + mem.ID;
       var isMain = false;
       let categoryTip = mem.Category + " category";
       let memImage = host + "/resources/mems/" + mem.ID +mem.ImgExt;

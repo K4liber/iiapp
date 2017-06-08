@@ -1,8 +1,6 @@
 import React from 'react';
 import Categories from './Categories';
 
-import { hostName } from './App.js';
-import { host } from './App.js';
 import { lock } from './App.js';
 import { browserHistory } from './App.js';
 

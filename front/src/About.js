@@ -1,24 +1,8 @@
 import React from 'react';
 
-import request from 'superagent';
-import { FacebookButton, FacebookCount } from "react-social";
-import ReactTooltip from 'react-tooltip'
-
-import Comments from './Comments';
-import Loading from './Loading';
-
-import { HttpClient } from './App.js';
-import { hostName } from './App.js';
 import { host } from './App.js';
 import { lock } from './App.js';
-import { AppID } from './App.js';
 import { browserHistory } from './App.js';
-
-import {
-  generateShareIcon
-} from 'react-share';
-
-const FacebookIcon = generateShareIcon('facebook');
 
 var About = React.createClass({
   getInitialState: function() {

@@ -1,8 +1,6 @@
 import React from 'react';
-import Mems from './Mems';
 
 import { hostName } from './App.js';
-import { HttpClient } from './App.js';
 
 import request from 'superagent';
 
@@ -41,7 +39,6 @@ var AdminPanel = React.createClass({
   deleteComment: function() {
     if (localStorage.getItem('profile')) {
         let profile = JSON.parse(localStorage.getItem('profile'));
-        let nickname = profile.nickname;
         let commentID = document.getElementById("commentID").value;
         let upload = request.post(hostName + "/adminDeleteComment")
             .field('Bearer ', localStorage.getItem('token'))

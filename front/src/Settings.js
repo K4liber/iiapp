@@ -1,24 +1,34 @@
 import React from 'react';
-import ReactTooltip from 'react-tooltip';
+import Modal from 'react-modal';
 
 import AvatarDropzone from './AvatarDropzone.js';
 
 import { CLIENT_DOMAIN } from './App.js';
-import { apiHost } from './App.js';
 import { hostName } from './App.js';
 import { host } from './App.js';
 import { API_TOKEN } from './App.js';
 import { browserHistory } from './App.js';
-import { store } from './App.js';
 
 import request from 'superagent';
-import { request as req } from 'request';
+
+const uploadingStyle = {
+  content : {
+    top                   : '50%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)',
+    
+  }
+};
 
 var Settings = React.createClass({
   getInitialState: function() {
     return {
       profile: null,
       showDropzone: false,
+      showLoading: false,
     }
   },
   componentDidMount: function() {
@@ -30,6 +40,9 @@ var Settings = React.createClass({
     });
   },
   uploadAvatar : function() {
+        this.setState({
+            showLoading : true,
+        });
         if (!this.state.uploadedFile) {
             alert("Nie dodales zdjecia!");
             return
@@ -59,11 +72,6 @@ var Settings = React.createClass({
     updateProfilePicture: function(pictureName) {
         let id = JSON.parse(localStorage.getItem('profile')).user_id;
         let url = 'https://' + CLIENT_DOMAIN + '/api/v2/users/' + id;
-        const headers = {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + API_TOKEN ,
-        }
         var payload = JSON.stringify(
           {
               "user_metadata": {
@@ -71,12 +79,6 @@ var Settings = React.createClass({
               }
           }
         );
-        var options = { 
-          method: 'PATCH',
-          url: url,
-          headers: headers,
-          body: payload,
-        };
         let update = request.patch(url)
           .set('Accept', 'application/json')
           .set('Content-Type', 'application/json')
@@ -87,16 +89,13 @@ var Settings = React.createClass({
               console.error(err);
           }
           if (response.status === 200) {
-              window.location.replace (apiHost + "/settings");
+              this.setState({
+                  showLoading : false,
+              });
+              browserHistory.replace(host + "/settings");
               //localStorage.setItem('profile', JSON.parse(response.text));
           }
         });
-        /*
-        req(options, function (error, response, body) {
-          if (error) throw new Error(error);
-          console.log(response);
-        });
-        */
     },
     onImageDrop : function(files) {
         let isOk = true;
@@ -146,6 +145,20 @@ var Settings = React.createClass({
           picture = host + "/resources/avatars/" + profile.user_metadata.picture
         return (
             <div className="row">
+                <Modal
+                    isOpen={this.state.showLoading}
+                    onRequestClose={this.closeLoading}
+                    animationType={"fade"}
+                    style={uploadingStyle}
+                    transparent={true}
+                    contentLabel={"Uploading"}
+                >   
+                    <div className="centering">
+                        <p>Uploading</p>
+                        <p><img alt="" src="/img/loading.gif"/></p>
+                        <p>Please wait a second ...</p>
+                    </div>
+                </Modal>
                 <div className="contentLeft col-md-12" id="contentLeft">
                 <p>Hello {profile.nickname}!</p>
                 <div className="checkbox">

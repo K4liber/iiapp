@@ -20,6 +20,7 @@ var Activities = React.createClass({
       var difference = 1000*60*60*24*days;
       if (time > now - difference)
         toReturn.push(activity);
+      return 0
     });
     return toReturn;
   },

@@ -18,7 +18,7 @@ const reducer = (state = false, action) => {
 export const store = createStore(reducer);
 
 import './App.css';
-import Upload from './Upload';
+import Upload from './Upload/Upload';
 import Board from './Board';
 import Profile from './Profile';
 import Activities from './Activities';
@@ -31,11 +31,14 @@ import MemPage from './MemPage';
 
 import Auth0Lock from 'auth0-lock';
 import createBrowserHistory from 'history/createBrowserHistory';
-import { request } from 'request';
 
+export const domain = "visionaries.pl"
 export const hostName = "http://46.41.149.6:80/app";
 export const host = "http://46.41.149.6:80";
 export const apiHost = "http://46.41.149.6:80/app";
+//export const hostName = "http://localhost:3000/app";
+//export const host = "http://localhost:3000";
+//export const apiHost = "http://localhost:3000/app";
 export var browserHistory = createBrowserHistory();
 export var AppID = 1891449367779446;
 export var CLIENT_ID = "ANOkwl33Ja5JX2ctrzF6FSXwhDbgiGU6";
@@ -68,7 +71,6 @@ export var HttpClient = function(sendToken) {
 }
 
 var App = React.createClass({
-  
   getInitialState: function() {
     return {
       token: null,
@@ -77,31 +79,6 @@ var App = React.createClass({
   },
   componentWillMount: function() {
     this.createLock();
-  },
-  setNick: function() {
-      let profile = JSON.parse(localStorage.getItem('profile'));
-      let url = 'https://' + CLIENT_DOMAIN + '/api/v2/users/' + profile.user_id;
-      const headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + API_TOKEN ,
-      }
-      var payload = JSON.stringify(
-        {
-            "user_metadata": {
-                "nick": profile.nickname,
-            }
-        }
-      );
-      var options = { 
-        method: 'PATCH',
-        url: url,
-        headers: headers,
-        body: payload,
-      };
-      request(options, function (error, response, body) {
-        if (error) throw new Error(error);
-      });
   },
   createLock: function() {
     let self = this;
@@ -140,6 +117,12 @@ var App = React.createClass({
   },
   render: function() {
     return (
+      <div>
+        <div className="footer">
+          <FacebookProvider appId={'' + AppID}>
+            <Like href="https://www.facebook.com/visionariesDOTpl" colorScheme="dark" share />
+          </FacebookProvider>
+        </div>
       <Router history={browserHistory}>
             <div>
               <Board lock={this.lock} browserHistory={browserHistory}/>
@@ -175,13 +158,10 @@ var App = React.createClass({
                   <AdminPanel/>
                 </Route>
               </Switch>
-              <div className="footer">
-                <FacebookProvider appId={'' + AppID}>
-                  <Like href="https://www.facebook.com/visionariesDOTpl" colorScheme="dark" share />
-                </FacebookProvider>
-              </div>
+              <div className="marginTop5"></div>
             </div>
       </Router>
+      </div>
     );
   },
 });

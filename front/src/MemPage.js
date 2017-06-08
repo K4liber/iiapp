@@ -70,7 +70,7 @@ var MemPage = React.createClass({
         if (response.status === 200) {
           let mem = this.state.mem;
           mem.Like = true;
-          mem.Points = mem.Points+1;
+          mem.Points++;
           this.setState({
             mem: mem,
           });
@@ -95,7 +95,7 @@ var MemPage = React.createClass({
         if (response.status === 200){
           let mem = this.state.mem;
           mem.Like = false;
-          mem.Points = mem.Points-1;
+          mem.Points--;
           this.setState({
             mem: mem,
           });
@@ -135,7 +135,6 @@ var MemPage = React.createClass({
       let mem = this.state.mem;
       let categoryTip = mem.Category + " category";
       let shareUrl = "visionaries.pl/idea/" + mem.ID;
-      var picture = mem.AuthorPhoto;
       var date = new Date(Date.parse(mem.DateTime));
       var dateTime = date.toString();
       var isMain = false;
