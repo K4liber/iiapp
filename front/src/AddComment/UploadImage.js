@@ -35,12 +35,10 @@ const uploadStyle = {
 
 var UploadImage = React.createClass({
     getIntialState: function() {
-        fileUrl: null
+
     },
     componentWillMount : function(props) {
-        this.state = {
-            fileUrl : this.props.fileUrl,
-        };
+
     },
     render: function() {
         return (
@@ -51,29 +49,15 @@ var UploadImage = React.createClass({
                 style={uploadStyle}
                 contentLabel="Example Modal"
                 >
-                { this.props.fileUrl &&
-                    <div className="memUpload">
-                        <p>Uploading file ...</p>
-                        <p>
-                            <img alt="" className="avatarImage" src={this.props.fileUrl}/>
-                        </p>
-                        <p>Please wait a second ...</p>
-                        <p>
-                            <Loading/>
-                        </p>
-                    </div>
-                }
-                { !this.props.fileUrl &&
-                    <div>
-                        Modal content
-                        <Dropzone 
-                            multiple={false}
-                            accept="image/*"
-                            onDrop={this.props.onDrop}>
-                            <p>Drop an image or click to select a file to upload.</p>
-                        </Dropzone> 
-                    </div>
-                }
+                <div>
+                    Modal content
+                    <Dropzone 
+                        multiple={false}
+                        accept="image/*"
+                        onDrop={this.props.onDrop}>
+                        <p>Drop an image or click to select a file to upload.</p>
+                    </Dropzone> 
+                </div>
             </Modal>
         )
     }

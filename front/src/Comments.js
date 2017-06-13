@@ -69,14 +69,19 @@ var Comments = React.createClass({
         });
         this.forceUpdate();
     },
-    sendComment : function() {
+    sendComment : function(images) {
+        var previews = [];
+        images.map(function(item, index) {
+            console.log(item);
+            previews.push(item.preview);
+        });
+        console.log(previews);
         let id = "commentArea";
         var comment = document.getElementById(id).value;
         if (comment !== "") {
             if(localStorage.getItem('profile')) {
                 let profile = JSON.parse(localStorage.getItem('profile'));
                 var profilePicture = profile.picture;
-                console.log(profile);
                 if (profile.user_metadata && profile.user_metadata.picture)
                     profilePicture = host + "/resources/avatars/" + profile.user_metadata.picture;
                 let upload = request.post(hostName + "/addComment")
@@ -86,6 +91,8 @@ var Comments = React.createClass({
                                 .field('profilePicture', profilePicture)
                                 .field('memID', this.props.memId)
                                 .field('comment', comment)
+                                .field('images', images)
+                                .field('previews', previews)
                 upload.end((err, response) => {
                     if (err) {
                         console.error(err);

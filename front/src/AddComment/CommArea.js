@@ -20,9 +20,8 @@ var CommArea = React.createClass({
             videos: [],
             youtube: [],
             showImageUpload: false,
-            imageUrl: null,
             imageFiles: [],
-            videoFiles: [],
+            imageUrls: [],
         }
     },
     timer : function() {
@@ -127,19 +126,22 @@ var CommArea = React.createClass({
         this.textAreaAdjust();
     },
     onSend : function() {
-        //this.props.onSend();
-        let id = "commentArea";
-        var el = document.getElementById(id);
-        if ( this.state.imageFiles.length > 0 ) {
-            console.log(this.state.imageFiles[0].preview);
-            el.value = el.value.replace(this.state.imageFiles[0].preview, "jakisLink")
-        }
-        var value = document.getElementById(id).value;
-        console.log(value)
+        this.props.onSend(this.correctImages());
         this.setState({
             comment: "",
             showPreview: false,
         })
+    },
+    correctImages : function() {
+        var correctImages = []
+        let id = "commentArea";
+        var comment = document.getElementById(id).value;
+        this.state.imageFiles.map(function(file, index) {
+            if (comment.includes(file.preview)) {
+                correctImages.push(file);
+            }
+        })
+        return correctImages;
     },
     addImage : function() {
         this.setState({
@@ -155,8 +157,10 @@ var CommArea = React.createClass({
          + "<youtube value=\"Youtube title\"/><end>");
     },
     onUploadImage : function(files) {
+        this.setState({
+            showImageUpload : false
+        })
         let isOk = true;
-        console.log(files)
         var res = files[0].type.split("/"); 
         if (res[0] !== "image") {
             alert("Wrong image format!");
@@ -170,13 +174,11 @@ var CommArea = React.createClass({
             var imageFiles = this.state.imageFiles;
             imageFiles.push(files[0])
             this.setState({
-                imageUrl : files[0].preview,
                 imageFiles: imageFiles,
             });
-            this.render();
+            this.addExpression("<img src=\"" + files[0].preview + "\"/>"
+                + "<title value=\"Figure title\"/><end>");
         }
-        this.addExpression("<img src=\"" + files[0].preview + "\"/>"
-         + "<title value=\"Figure title\"/><end>");
     },
     closeUploadImage: function() {
         this.setState({
@@ -298,7 +300,6 @@ var CommArea = React.createClass({
                     }
                     <img data-tip="LaTeX" alt="" onClick={this.expressions} src="/img/latexIcon.png" className="iconLogo center"/>
                     <img data-tip="add image" alt="" onClick={this.addImage} src="/img/imgIcon.png" className="iconLogo center"/>
-                    <img data-tip="add video" alt="" onClick={this.addVideo} src="/img/videoIcon.png" className="iconLogo center"/>
                     <img data-tip="youtube" alt="" onClick={this.addIframe} src="/img/youtubeIcon.png" className="iconLogo center"/>
                 </p>
                 <p className="margin3">
